@@ -1,4 +1,3 @@
-
 import { configureStore } from '@reduxjs/toolkit';
 import counterSlice from './slices/counter.slice';
 import pokemonSlice from './slices/pokemon.slice';
@@ -9,11 +8,10 @@ export const store = configureStore({
   reducer: {
     [api.reducerPath]: api.reducer,
     counter: counterSlice,
-    pokemon: pokemonSlice
+    pokemon: pokemonSlice,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware),
-})
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
+});
 
 setupListeners(store.dispatch);
 // Infer the `RootState` and `AppDispatch` types from the store itself

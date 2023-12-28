@@ -1,9 +1,11 @@
 node_modules
 public
-.github
-.prettierrc
 package-lock.json
 package.json
 README.md 
-10
 tsconfig.json
+.github
+.prettierrc
+.eslintrc.json
+.babelrc
+.lintstagedrc

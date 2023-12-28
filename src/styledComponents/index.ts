@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import { jsToCss } from "../utils/utils";
+import styled from 'styled-components';
+import { jsToCss } from '../utils/utils';
 
 export interface StyledProps {
-  style?: { [x: string]: any }
+  style?: { [x: string]: any };
 }
 
 export const RootContainer = styled.div<StyledProps>`
