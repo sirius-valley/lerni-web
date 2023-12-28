@@ -1,0 +1,11 @@
+node_modules
+public
+package-lock.json
+package.json
+README.md 
+tsconfig.json
+.github
+.prettierrc
+.eslintrc.json
+.babelrc
+.lintstagedrc

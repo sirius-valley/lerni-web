@@ -26,12 +26,15 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "lint": "eslint --fix . --ext .ts,.tsx",
+    "format": "prettier --write ."
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "prettier"
     ]
   },
   "browserslist": {
@@ -49,8 +52,13 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "babel-plugin-styled-components": "^2.1.4",
+    "eslint-config-prettier": "^9.1.0",
     "husky": "^8.0.3",
-    "lint-staged": "^15.2.0"
+    "lint-staged": "^15.2.0",
+    "prettier": "3.1.1"
+  },
+  "lint-staged": {
+    "*.{js,css,md,ts,tsx}": "prettier --write --ignore-unknown"
   },
   "resolutions": {
     "styled-components": "^5"

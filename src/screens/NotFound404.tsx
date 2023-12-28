@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { RootContainer } from '../styledComponents';
 
 const NotFound = () => {
@@ -6,7 +6,7 @@ const NotFound = () => {
     <RootContainer>
       <h1>Page not found</h1>
     </RootContainer>
-  )
-}
+  );
+};
 
 export default NotFound;

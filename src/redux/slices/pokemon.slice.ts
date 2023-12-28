@@ -3,29 +3,23 @@ import { pokemonApi } from '../api/pokemon.service';
 import { PokemonResponse } from '../api/types/pokemon.types';
 
 type initialStateHomeType = {
-	pokemon: any;
+  pokemon: any;
 };
 
 const initialState: initialStateHomeType = {
-	pokemon: {}
+  pokemon: {},
 };
 
 export const pokemonSlice = createSlice({
-	name: 'pokemonSlice',
-	initialState,
-	reducers: {},
-	extraReducers: (builder) => {
-		builder
-			.addMatcher(
-				pokemonApi.endpoints.getPokemon.matchFulfilled,
-				(state, { payload }) => {
-					const { results } = payload;
-					state.pokemon = results;
-				},
-			)
-
-	},
+  name: 'pokemonSlice',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addMatcher(pokemonApi.endpoints.getPokemon.matchFulfilled, (state, { payload }) => {
+      const { results } = payload;
+      state.pokemon = results;
+    });
+  },
 });
-
 
 export default pokemonSlice.reducer;

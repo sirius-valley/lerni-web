@@ -10,6 +10,6 @@ const Router = () => {
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
-}
+};
 
 export default Router;

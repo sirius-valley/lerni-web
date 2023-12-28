@@ -4,7 +4,6 @@ import { RootContainer } from '../styledComponents';
 import { useGetPokemonQuery } from '../redux/api/pokemon.service';
 
 const Home = () => {
-
   const pokemon = useGetPokemonQuery('');
 
   return (
@@ -13,7 +12,7 @@ const Home = () => {
       <Counter />
     </RootContainer>
   );
-}
+};
 
 export default Home;
 
@@ -21,7 +20,6 @@ const Styles = {
   rootContainer: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
-  }
-}
-
+    alignItems: 'center',
+  },
+};
