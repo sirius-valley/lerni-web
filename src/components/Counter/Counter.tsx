@@ -13,7 +13,7 @@ const Counter = () => {
       <h3>Counter</h3>
       <Button 
       onClick={increment}
-       style={Styles.button}>
+        style={Styles.button}>
         +
       </Button>
       <h5>{counter}</h5>
