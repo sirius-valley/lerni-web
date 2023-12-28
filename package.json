@@ -27,13 +27,14 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prepare": "husky install",
-    "format": "npx prettier --write .",
-    "lint": "eslint --fix . --ext .ts,.tsx"
+    "lint": "eslint --fix . --ext .ts,.tsx",
+    "format": "prettier --write ."
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "prettier"
     ]
   },
   "browserslist": {
@@ -57,7 +58,7 @@
     "prettier": "3.1.1"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "*.{js,css,md,ts,tsx}": "prettier --write --ignore-unknown"
   },
   "resolutions": {
     "styled-components": "^5"
