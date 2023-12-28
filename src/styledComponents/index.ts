@@ -6,14 +6,7 @@ export interface StyledProps {
 }
 
 export const RootContainer = styled.div<StyledProps>`
-  min-height: 100%;
+  min-height: 100vh;
   width: 100%;
-  ${(props) => props.style && jsToCss(props.style)}
-`;
-
-export const Button = styled.button<StyledProps>`
-  height: 40px;
-  width: 100px;
-  border-radius: 8px;
   ${(props) => props.style && jsToCss(props.style)}
 `;
