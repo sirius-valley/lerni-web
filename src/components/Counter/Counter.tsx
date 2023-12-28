@@ -12,7 +12,10 @@ const Counter = () => {
   return (
     <div>
       <h3>Counter</h3>
-      <Button onClick={increment} style={Styles.button}>+</Button>
+      <Button 
+      
+      onClick={increment}
+              style={Styles.button}>+</Button>
       <h5>{counter}</h5>
     </div>
   )
