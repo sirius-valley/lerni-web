@@ -1,5 +1,3 @@
-import { DefaultTheme } from 'styled-components';
-
 export const theme = {
   primary950: '#000C0F',
   primary900: '#001B23',
@@ -66,5 +64,3 @@ export const theme = {
     lineHeight: 'normal',
   },
 };
-
-export type MyTheme = typeof theme;
