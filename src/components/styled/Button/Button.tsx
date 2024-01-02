@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { ButtonSizeEnum, ButtonState, ButtonType, StyledButton } from './styles';
+import { ButtonSizeEnum, ButtonState, StyledButton } from './styles';
 import { useTheme } from 'styled-components';
+import { ComponentVariantType } from '../../../utils/constants';
 // import { DefaultTheme, useTheme } from "rn-css"
 // import HomeIcon from "../../assets/icons/HomeIcon";
 
@@ -20,7 +21,7 @@ export interface ButtonProps {
   onClick: () => void;
   title: string;
   icon?: (arg: any) => JSX.Element;
-  variant?: ButtonType;
+  variant?: ComponentVariantType;
   size?: ButtonSizeEnum;
   disabled?: boolean;
   css?: { [key in string]: string | number | boolean };
@@ -28,7 +29,7 @@ export interface ButtonProps {
 const Button = ({
   onClick,
   title = '',
-  variant = ButtonType.PRIMARY,
+  variant = ComponentVariantType.PRIMARY,
   size = ButtonSizeEnum.MEDIUM,
   disabled = false,
   icon,
@@ -42,7 +43,7 @@ const Button = ({
   return (
     <StyledButton
       type={variant}
-      state={ButtonState.DEFAULT}
+      state={isDisabled}
       disabled={disabled}
       onClick={() => (disabled ? undefined : onClick())}
       css={css}

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { jsToCss } from '../../../utils/utils';
-// import { ButtonState, ButtonType } from './Button';
 import { MyTheme, theme } from '../../../utils/theme';
+import { ComponentVariantType } from '../../../utils/constants';
 
 export interface StyledProps {
   css?: { [x: string]: any };
@@ -12,17 +12,10 @@ type styleProps = {
 };
 
 type StyleByOptionsProps = {
-  [key in ButtonType]: {
+  [key in ComponentVariantType]: {
     [state in ButtonState]: styleProps;
   };
 };
-
-export enum ButtonType {
-  DARK = 'dark',
-  PRIMARY = 'primary',
-  RED = 'red',
-  GHOST = 'ghost',
-}
 
 export enum ButtonSizeEnum {
   SMALL = 'small',
@@ -37,69 +30,79 @@ export enum ButtonState {
 
 const getButtonStyles = (theme: MyTheme): StyleByOptionsProps => {
   return {
-    [ButtonType.PRIMARY]: {
+    [ComponentVariantType.PRIMARY]: {
       [ButtonState.DEFAULT]: {
         backgroundColor: theme.primary500,
         color: theme.white,
+        border: 'none',
         hover: {
           backgroundColor: theme.primary600,
+          cursor: 'pointer',
+          color: theme.blue500,
         },
       },
       [ButtonState.DISABLED]: {
+        border: 'none',
         backgroundColor: theme.gray300,
         color: theme.gray500,
       },
     },
-    [ButtonType.DARK]: {
+    [ComponentVariantType.DARK]: {
       [ButtonState.DEFAULT]: {
         backgroundColor: theme.primary800,
         color: theme.white,
-        border: `1px solid ${theme.primary800}`,
+        border: 'none',
         hover: {
           backgroundColor: theme.primary900,
           color: theme.white,
-          border: `1px solid ${theme.primary900}`,
+          cursor: 'pointer',
         },
       },
 
       [ButtonState.DISABLED]: {
+        border: 'none',
         backgroundColor: theme.gray300,
-        color: theme.gray300,
-        border: `1px solid ${theme.gray300}`,
+        color: theme.gray500,
       },
     },
-    [ButtonType.GHOST]: {
+    [ComponentVariantType.GHOST]: {
       [ButtonState.DEFAULT]: {
-        backgroundColor: 'none',
+        backgroundColor: 'transparent',
         color: theme.primary500,
+        border: 'none',
         hover: {
           backgroundColor: theme.primary200,
           color: theme.primary400,
+          cursor: 'pointer',
         },
       },
       [ButtonState.DISABLED]: {
+        border: 'none',
         backgroundColor: theme.gray300,
-        color: theme.gray300,
+        color: theme.gray500,
       },
     },
-    [ButtonType.RED]: {
+    [ComponentVariantType.RED]: {
       [ButtonState.DEFAULT]: {
         backgroundColor: theme.red500,
         color: theme.white,
+        border: 'none',
         hover: {
           backgroundColor: theme.red600,
+          cursor: 'pointer',
         },
       },
       [ButtonState.DISABLED]: {
+        border: 'none',
         backgroundColor: theme.gray300,
-        color: theme.gray300,
+        color: theme.gray500,
       },
     },
   };
 };
-console.log(getButtonStyles(theme)['dark']['default']);
+
 interface ButtonProps {
-  type: ButtonType;
+  type: ComponentVariantType;
   state: ButtonState;
   css?: { [x: string]: any };
 }
@@ -108,17 +111,19 @@ export const StyledButton = styled.button.attrs<ButtonProps>((props) => ({
   type: props.type ?? 'filled',
   state: props.state ?? 'default',
 }))`
+  width: 96px;
+  height: 42px;
   border-radius: 6px;
-  padding: 8px 24px;
+  padding: 8px 0px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
+  font-weight: 700;
   ${(props) => {
     if (props.type) {
       const { hover, ...restStyles } = getButtonStyles(theme)[props.type][props.state];
-      console.log('restStyles: ', restStyles);
       const styleHover: { [key: string]: string | number } = typeof hover === 'object' ? hover : {};
       return `
       ${jsToCss(restStyles)}
@@ -130,11 +135,3 @@ export const StyledButton = styled.button.attrs<ButtonProps>((props) => ({
   }}
   ${(props) => props.css && jsToCss(props.css)}
 `;
-// ${jsToCss(restStyles)}
-
-// export const StyledButton = styled.button<StyledProps>`
-//   height: 40px;
-//   width: 100px;
-//   border-radius: 8px;
-//   ${(props) => props.css && jsToCss(props.css)}
-// `;
