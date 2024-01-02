@@ -44,16 +44,23 @@ export const theme = {
   },
   body1: {
     fontFamily: 'Roboto',
-    fontSize: '14px',
+    fontSize: '16px',
     fontStyle: 'normal',
     fontWeight: 400,
     lineHeight: 'normal',
   },
   body2: {
     fontFamily: 'Roboto',
-    fontSize: '12px',
+    fontSize: '14px',
     fontStyle: 'normal',
     fontWeight: 500,
+    lineHeight: 'normal',
+  },
+  body3: {
+    fontFamily: 'Roboto',
+    fontSize: '12px',
+    fontStyle: 'normal',
+    fontWeight: 400,
     lineHeight: 'normal',
   },
 };
