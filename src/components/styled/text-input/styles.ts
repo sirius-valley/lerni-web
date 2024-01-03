@@ -1,12 +1,7 @@
-import { TextInputStatus } from '../../../utils/constants';
 import { TextInputProps } from './TextInput';
 import styled, { DefaultTheme, useTheme } from 'styled-components';
 
-type StyledTextInputProps = {
-  status: TextInputStatus;
-} & TextInputProps;
-
-export const StyledTextInput = styled.input<StyledTextInputProps>`
+export const StyledTextInput = styled.input<TextInputProps>`
   border-radius: 8px;
   outline: none !important;
   border: none !important;
