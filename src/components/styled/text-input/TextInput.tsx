@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyledTextInput } from './styles';
-import { TextInputStatus } from '../../../utils/constants.';
+import { TextInputStatus } from '../../../utils/constants';
 
 export interface TextInputProps {
   placeholder?: string;

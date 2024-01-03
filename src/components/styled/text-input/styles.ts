@@ -1,4 +1,4 @@
-import { TextInputStatus } from '../../../utils/constants.';
+import { TextInputStatus } from '../../../utils/constants';
 import { TextInputProps } from './TextInput';
 import styled, { DefaultTheme, useTheme } from 'styled-components';
 
