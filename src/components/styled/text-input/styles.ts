@@ -17,48 +17,30 @@ export const StyledTextInput = styled.input<StyledTextInputProps>`
   font-weight: 500;
   color: ${(props) => {
     const theme = useTheme();
-    const statusColors = {
-      [TextInputStatus.DEFAULT]: {
-        color: theme.gray900,
-        backgroundcolor: theme.white,
-      },
-      [TextInputStatus.PLACEHOLDER]: {
-        color: theme.gray300,
-        backgroundColor: theme.white,
-      },
-      [TextInputStatus.ERROR]: {
-        color: theme.red500,
-        backgroundColor: theme.white,
-      },
-      [TextInputStatus.DISABLED]: {
-        color: theme.gray400,
-        backgroundColor: theme.gray200,
-      },
-    };
-    return statusColors[props.status].color;
+    if (props.error) {
+      return theme.red500;
+    } else if (props.disabled) {
+      return theme.gray400;
+    } else {
+      return theme.gray900;
+    }
   }};
+
   background-color: ${(props) => {
     const theme = useTheme();
-    const statusColors = {
-      [TextInputStatus.DEFAULT]: {
-        color: theme.gray900,
-        backgroundColor: theme.white,
-      },
-      [TextInputStatus.PLACEHOLDER]: {
-        color: theme.gray300,
-        backgroundColor: theme.white,
-      },
-      [TextInputStatus.ERROR]: {
-        color: theme.red500,
-        backgroundColor: theme.white,
-      },
-      [TextInputStatus.DISABLED]: {
-        color: theme.gray400,
-        backgroundColor: theme.gray200,
-      },
-    };
-    return statusColors[props.status].backgroundColor;
+    if (props.error) {
+      return theme.white;
+    } else if (props.disabled) {
+      return theme.gray200;
+    } else {
+      return theme.white;
+    }
   }};
+
+  :placeholder {
+    color: ${(props) => props.theme.gray300};
+    background-color: ${(props) => props.theme.white};
+  }
 
   :focus {
     outline: none;
