@@ -1,59 +1,57 @@
 import React, { useMemo } from 'react';
-import { ButtonSizeEnum, ButtonState, StyledButton } from './styles';
-import { useTheme } from 'styled-components';
+import { ButtonLabelSize, ButtonState, StyledButton } from './styles';
 import { ComponentVariantType } from '../../../utils/constants';
-// import { DefaultTheme, useTheme } from "rn-css"
-// import HomeIcon from "../../assets/icons/HomeIcon";
-
-const ButtonSizeText: { [key in ButtonSizeEnum]: string } = {
-  [ButtonSizeEnum.SMALL]: 'buttonSmall',
-  [ButtonSizeEnum.MEDIUM]: 'buttonStandard',
-  [ButtonSizeEnum.LARGE]: 'buttonLarge',
-};
-
-const ButtonSizeIcon: { [key in ButtonSizeEnum]: number } = {
-  [ButtonSizeEnum.SMALL]: 20,
-  [ButtonSizeEnum.MEDIUM]: 24,
-  [ButtonSizeEnum.LARGE]: 28,
-};
+import { theme } from '../../../utils/theme';
+import Spinner from '../../Spinner/Spinner';
 
 export interface ButtonProps {
   onClick: () => void;
-  title: string;
+  label: string;
+  labelSize?: ButtonLabelSize;
   icon?: (arg: any) => JSX.Element;
   variant?: ComponentVariantType;
-  size?: ButtonSizeEnum;
   disabled?: boolean;
+  loading?: boolean;
   css?: { [key in string]: string | number | boolean };
 }
 const Button = ({
   onClick,
-  title = '',
+  label = '',
+  labelSize = ButtonLabelSize.BODY1,
   variant = ComponentVariantType.PRIMARY,
-  size = ButtonSizeEnum.MEDIUM,
   disabled = false,
+  loading = false,
   icon,
   css,
 }: ButtonProps) => {
-  const theme = useTheme();
   const isDisabled = useMemo(
     () => (disabled ? ButtonState.DISABLED : ButtonState.DEFAULT),
     [disabled],
   );
+
+  const renderLabel = () => {
+    if (loading) return <Spinner variant={variant} size={24} />;
+    return label;
+  };
+
   return (
     <StyledButton
       type={variant}
       state={isDisabled}
       disabled={disabled}
-      onClick={() => (disabled ? undefined : onClick())}
-      css={css}
+      onClick={() => (disabled || loading ? undefined : onClick())}
+      css={{
+        ...theme[labelSize],
+        css,
+      }}
     >
       {icon &&
+        !loading &&
         icon({
-          // color: getIconColor(theme)[variant][isDisabled],
-          size: ButtonSizeIcon[size],
+          color: '#eee',
+          size: 18,
         })}
-      {title}
+      {renderLabel()}
     </StyledButton>
   );
 };

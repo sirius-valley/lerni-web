@@ -28,6 +28,12 @@ export enum ButtonState {
   DISABLED = 'disabled',
 }
 
+export enum ButtonLabelSize {
+  BODY1 = 'body1',
+  BODY2 = 'body2',
+  BODY3 = 'body3',
+}
+
 const getButtonStyles = (theme: MyTheme): StyleByOptionsProps => {
   return {
     [ComponentVariantType.PRIMARY]: {
@@ -119,8 +125,10 @@ export const StyledButton = styled.button.attrs<ButtonProps>((props) => ({
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  gap: 4px;
   box-sizing: border-box;
   font-weight: 700;
+  transition: all 100ms ease-in-out;
   ${(props) => {
     if (props.type) {
       const { hover, ...restStyles } = getButtonStyles(theme)[props.type][props.state];
