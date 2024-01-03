@@ -4,9 +4,3 @@ export enum ComponentVariantType {
   RED = 'red',
   GHOST = 'ghost',
 }
-export enum TextInputStatus {
-  DEFAULT = 'default',
-  PLACEHOLDER = 'placeholder',
-  ERROR = 'error',
-  DISABLED = 'disabled',
-}
