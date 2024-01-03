@@ -64,3 +64,5 @@ export const theme = {
     lineHeight: 'normal',
   },
 };
+
+export type MyTheme = typeof theme;

@@ -1,15 +1,26 @@
 import React from 'react';
-import Counter from '../components/Counter/Counter';
 import { RootContainer } from '../styledComponents';
-import { useGetPokemonQuery } from '../redux/api/pokemon.service';
+import Button from '../components/styled/Button/Button';
+import { ComponentVariantType } from '../utils/constants';
+import { ButtonLabelSize } from '../components/styled/Button/styles';
+import SendIcon from '../assets/icons/SendIcon';
 
 const Home = () => {
-  const pokemon = useGetPokemonQuery('');
+  const handleButton = () => {
+    alert('hello');
+  };
 
   return (
     <RootContainer style={Styles.rootContainer}>
-      <h1>Hello world</h1>
-      <Counter />
+      <Button
+        onClick={handleButton}
+        label={'Button'}
+        labelSize={ButtonLabelSize.BODY1}
+        variant={ComponentVariantType.DARK}
+        disabled={false}
+        loading={false}
+        icon={SendIcon}
+      />
     </RootContainer>
   );
 };
@@ -21,5 +32,7 @@ const Styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
   },
 };
