@@ -39,14 +39,14 @@ export const theme = {
     fontFamily: 'Roboto',
     fontSize: '18px',
     fontStyle: 'normal',
-    fontWeight: 600,
+    fontWeight: 700,
     lineHeight: 'normal',
   },
   body1: {
     fontFamily: 'Roboto',
     fontSize: '16px',
     fontStyle: 'normal',
-    fontWeight: 400,
+    fontWeight: 500,
     lineHeight: 'normal',
   },
   body2: {
