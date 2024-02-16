@@ -1,9 +1,5 @@
 import React from 'react';
-
-interface SendIconInterface {
-  color?: string;
-  size?: number;
-}
+import { SendIconInterface } from '../../utils/utils';
 
 const SendIcon = ({ color = '#000C0F', size = 14 }: SendIconInterface) => {
   return (

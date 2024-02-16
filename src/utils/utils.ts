@@ -33,3 +33,8 @@ export const getStyleColorByVariant = (componentVariant: ComponentVariantType) =
       return theme.gray300;
   }
 };
+
+export interface SendIconInterface {
+  color?: string;
+  size?: number;
+}
