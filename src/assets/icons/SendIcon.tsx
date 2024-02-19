@@ -1,11 +1,7 @@
 import React from 'react';
+import { IconInterface } from '../../utils/utils';
 
-interface SendIconInterface {
-  color?: string;
-  size?: number;
-}
-
-const SendIcon = ({ color = '#000C0F', size = 14 }: SendIconInterface) => {
+const SendIcon = ({ color = '#000C0F', size = 14 }: IconInterface) => {
   return (
     <svg
       width={size}
@@ -16,7 +12,7 @@ const SendIcon = ({ color = '#000C0F', size = 14 }: SendIconInterface) => {
     >
       <path
         d="M0.00857142 14L18 7L0.00857142 0L0 5.44444L12.8571 7L0 8.55556L0.00857142 14Z"
-        fill={color}
+        fill={color ? color : '#000C0F'}
       />
     </svg>
   );

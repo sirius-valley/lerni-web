@@ -4,6 +4,10 @@ import Button from '../components/styled/Button/Button';
 import { ComponentVariantType } from '../utils/constants';
 import { ButtonLabelSize } from '../components/styled/Button/styles';
 import SendIcon from '../assets/icons/SendIcon';
+import { ProgramItem } from '../components/program/ProgramItem';
+import { StyledColumn } from '../components/styled/styles';
+import { useTheme } from 'styled-components';
+import { theme } from '../utils/theme';
 
 const Home = () => {
   const handleButton = () => {
@@ -12,15 +16,20 @@ const Home = () => {
 
   return (
     <RootContainer style={Styles.rootContainer}>
-      <Button
-        onClick={handleButton}
-        label={'Button'}
-        labelSize={ButtonLabelSize.BODY1}
-        variant={ComponentVariantType.DARK}
-        disabled={false}
-        loading={false}
-        icon={SendIcon}
-      />
+      <StyledColumn
+        style={{ gap: 8, width: '60%', justifyContent: 'center', alignItems: 'center' }}
+      >
+        <Button
+          onClick={handleButton}
+          label={'Button'}
+          labelSize={ButtonLabelSize.BODY1}
+          variant={ComponentVariantType.DARK}
+          disabled={false}
+          loading={false}
+          icon={SendIcon}
+        />
+        <ProgramItem />
+      </StyledColumn>
     </RootContainer>
   );
 };

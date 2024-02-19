@@ -2,7 +2,7 @@ import { ComponentVariantType } from './constants';
 import { theme } from './theme';
 
 // type CSSProperties = { [key: string]: string | number};
-type CSSProperties = {
+export type CSSProperties = {
   [key: string]:
     | string
     | number
@@ -33,3 +33,8 @@ export const getStyleColorByVariant = (componentVariant: ComponentVariantType) =
       return theme.gray300;
   }
 };
+
+export interface IconInterface {
+  color?: string;
+  size?: number;
+}
