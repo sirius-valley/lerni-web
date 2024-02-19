@@ -1,10 +1,7 @@
 import React from 'react';
-import { SendIconInterface } from '../../utils/utils';
+import { IconInterface } from '../../utils/utils';
 import { HomeIcon } from '../../assets/icons/HomeIcon';
-import { BooksIcon } from '../../assets/icons/BooksIcon';
 import { PillIcon } from '../../assets/icons/PillIcon';
-import { BoltIcon } from '../../assets/icons/BoltIcon';
-import { ScreenIcon } from '../../assets/icons/ScreenIcon';
 import { PeopleIcon } from '../../assets/icons/PeopleIcon';
 import { LogoutIcon } from '../../assets/icons/LogoutIcon';
 import { StyledBox, StyledColumn } from '../styled/styles';
@@ -12,12 +9,15 @@ import { useTheme } from 'styled-components';
 import { NavbarItem } from './NavbarItem';
 import { LogoIcon } from '../../assets/icons/LogoIcon';
 import { RightArrowIcon } from '../../assets/icons/RightArrowIcon';
+import { LibraryIcon } from '../../assets/icons/LibraryIcon';
+import { TriviaIcon } from '../../assets/icons/TriviaIcon';
+import { ClassIcon } from '../../assets/icons/ClassIcon';
 
 interface NavbarItem {
   id: string;
   name: string;
   screen: string;
-  iconName: React.FC<SendIconInterface>;
+  iconName: React.FC<IconInterface>;
 }
 
 export const NavBarItems: NavbarItem[] = [
@@ -29,10 +29,10 @@ export const NavBarItems: NavbarItem[] = [
     iconName: HomeIcon,
   },
   {
-    id: 'Books',
-    name: 'Books',
-    screen: 'books',
-    iconName: BooksIcon,
+    id: 'Library',
+    name: 'Library',
+    screen: 'library',
+    iconName: LibraryIcon,
   },
   {
     id: 'Pill',
@@ -44,13 +44,13 @@ export const NavBarItems: NavbarItem[] = [
     id: 'Trivia',
     name: 'Trivia',
     screen: 'trivia',
-    iconName: BoltIcon,
+    iconName: TriviaIcon,
   },
   {
-    id: 'Share',
-    name: 'Share',
-    screen: 'share',
-    iconName: ScreenIcon,
+    id: 'Class',
+    name: 'Class',
+    screen: 'class',
+    iconName: ClassIcon,
   },
   {
     id: 'People',
@@ -61,7 +61,7 @@ export const NavBarItems: NavbarItem[] = [
 ];
 
 const handleClick = () => {
-  alert('Router push screen');
+  alert('ruta pusheada');
 };
 
 export const NavBar = () => {
@@ -71,24 +71,28 @@ export const NavBar = () => {
       style={{
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: '100vh',
+        position: 'fixed',
+        top: 0,
+        bottom: 0,
         width: 72,
         backgroundColor: theme.white,
-        padding: '18px 12px 24px 12px',
+        padding: '18px 15px 24px 15px',
         gap: 12,
       }}
     >
-      <StyledColumn style={{ gap: 12 }}>
+      <StyledColumn style={{ gap: 15 }}>
         <StyledColumn
           style={{
             width: 72,
             height: 72,
             gap: 12,
+            padding: '0px 16px',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
           <StyledBox
+            onClick={() => alert('ir a home')}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -97,11 +101,22 @@ export const NavBar = () => {
               padding: '7px 9px',
               borderRadius: 9,
               backgroundColor: theme.primary500,
+              cursor: 'pointer',
             }}
           >
             <LogoIcon size={22} />
           </StyledBox>
-          <RightArrowIcon color={theme.gray300} size={13} />
+          <StyledBox
+            onClick={() => alert('volver para atras')}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              cursor: 'pointer',
+            }}
+          >
+            <RightArrowIcon color={theme.gray300} size={13} />
+          </StyledBox>
         </StyledColumn>
         <StyledColumn style={{ padding: '28px 12px 0px 12px', gap: 6 }}>
           {NavBarItems.map((item, idx) => (
@@ -111,18 +126,34 @@ export const NavBar = () => {
       </StyledColumn>
       <StyledColumn
         style={{
-          gap: 12,
+          gap: 6,
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
         <StyledBox
-          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 12 }}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 12,
+            width: 42,
+            height: 42,
+            cursor: 'pointer',
+          }}
+          onClick={() => alert('Cerrar Sesión')}
         >
-          <LogoutIcon />
+          <LogoutIcon color={theme.gray400} size={18} />
         </StyledBox>
         <StyledBox
-          style={{ backgroundColor: theme.gray300, borderRadius: 100, width: 42, height: 42 }}
+          onClick={() => alert('Ir a profile')}
+          style={{
+            backgroundColor: theme.gray300,
+            borderRadius: 100,
+            width: 42,
+            height: 42,
+            cursor: 'pointer',
+          }}
         />
       </StyledColumn>
     </StyledColumn>

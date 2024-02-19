@@ -1,7 +1,7 @@
 import React from 'react';
-import { SendIconInterface } from '../../utils/utils';
+import { IconInterface } from '../../utils/utils';
 
-export const LogoIcon = ({ size, color }: SendIconInterface) => {
+export const LogoIcon = ({ size, color }: IconInterface) => {
   return (
     <svg
       width={size ? size : '32'}

@@ -34,7 +34,7 @@ export const getStyleColorByVariant = (componentVariant: ComponentVariantType) =
   }
 };
 
-export interface SendIconInterface {
+export interface IconInterface {
   color?: string;
   size?: number;
 }
