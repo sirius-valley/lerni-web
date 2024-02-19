@@ -35,6 +35,7 @@ export const StyledTextInput = styled(StyledRow)<TextInputProps>`
   border: 1px solid ${(props) => (props.error ? props.theme.red500 : props.theme.gray200)};
   background-color: ${(props) => (props.disabled ? props.theme.gray200 : props.theme.white)};
   color: ${(props) => (props.disabled ? props.theme.gray400 : props.theme.gray300)};
+  transition: all ease-in-out 0.3s;
 
   &:hover {
     outline: 1px solid ${(props) => props.theme.primary500};
@@ -43,7 +44,6 @@ export const StyledTextInput = styled(StyledRow)<TextInputProps>`
 
   &:focus-within {
     border-color: ${(props) => props.theme.primary500};
-    transition: ease-in-out 0.3s;
   }
 
   & > input::placeholder {
