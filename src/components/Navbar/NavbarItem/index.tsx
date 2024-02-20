@@ -25,7 +25,7 @@ export const NavbarItem = ({ name, icon: Icon, onClick, focused }: NavbarItemPro
         padding: 12,
         height: 44,
         width: 44,
-        backgroundColor: focused ? theme.primary200 : 'transparent',
+        backgroundColor: hover ? theme.primary200 : 'transparent',
         cursor: 'pointer',
       }}
     >
