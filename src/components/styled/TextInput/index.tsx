@@ -2,7 +2,7 @@ import { useTheme } from 'styled-components';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../styles';
 import React, { ChangeEvent, useState } from 'react';
 import { ShowIcon } from '../../../assets/icons/ShowIcon';
-import { StyledInput, StyledTextInput } from './styles';
+import { StyledInput, StyledTextInputBox } from './styles';
 import { HideIcon } from '../../../assets/icons/HideIcon';
 
 export interface TextInputProps {
@@ -11,10 +11,22 @@ export interface TextInputProps {
   placeholder?: string;
   disabled?: boolean;
   required?: boolean;
-  type?: 'text' | 'email' | 'password';
+  type?: 'text' | 'password';
   error?: boolean;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (value: string) => void;
   value: string;
+  css?: { [key in string]: string | number | boolean };
+}
+
+export interface InputBoxProps {
+  title?: string;
+  subtitle?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  required?: boolean;
+  type?: 'text' | 'password';
+  error?: boolean;
+  focused?: boolean;
   css?: { [key in string]: string | number | boolean };
 }
 
@@ -68,18 +80,17 @@ export const TextInput = ({
           {required || (title && required) ? '*' : ''}
         </StyledText>
       </StyledRow>
-      <StyledTextInput
+      <StyledTextInputBox
         disabled={disabled}
         error={error}
         css={css}
-        onChange={onChange}
-        value={value}
         placeholder={placeholder}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        focused={focused}
       >
         <StyledInput
-          onChange={onChange}
+          onChange={(event) => onChange(event.target.value)}
           value={value}
           type={type === 'password' ? showPassword : type}
           disabled={disabled}
@@ -99,7 +110,7 @@ export const TextInput = ({
                     : disabled
                       ? theme.gray400
                       : focused
-                        ? theme.black
+                        ? theme.primary950
                         : theme.gray300
                 }
               />
@@ -112,17 +123,17 @@ export const TextInput = ({
                     : disabled
                       ? theme.gray400
                       : focused
-                        ? theme.black
+                        ? theme.primary950
                         : theme.gray300
                 }
               />
             )
           ) : null}
         </StyledBox>
-      </StyledTextInput>
+      </StyledTextInputBox>
       <StyledText
         variant="body3"
-        style={{ color: error ? theme.red400 : disabled ? theme.gray300 : theme.black }}
+        style={{ color: error ? theme.red400 : disabled ? theme.gray300 : theme.primary950 }}
       >
         {subtitle}
       </StyledText>

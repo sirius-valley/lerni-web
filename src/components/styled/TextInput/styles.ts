@@ -1,21 +1,25 @@
 import styled from 'styled-components';
 import { StyledRow } from '../styles';
-import { TextInputProps } from '.';
+import { InputBoxProps, TextInputProps } from '.';
+import { ChangeEvent } from 'react';
 
-export const StyledInput = styled.input<TextInputProps>`
+interface StyledInputProps extends Omit<TextInputProps, 'onChange'> {
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}
+
+export const StyledInput = styled.input<StyledInputProps>`
   outline: none !important;
   border: none !important;
+  transition: all 0.2s ease-in-out;
+  padding: 6px 8px;
   width: 100%;
   color: ${(props) => {
     if (props.disabled) {
       return props.theme.gray400;
     } else {
-      return props.theme.gray300;
+      return props.theme.primary950;
     }
   }};
-  &:focus-within {
-    color: #171717;
-  }
   background-color: ${(props) => {
     if (props.disabled) {
       return props.theme.gray200;
@@ -25,25 +29,36 @@ export const StyledInput = styled.input<TextInputProps>`
   }};
 `;
 
-export const StyledTextInput = styled(StyledRow)<TextInputProps>`
+export const StyledTextInputBox = styled(StyledRow)<InputBoxProps>`
   justify-content: space-between;
+  outline: 1px solid transparent;
   align-items: center;
-  padding: 12px 16px;
+  padding: 6px 8px;
   border-radius: 8px;
   gap: 10px;
   width: 100%;
   border: 1px solid ${(props) => (props.error ? props.theme.red500 : props.theme.gray200)};
   background-color: ${(props) => (props.disabled ? props.theme.gray200 : props.theme.white)};
-  color: ${(props) => (props.disabled ? props.theme.gray400 : props.theme.gray300)};
-  transition: all ease-in-out 0.3s;
+  color: ${(props) => props.theme.primary950};
+  transition: all 0.2s ease-in-out;
 
   &:hover {
-    outline: 1px solid ${(props) => props.theme.primary500};
-    transition: ease-in-out 0.1s;
+    outline: 1px solid
+      ${(props) =>
+        props.error
+          ? props.theme.red500
+          : props.focused
+            ? props.theme.primary500
+            : props.theme.gray200};
   }
 
   &:focus-within {
-    border-color: ${(props) => props.theme.primary500};
+    border-color: ${(props) =>
+      props.error
+        ? props.theme.red500
+        : props.disabled
+          ? props.theme.gray200
+          : props.theme.primary500};
   }
 
   & > input::placeholder {
