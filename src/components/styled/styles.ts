@@ -12,7 +12,7 @@ interface StyledTextInterface {
   color?: keyof ThemeColors;
 }
 
-export const StyledText = styled.text<StyledTextInterface>`
+export const StyledText = styled.p<StyledTextInterface>`
   color: ${(props) => (props.color ? props.theme[props.color] : props.theme.primary900)};
   ${({ variant, theme }) => styledComponent(theme[variant || 'body1'])};
 `;

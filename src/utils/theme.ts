@@ -10,6 +10,7 @@ export const theme = {
   primary200: '#C6EFFC',
   blue500: '#273873',
   white: '#FFFFFF',
+  red400: '#EC7F74',
   red500: '#FC6464',
   red600: '#B93333',
   gray50: '#f8fafc',
