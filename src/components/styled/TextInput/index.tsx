@@ -67,7 +67,6 @@ export const TextInput = ({
       style={{
         gap: 8,
         justifyContent: 'flex-start',
-        width: 306,
         background: theme.white,
         padding: 8,
       }}
