@@ -3,6 +3,9 @@ import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import { useTheme } from 'styled-components';
 import ProgramContent from '../ProgramContent';
 import ProgramDetails from '../ProgramDetails';
+import { ProgramQuestionnaire } from '../ProgramQuestionnaire';
+import { ProgramTrivia } from '../ProgramTrivia';
+import { ProgramStudents } from '../ProgramStudents';
 
 const CreateProgram = () => {
   const theme = useTheme();
@@ -25,6 +28,7 @@ const CreateProgram = () => {
           background: theme.gray200,
           minHeight: '100vh',
           width: '100vw',
+          paddingBottom: 32,
         }}
       >
         <StyledColumn
@@ -32,6 +36,9 @@ const CreateProgram = () => {
         >
           <ProgramDetails />
           <ProgramContent />
+          <ProgramQuestionnaire hasPills />
+          <ProgramTrivia hasPills />
+          <ProgramStudents hasPills />
         </StyledColumn>
       </StyledColumn>
     </>
