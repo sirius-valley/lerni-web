@@ -43,6 +43,7 @@ const ProgramDetails = () => {
           onChange={(value) => handleChange('url', value)}
         ></TextInput>
         <TextInput
+          css={{ height: '145px' }}
           placeholder="Descripcion del programa..."
           title="Descripcion"
           required
