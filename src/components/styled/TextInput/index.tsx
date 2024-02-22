@@ -14,6 +14,7 @@ export interface TextInputProps {
   type?: 'text' | 'password';
   error?: boolean;
   onChange: (value: string) => void;
+  onBlur?: () => void;
   value: string;
   css?: { [key in string]: string | number | boolean };
 }
@@ -39,6 +40,7 @@ export const TextInput = ({
   required = false,
   error = false,
   onChange,
+  onBlur,
   value,
   css,
 }: TextInputProps) => {
@@ -60,6 +62,7 @@ export const TextInput = ({
 
   const handleBlur = () => {
     setFocused(false);
+    onBlur && onBlur();
   };
 
   return (
@@ -68,8 +71,6 @@ export const TextInput = ({
         gap: 8,
         justifyContent: 'flex-start',
         width: 306,
-        background: theme.white,
-        padding: 8,
       }}
     >
       <StyledRow style={{ alignContent: 'center', gap: 4 }}>

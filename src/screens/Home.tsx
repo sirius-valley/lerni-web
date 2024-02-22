@@ -1,13 +1,10 @@
 import React from 'react';
-import { RootContainer } from '../styledComponents';
-import Button from '../components/styled/Button/Button';
+import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
 import { ButtonLabelSize } from '../components/styled/Button/styles';
 import SendIcon from '../assets/icons/SendIcon';
 import { ProgramItem } from '../components/program/ProgramItem';
-import { StyledColumn } from '../components/styled/styles';
-import { useTheme } from 'styled-components';
-import { theme } from '../utils/theme';
+import { RootContainer, StyledColumn } from '../components/styled/styles';
 
 const Home = () => {
   const handleButton = () => {
@@ -15,19 +12,28 @@ const Home = () => {
   };
 
   return (
-    <RootContainer style={Styles.rootContainer}>
+    <RootContainer
+      css={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+      }}
+    >
       <StyledColumn
         style={{ gap: 8, width: '60%', justifyContent: 'center', alignItems: 'center' }}
       >
         <Button
           onClick={handleButton}
-          label={'Button'}
           labelSize={ButtonLabelSize.BODY1}
           variant={ComponentVariantType.DARK}
           disabled={false}
           loading={false}
           icon={SendIcon}
-        />
+        >
+          Button
+        </Button>
         <ProgramItem />
       </StyledColumn>
     </RootContainer>
@@ -35,13 +41,3 @@ const Home = () => {
 };
 
 export default Home;
-
-const Styles = {
-  rootContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',
-  },
-};
