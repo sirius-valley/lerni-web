@@ -12,6 +12,7 @@ export interface TextInputProps {
   disabled?: boolean;
   required?: boolean;
   type?: 'text' | 'password';
+  maxLength?: number;
   error?: boolean;
   onChange: (value: string) => void;
   value: string;
@@ -38,6 +39,7 @@ export const TextInput = ({
   disabled = false,
   required = false,
   error = false,
+  maxLength = 400,
   onChange,
   value,
   css,
@@ -67,7 +69,6 @@ export const TextInput = ({
       style={{
         gap: 8,
         justifyContent: 'flex-start',
-        width: 306,
         background: theme.white,
         padding: 8,
       }}
@@ -95,6 +96,7 @@ export const TextInput = ({
           type={type === 'password' ? showPassword : type}
           disabled={disabled}
           placeholder={placeholder}
+          maxLength={maxLength}
         />
         <StyledBox
           style={{ display: 'flex', justifyContent: 'center', alignContent: 'center' }}

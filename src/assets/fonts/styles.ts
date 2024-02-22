@@ -1,7 +1,7 @@
 import styled, { css as styledComponent } from 'styled-components';
-import { jsToCss } from '../../../utils/utils';
-import { MyTheme, theme } from '../../../utils/theme';
-import { ComponentVariantType } from '../../../utils/constants';
+import { jsToCss } from '../../utils/utils';
+import { MyTheme, theme } from '../../utils/theme';
+import { ComponentVariantType } from '../../utils/constants';
 
 export interface StyledProps {
   css?: { [x: string]: any };
@@ -130,6 +130,7 @@ export const StyledButton = styled.button<ButtonProps>`
     if (props.type) {
       const { hover, ...restStyles } = getButtonStyles(theme)[props.type][props.state];
       const styleHover: { [key: string]: string | number } = typeof hover === 'object' ? hover : {};
+      console.log(props.css);
       return `
       ${jsToCss(restStyles)}
       &:hover {
