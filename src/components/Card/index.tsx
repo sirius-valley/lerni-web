@@ -28,6 +28,7 @@ const Card = ({
         gap: '12px',
         width: width,
         height: height,
+        background: theme.white,
         ...css,
       }}
     >

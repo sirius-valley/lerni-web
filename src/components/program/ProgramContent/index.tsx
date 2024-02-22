@@ -106,7 +106,7 @@ const ProgramContent = () => {
     </StyledColumn>
   );
   return (
-    <Card height={'137px'} headerComponent={ProgramHeader}>
+    <Card height={'325px'} headerComponent={ProgramHeader}>
       {ProgramBody}
     </Card>
   );
