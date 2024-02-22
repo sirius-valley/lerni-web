@@ -22,7 +22,12 @@ const ProgramContent = () => {
   );
   const ProgramBody = (
     <StyledRow
-      style={{ gap: '24px', marginTop: '12px', justifyContent: 'center', alignItems: 'center' }}
+      style={{
+        gap: '24px',
+        marginTop: '36px',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
     >
       <StyledText color="gray400" variant="body3">
         No se agregó ninguna píldora todavía
