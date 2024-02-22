@@ -24,13 +24,14 @@ const ProgramContent = () => {
       <StyledText variant="h2" style={{ marginBottom: '6px' }}>
         Contenido
       </StyledText>
-      <Button
-        labelSize={ButtonLabelSize.BODY3}
-        variant={ComponentVariantType.PRIMARY}
-        onClick={() => console.log('hola')}
-        label="Agregar pildora"
-        css={{ maxHeight: '30px', maxWidth: '114px' }}
-      />
+      <StyledBox style={{ marginBottom: '6px' }}>
+        <Button
+          labelSize={ButtonLabelSize.BODY3}
+          variant={ComponentVariantType.PRIMARY}
+          onClick={() => console.log('open modal')}
+          label="Agregar pildora"
+        />
+      </StyledBox>
     </StyledRow>
   );
   const ProgramBody = emptyPills ? (

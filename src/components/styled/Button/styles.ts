@@ -117,8 +117,8 @@ export const StyledButton = styled.button.attrs<ButtonProps>((props) => ({
   type: props.type ?? 'filled',
   state: props.state ?? 'default',
 }))`
-  width: 96px;
-  height: 42px;
+  width: 114px;
+  height: 30px;
   border-radius: 6px;
   padding: 8px 0px;
   display: flex;
