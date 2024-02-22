@@ -55,7 +55,7 @@ const getButtonStyles = (theme: MyTheme): StyleByOptionsProps => {
     },
     [ComponentVariantType.DARK]: {
       [ButtonState.DEFAULT]: {
-        backgroundColor: theme.primary800,
+        backgroundColor: theme.primary900,
         color: theme.white,
         border: 'none',
         hover: {

@@ -27,12 +27,40 @@ export const StyledInput = styled.input<StyledInputProps>`
       return props.theme.white;
     }
   }};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+export const StyledTextArea = styled.textarea<StyledInputProps>`
+  outline: none !important;
+  border: none !important;
+  transition: all 0.2s ease-in-out;
+  padding: 6px 8px;
+  width: 100%;
+  color: ${(props) => {
+    if (props.disabled) {
+      return props.theme.gray400;
+    } else {
+      return props.theme.primary950;
+    }
+  }};
+  background-color: ${(props) => {
+    if (props.disabled) {
+      return props.theme.gray200;
+    } else {
+      return props.theme.white;
+    }
+  }};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const StyledTextInputBox = styled(StyledRow)<InputBoxProps>`
   justify-content: space-between;
   outline: 1px solid transparent;
-  align-items: flex-start;
+  align-items: center;
   padding: 6px 8px;
   border-radius: 8px;
   gap: 10px;
