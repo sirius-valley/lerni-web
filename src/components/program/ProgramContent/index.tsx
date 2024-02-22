@@ -1,13 +1,13 @@
 import React from 'react';
 import Card from '../../Card';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
-import Button from '../../styled/Button/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { ShowIcon } from '../../../assets/icons/ShowIcon';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { useTheme } from 'styled-components';
+import Button from '../../styled/Button';
 
 const ProgramContent = () => {
   const theme = useTheme();
@@ -26,11 +26,16 @@ const ProgramContent = () => {
       </StyledText>
       <StyledBox style={{ marginBottom: '6px' }}>
         <Button
-          labelSize={ButtonLabelSize.BODY3}
           variant={ComponentVariantType.PRIMARY}
           onClick={() => console.log('open modal')}
-          label="Agregar pildora"
-        />
+          labelSize={ButtonLabelSize.BODY3}
+          css={{
+            width: '114px',
+            height: '30px',
+          }}
+        >
+          Agregar pildora
+        </Button>
       </StyledBox>
     </StyledRow>
   );
@@ -88,8 +93,9 @@ const ProgramContent = () => {
                     strokeLinecap: 'butt',
                   },
                   text: {
+                    fontFamily: 'Roboto-bold',
                     fill: '#000000',
-                    fontSize: '56px',
+                    fontSize: '60px',
                     fontWeight: 600,
                   },
                 }}
@@ -99,7 +105,7 @@ const ProgramContent = () => {
                 text={pillNumber}
               />
             </StyledBox>
-            <StyledText variant="h5"> {name} </StyledText>
+            <StyledText variant="h4"> {name} </StyledText>
           </StyledRow>
           <ShowIcon size={18} color={theme.gray400} />
         </StyledRow>

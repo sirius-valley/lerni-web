@@ -27,57 +27,36 @@ export const theme = {
   warning: '#F99D32',
   error: '#D84545',
   h1: {
-    fontFamily: 'Roboto',
+    fontFamily: 'Roboto-Bold',
     fontSize: '24px',
-    fontStyle: 'Bold',
-    fontWeight: 700,
   },
   h2: {
-    fontFamily: 'Roboto',
+    fontFamily: 'Roboto-Bold',
     fontSize: '20px',
-    fontStyle: 'Bold',
-    fontWeight: 700,
   },
   h3: {
-    fontFamily: 'Roboto',
+    fontFamily: 'Roboto-Bold',
     fontSize: '18px',
-    fontStyle: 'Bold',
-    fontWeight: 700,
   },
   h4: {
-    fontFamily: 'Roboto',
-    fontSize: '16px',
-    fontStyle: 'normal',
-    fontWeight: 700,
-  },
-  h5: {
     fontFamily: 'Roboto-Bold',
-    fontSize: '14px',
-    fontStyle: 'normal',
-    fontWeight: 700,
+    fontSize: '16px',
   },
+
   body1: {
     fontFamily: 'Roboto',
     fontSize: '16px',
-    fontStyle: 'normal',
-    fontWeight: 400,
   },
   body2: {
     fontFamily: 'Roboto',
     fontSize: '14px',
-    fontStyle: 'normal',
-    fontWeight: 400,
   },
   body3: {
     fontFamily: 'Roboto',
     fontSize: '12px',
-    fontStyle: 'normal',
-    fontWeight: 400,
   },
 };
 
 export type MyTheme = typeof theme;
-export type ThemeColors = Omit<
-  MyTheme,
-  'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'body1' | 'body2' | 'body3'
->;
+export type ThemeColors = Omit<MyTheme, 'h1' | 'h2' | 'h3' | 'h4' | 'body1' | 'body2' | 'body3'>;
+export type ThemeFonts = Pick<MyTheme, 'h1' | 'h2' | 'h3' | 'h4' | 'body1' | 'body2' | 'body3'>;
