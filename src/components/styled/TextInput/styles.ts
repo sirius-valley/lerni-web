@@ -27,6 +27,9 @@ export const StyledInput = styled.input<StyledInputProps>`
       return props.theme.white;
     }
   }};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const StyledTextInputBox = styled(StyledRow)<InputBoxProps>`
