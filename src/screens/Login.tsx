@@ -92,6 +92,7 @@ const Login = () => {
                     css={{
                       textAlign: 'right',
                       marginTop: '2px',
+                      marginBottom: '14px',
                       textDecorationLine: 'underline',
                     }}
                     color="white"
