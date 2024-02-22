@@ -12,7 +12,7 @@ interface ValidationMessageInterface {
 const ValidationMessage = ({ isValid, message }: ValidationMessageInterface) => {
   const theme = useTheme();
   return (
-    <StyledRow css={{ gap: '8px' }}>
+    <StyledRow css={{ gap: '8px', alignItems: 'center' }}>
       {isValid ? <CheckIcon /> : <MultiplyIcon />}
       <StyledText css={{ color: theme.white }}>{message}</StyledText>
     </StyledRow>

@@ -104,12 +104,13 @@ export const TextInput = ({
             placeholder={placeholder}
           />
         )}
-        <StyledBox
-          style={{
+        <StyledRow
+          css={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             cursor: 'pointer',
+            height: '100%',
           }}
           onClick={handleShowPassword}
         >
@@ -120,7 +121,7 @@ export const TextInput = ({
               <HideIcon size={20} color={getShowIconColor()} />
             )
           ) : null}
-        </StyledBox>
+        </StyledRow>
       </StyledTextInputBox>
       <StyledText
         variant="body3"

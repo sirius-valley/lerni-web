@@ -60,7 +60,7 @@ export const StyledTextArea = styled.textarea<StyledInputProps>`
 export const StyledTextInputBox = styled(StyledRow)<InputBoxProps>`
   justify-content: space-between;
   outline: 1px solid transparent;
-  align-items: flex-start;
+  align-items: center;
   padding: 6px 8px;
   border-radius: 8px;
   gap: 10px;

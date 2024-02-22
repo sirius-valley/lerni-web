@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import { TextInput } from '../components/styled/TextInput';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
+import { useNavigate } from 'react-router-dom';
 
 const SigninSchema = Yup.object().shape({
   email: Yup.string()
@@ -24,11 +25,14 @@ const SigninSchema = Yup.object().shape({
 
 const Login = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const handleLogin = (values: any) => {
     // login(values).then(() => fetch());
     alert(JSON.stringify(values, null, 3));
   };
+
+  const handleGoToRegisterScreen = () => navigate('/register');
 
   return (
     <RootContainer
@@ -37,11 +41,12 @@ const Login = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
+        paddingTop: '10%',
         minHeight: '100vh',
       }}
     >
-      <StyledColumn css={{ alignItems: 'center' }}>
+      <StyledColumn css={{ alignItems: 'center', width: '342px' }}>
         <LerniMainIcon />
         <StyledColumn
           css={{
@@ -58,20 +63,18 @@ const Login = () => {
           >
             {({ handleChange, handleBlur, handleSubmit, values, isValid, errors, touched }) => (
               <>
-                <StyledColumn>
-                  <TextInput
-                    title="Email"
-                    value={values.email}
-                    onChange={handleChange('email')}
-                    placeholder="Email"
-                    onBlur={() => handleBlur('email')}
-                    error={!!errors.email && touched.email}
-                    disabled={false}
-                    css={{
-                      width: '100%',
-                    }}
-                  />
-                </StyledColumn>
+                <TextInput
+                  title="Email"
+                  value={values.email}
+                  onChange={handleChange('email')}
+                  placeholder="Email"
+                  onBlur={() => handleBlur('email')}
+                  error={!!errors.email && touched.email}
+                  disabled={false}
+                  css={{
+                    width: '100%',
+                  }}
+                />
                 <StyledColumn>
                   <TextInput
                     title="Contraseña"
@@ -115,7 +118,7 @@ const Login = () => {
                   <StyledText variant="body1">No tenés cuenta?&nbsp;</StyledText>
                   <StyledText
                     css={{ textDecorationLine: 'underline' }}
-                    onClick={() => alert('to be defined')}
+                    onClick={handleGoToRegisterScreen}
                   >
                     Crear una ahora
                   </StyledText>

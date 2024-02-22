@@ -37,11 +37,12 @@ const Login = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
+        paddingTop: '10%',
         minHeight: '100vh',
       }}
     >
-      <StyledColumn css={{ alignItems: 'center' }}>
+      <StyledColumn css={{ alignItems: 'center', width: '342px' }}>
         <LerniMainIcon />
         <StyledColumn
           css={{
