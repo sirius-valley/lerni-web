@@ -37,7 +37,9 @@ export const StyledColumn = styled.div<StyledPropertiesInterface>`
   ${({ css }) => css && jsToCss(css)};
 `;
 
-export const StyledBox = styled.div``;
+export const StyledBox = styled.div<StyledPropertiesInterface>`
+  ${({ css }) => css && jsToCss(css)};
+`;
 
 export const StyledLine = styled.div<StyledLine>`
   height: 1px;

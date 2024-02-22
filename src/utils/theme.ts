@@ -42,6 +42,7 @@ export const theme = {
     fontFamily: 'Roboto-Bold',
     fontSize: '16px',
   },
+
   body1: {
     fontFamily: 'Roboto',
     fontSize: '16px',

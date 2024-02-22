@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { useTheme } from 'styled-components';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../styles';
 import { ShowIcon } from '../../../assets/icons/ShowIcon';
-import { StyledInput, StyledTextInputBox } from './styles';
+import { StyledInput, StyledTextArea, StyledTextInputBox } from './styles';
 import { HideIcon } from '../../../assets/icons/HideIcon';
-
 export interface TextInputProps {
   title?: string;
   subtitle?: string;
@@ -17,6 +16,7 @@ export interface TextInputProps {
   onBlur?: () => void;
   value: string;
   css?: { [key in string]: string | number | boolean };
+  multiline?: boolean;
 }
 
 type PasswordType = 'text' | 'password';
@@ -31,7 +31,6 @@ export interface InputBoxProps {
   focused?: boolean;
   css?: { [key in string]: string | number | boolean };
 }
-
 export const TextInput = ({
   title,
   subtitle,
@@ -44,6 +43,7 @@ export const TextInput = ({
   onBlur,
   value,
   css,
+  multiline = false,
 }: TextInputProps) => {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
@@ -54,24 +54,20 @@ export const TextInput = ({
   const handleFocus = () => {
     setFocused(true);
   };
-
   const handleBlur = () => {
     setFocused(false);
     onBlur && onBlur();
   };
-
   const getShowIconColor = () => {
     if (error) return theme.red500;
     if (disabled) return theme.gray400;
     return theme.primary950;
   };
-
   return (
     <StyledColumn
       style={{
         gap: 8,
         justifyContent: 'flex-start',
-        width: 306,
       }}
     >
       <StyledRow style={{ alignContent: 'center', gap: 4 }}>
@@ -91,13 +87,23 @@ export const TextInput = ({
         onBlur={handleBlur}
         focused={focused}
       >
-        <StyledInput
-          onChange={(event) => onChange(event.target.value)}
-          value={value}
-          type={showPassword ? 'text' : 'password'}
-          disabled={disabled}
-          placeholder={placeholder}
-        />
+        {multiline ? (
+          <StyledTextArea
+            onChange={(event) => onChange(event.target.value)}
+            value={value}
+            type={showPassword ? 'text' : 'password'}
+            disabled={disabled}
+            placeholder={placeholder}
+          />
+        ) : (
+          <StyledInput
+            onChange={(event) => onChange(event.target.value)}
+            value={value}
+            type={showPassword ? 'text' : 'password'}
+            disabled={disabled}
+            placeholder={placeholder}
+          />
+        )}
         <StyledBox
           style={{
             display: 'flex',
