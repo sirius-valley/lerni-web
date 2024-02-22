@@ -79,7 +79,6 @@ const Login = () => {
                     onChange={handleChange('password')}
                     placeholder="Contraseña"
                     onBlur={() => handleBlur('password')}
-                    error={!!errors.password}
                     type="password"
                     disabled={false}
                     css={{

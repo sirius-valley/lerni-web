@@ -1,4 +1,4 @@
-import styled, { css as styledComponent } from 'styled-components';
+import styled from 'styled-components';
 import { ThemeColors } from '../../utils/theme';
 import { CSSProperties, jsToCss } from '../../utils/utils';
 

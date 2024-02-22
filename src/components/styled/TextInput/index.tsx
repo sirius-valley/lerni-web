@@ -1,6 +1,6 @@
+import React, { useState } from 'react';
 import { useTheme } from 'styled-components';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../styles';
-import React, { ChangeEvent, useState } from 'react';
 import { ShowIcon } from '../../../assets/icons/ShowIcon';
 import { StyledInput, StyledTextInputBox } from './styles';
 import { HideIcon } from '../../../assets/icons/HideIcon';
@@ -19,13 +19,14 @@ export interface TextInputProps {
   css?: { [key in string]: string | number | boolean };
 }
 
+type PasswordType = 'text' | 'password';
 export interface InputBoxProps {
   title?: string;
   subtitle?: string;
   placeholder?: string;
   disabled?: boolean;
   required?: boolean;
-  type?: 'text' | 'password';
+  type?: PasswordType;
   error?: boolean;
   focused?: boolean;
   css?: { [key in string]: string | number | boolean };
@@ -46,15 +47,9 @@ export const TextInput = ({
 }: TextInputProps) => {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
-  const [showPassword, setShowPassword] = useState<'text' | 'password'>('text');
+  const [showPassword, setShowPassword] = useState(type === 'text');
 
-  const handleShowPassword = () => {
-    if (showPassword === 'password') {
-      setShowPassword('text');
-    } else {
-      setShowPassword('password');
-    }
-  };
+  const handleShowPassword = () => setShowPassword((prev) => !prev);
 
   const handleFocus = () => {
     setFocused(true);
@@ -63,6 +58,12 @@ export const TextInput = ({
   const handleBlur = () => {
     setFocused(false);
     onBlur && onBlur();
+  };
+
+  const getShowIconColor = () => {
+    if (error) return theme.red500;
+    if (disabled) return theme.gray400;
+    return theme.primary950;
   };
 
   return (
@@ -93,41 +94,24 @@ export const TextInput = ({
         <StyledInput
           onChange={(event) => onChange(event.target.value)}
           value={value}
-          type={type === 'password' ? showPassword : type}
+          type={showPassword ? 'text' : 'password'}
           disabled={disabled}
           placeholder={placeholder}
         />
         <StyledBox
-          style={{ display: 'flex', justifyContent: 'center', alignContent: 'center' }}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            cursor: 'pointer',
+          }}
           onClick={handleShowPassword}
         >
           {type === 'password' ? (
-            showPassword === 'password' ? (
-              <ShowIcon
-                size={20}
-                color={
-                  error
-                    ? theme.red500
-                    : disabled
-                      ? theme.gray400
-                      : focused
-                        ? theme.primary950
-                        : theme.gray300
-                }
-              />
+            showPassword ? (
+              <ShowIcon size={20} color={getShowIconColor()} />
             ) : (
-              <HideIcon
-                size={20}
-                color={
-                  error
-                    ? theme.red500
-                    : disabled
-                      ? theme.gray400
-                      : focused
-                        ? theme.primary950
-                        : theme.gray300
-                }
-              />
+              <HideIcon size={20} color={getShowIconColor()} />
             )
           ) : null}
         </StyledBox>

@@ -5,18 +5,17 @@
 }
 
 @font-face {
-  font-family: "Roboto";
-  src: 
-    local("Roboto"),
-    url("./assets/fonts/Roboto-Regular.ttf") format("truetype");
+  font-family: 'Roboto';
+  src:
+    local('Roboto'),
+    url('./assets/fonts/Roboto-Regular.ttf') format('truetype');
   font-weight: normal;
 }
 
 @font-face {
-  font-family: "Roboto-Bold";
-  src: 
-    local("Roboto-Bold"),
-    url("./assets/fonts/Roboto-Bold.ttf") format("truetype");
+  font-family: 'Roboto-Bold';
+  src:
+    local('Roboto-Bold'),
+    url('./assets/fonts/Roboto-Bold.ttf') format('truetype');
   font-weight: bold;
 }
-
