@@ -25,7 +25,10 @@ const ProgramDetails = () => {
   const ProgramTitle = 'Detalles del programa';
   const ProgramBody = (
     <StyledRow style={{ gap: '24px', marginTop: '12px' }}>
-      <img src={imageUrl} style={{ height: '180px', width: '180px', borderRadius: '6px' }} />
+      <img
+        src={imageUrl}
+        style={{ height: '180px', width: '180px', borderRadius: '6px', objectFit: 'cover' }}
+      />
 
       <StyledColumn style={{ width: '-webkit-fill-available' }}>
         <TextInput
@@ -37,7 +40,7 @@ const ProgramDetails = () => {
         ></TextInput>
         <TextInput
           placeholder="https://www.pixels.com/321423534ng43g432g4f443f4545"
-          title="Url del programa"
+          title="URL del programa"
           required
           value={program.url}
           onChange={(value) => handleChange('url', value)}
@@ -49,6 +52,7 @@ const ProgramDetails = () => {
           required
           value={program.description}
           onChange={(value) => handleChange('description', value)}
+          multiline
         ></TextInput>
       </StyledColumn>
     </StyledRow>

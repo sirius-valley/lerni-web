@@ -1,6 +1,6 @@
-import styled, { css as styledComponent } from 'styled-components';
+import styled from 'styled-components';
 import { ThemeColors } from '../../utils/theme';
-import { CSSProperties } from '../../utils/utils';
+import { CSSProperties, jsToCss } from '../../utils/utils';
 
 interface StyledLine {
   color?: keyof ThemeColors;
@@ -19,7 +19,7 @@ interface StyledTextInterface extends StyledPropertiesInterface {
 
 export const StyledText = styled.p<StyledTextInterface>`
   color: ${(props) => (props.color ? props.theme[props.color] : props.theme.primary900)};
-  ${({ variant, theme }) => styledComponent(theme[variant || 'body1'])};
+  ${({ variant, theme }) => jsToCss(theme[variant || 'body1'])};
 `;
 
 export const StyledImage = styled.img``;
@@ -27,16 +27,18 @@ export const StyledImage = styled.img``;
 export const StyledRow = styled.div<StyledPropertiesInterface>`
   display: flex;
   flex-direction: row;
-  ${({ css }) => css && styledComponent(css)};
+  ${({ css }) => css && jsToCss(css)};
 `;
 
 export const StyledColumn = styled.div<StyledPropertiesInterface>`
   display: flex;
   flex-direction: column;
-  ${({ css }) => css && styledComponent(css)};
+  ${({ css }) => css && jsToCss(css)};
 `;
 
-export const StyledBox = styled.div``;
+export const StyledBox = styled.div<StyledPropertiesInterface>`
+  ${({ css }) => css && jsToCss(css)};
+`;
 
 export const StyledLine = styled.div<StyledLine>`
   height: 1px;
@@ -53,5 +55,5 @@ export interface StyledProps {
 export const RootContainer = styled.div<StyledPropertiesInterface>`
   min-height: 100vh;
   width: 100%;
-  ${({ css }) => css && styledComponent(css)};
+  ${({ css }) => css && jsToCss(css)};
 `;
