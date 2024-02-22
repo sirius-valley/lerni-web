@@ -32,7 +32,7 @@ export const StyledInput = styled.input<StyledInputProps>`
 export const StyledTextInputBox = styled(StyledRow)<InputBoxProps>`
   justify-content: space-between;
   outline: 1px solid transparent;
-  align-items: center;
+  align-items: flex-start;
   padding: 6px 8px;
   border-radius: 8px;
   gap: 10px;
