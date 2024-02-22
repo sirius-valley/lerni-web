@@ -10,7 +10,7 @@ export interface StyledPropertiesInterface {
   css?: CSSProperties;
 }
 
-type TextVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'body1' | 'body2' | 'body3';
+type TextVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'body1' | 'body2' | 'body3';
 
 interface StyledTextInterface extends StyledPropertiesInterface {
   variant?: TextVariant;
@@ -20,6 +20,7 @@ interface StyledTextInterface extends StyledPropertiesInterface {
 export const StyledText = styled.p<StyledTextInterface>`
   color: ${(props) => (props.color ? props.theme[props.color] : props.theme.primary900)};
   ${({ variant, theme }) => jsToCss(theme[variant || 'body1'])};
+  ${({ css }) => css && jsToCss(css)};
 `;
 
 export const StyledImage = styled.img``;
