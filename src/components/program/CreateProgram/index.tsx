@@ -9,6 +9,18 @@ const CreateProgram = () => {
   const theme = useTheme();
   return (
     <>
+      <StyledRow
+        css={{
+          width: '1440px',
+          height: '66px',
+          background: '#FAFAFA',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <StyledText variant="h2">Crear nuevo programa</StyledText>
+      </StyledRow>
+
       <StyledColumn
         css={{
           background: theme.gray200,
@@ -17,20 +29,12 @@ const CreateProgram = () => {
         }}
       >
         <NavBar />
-        <StyledRow
-          css={{
-            width: '1440px',
-            height: '66px',
-            background: '#FAFAFA',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
+
+        <StyledColumn
+          css={{ marginTop: '24px', justifyContent: 'center', alignItems: 'center', gap: '12px' }}
         >
-          <StyledText variant="h2">Crear nuevo programa</StyledText>
-        </StyledRow>
-        <StyledColumn css={{ justifyContent: 'center', alignItems: 'center', gap: '12px' }}>
-          <ProgramContent />
           <ProgramDetails />
+          <ProgramContent />
         </StyledColumn>
       </StyledColumn>
     </>
