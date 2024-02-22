@@ -2,7 +2,7 @@ import React from 'react';
 import { StyledBox, StyledColumn, StyledImage, StyledRow, StyledText } from '../../styled/styles';
 import { useTheme } from 'styled-components';
 import { ComponentVariantType } from '../../../utils/constants';
-import Button from '../../styled/Button/Button';
+import Button from '../../styled/Button';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 
 export const ProgramItem = () => {
@@ -42,10 +42,11 @@ export const ProgramItem = () => {
           onClick={() => alert('redireccionar a program details')}
           disabled={false}
           labelSize={ButtonLabelSize.BODY3}
-          label="Ver detalles"
           variant={ComponentVariantType.GHOST}
           css={{ color: theme.primary400 }}
-        />
+        >
+          Ver detalles
+        </Button>
       </StyledBox>
     </StyledRow>
   );

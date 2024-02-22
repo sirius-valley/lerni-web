@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import { ButtonLabelSize, ButtonState, StyledButton } from './styles';
 import { ComponentVariantType } from '../../../utils/constants';
-import { theme } from '../../../utils/theme';
+import { ThemeFonts, theme } from '../../../utils/theme';
 import Spinner from '../../Spinner/Spinner';
 
 export interface ButtonProps {
   onClick: () => void;
-  label: string;
-  labelSize?: ButtonLabelSize;
+  children: string;
+  labelSize?: keyof ThemeFonts;
   icon?: (arg: any) => JSX.Element;
   variant?: ComponentVariantType;
   disabled?: boolean;
@@ -16,8 +16,8 @@ export interface ButtonProps {
 }
 const Button = ({
   onClick,
-  label = '',
-  labelSize = ButtonLabelSize.BODY1,
+  children,
+  labelSize = 'body1',
   variant = ComponentVariantType.PRIMARY,
   disabled = false,
   loading = false,
@@ -31,7 +31,7 @@ const Button = ({
 
   const renderLabel = () => {
     if (loading) return <Spinner variant={variant} size={24} />;
-    return label;
+    return children;
   };
 
   return (
@@ -42,7 +42,7 @@ const Button = ({
       onClick={() => (disabled || loading ? undefined : onClick())}
       css={{
         ...theme[labelSize],
-        css,
+        ...css,
       }}
     >
       {icon &&

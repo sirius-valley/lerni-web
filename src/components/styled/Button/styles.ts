@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css as styledComponent } from 'styled-components';
 import { jsToCss } from '../../../utils/utils';
 import { MyTheme, theme } from '../../../utils/theme';
 import { ComponentVariantType } from '../../../utils/constants';
@@ -113,10 +113,7 @@ interface ButtonProps {
   css?: { [x: string]: any };
 }
 
-export const StyledButton = styled.button.attrs<ButtonProps>((props) => ({
-  type: props.type ?? 'filled',
-  state: props.state ?? 'default',
-}))`
+export const StyledButton = styled.button<ButtonProps>`
   width: 96px;
   height: 42px;
   border-radius: 6px;
@@ -141,5 +138,5 @@ export const StyledButton = styled.button.attrs<ButtonProps>((props) => ({
       `;
     }
   }}
-  ${(props) => props.css && jsToCss(props.css)}
+  ${({ css }) => css && jsToCss(css)};
 `;
