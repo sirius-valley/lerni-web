@@ -16,14 +16,14 @@ interface ProgramStudentsProps {
 const mockedStudents = [
   {
     email: 'hola@email.com',
-    name: 'hola',
+    name: 'holaholaholaholaholaholaholaholaholaholahola',
     lastname: 'email',
-    status: false,
+    status: true,
     profilePicture:
       'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light',
   },
   {
-    email: 'chat@gmail.com',
+    email: 'chatchatchatchatchat@gmail.com',
     name: 'chau',
     lastname: 'gmail',
     status: true,
@@ -56,7 +56,7 @@ export const ProgramStudents = ({ hasPills = true }: ProgramStudentsProps) => {
             width: 'auto',
             height: '30px',
             padding: '8px 16px 8px 16px',
-            fontWeight: 14,
+            fontFamily: 'Roboto-Bold',
           }}
         >
           {'Cargar estudiantes'}
@@ -69,7 +69,22 @@ export const ProgramStudents = ({ hasPills = true }: ProgramStudentsProps) => {
 
   return (
     <Card height="auto" headerComponent={StudentsHeader}>
-      {StudentsBody}
+      {mockedStudents.length ? (
+        StudentsBody
+      ) : (
+        <StyledBox
+          css={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '16px 0px 16px 0px',
+          }}
+        >
+          <StyledText variant="body3" style={{ textAlign: 'center', color: theme.gray400 }}>
+            {'No se agregaron estudiantes todavía'}
+          </StyledText>
+        </StyledBox>
+      )}
     </Card>
   );
 };

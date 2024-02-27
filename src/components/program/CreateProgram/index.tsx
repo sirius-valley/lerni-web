@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import { useTheme } from 'styled-components';
 import ProgramContent from '../ProgramContent';
@@ -6,8 +6,15 @@ import ProgramDetails from '../ProgramDetails';
 import { ProgramQuestionnaire } from '../ProgramQuestionnaire';
 import { ProgramTrivia } from '../ProgramTrivia';
 import { ProgramStudents } from '../ProgramStudents';
+import { Card } from '@mui/material';
+import { TextInput } from '../../styled/TextInput';
 
 const CreateProgram = () => {
+  const [value, setValue] = useState('');
+
+  const handleChange = (value: string) => {
+    setValue(value);
+  };
   const theme = useTheme();
   return (
     <>
@@ -36,8 +43,8 @@ const CreateProgram = () => {
         >
           <ProgramDetails />
           <ProgramContent />
-          <ProgramQuestionnaire hasPills />
-          <ProgramTrivia hasPills />
+          <ProgramQuestionnaire hasPills hasQuestionnaire={true} />
+          <ProgramTrivia hasPills hasTrivia={false} />
           <ProgramStudents hasPills />
         </StyledColumn>
       </StyledColumn>

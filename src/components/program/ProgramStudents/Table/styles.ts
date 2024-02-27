@@ -31,25 +31,7 @@ export const StyledTable = styled.table`
     font-size: 14px;
     color: ${(props) => props.theme.gray900};
     word-wrap: break-word;
-    overflow: auto;
+    overflow: hidden;
     max-width: 0;
-  }
-
-  ::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 50px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
-  }
-
-  /* Scrollbar thumb when active */
-  ::-webkit-scrollbar-thumb:active {
-    background: rgba(0, 0, 0, 0.7);
   }
 `;

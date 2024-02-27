@@ -8,6 +8,7 @@ import { ThemeProvider } from 'styled-components';
 import { theme } from './utils/theme';
 import Router from './router/Router';
 import './index.css';
+import 'react-tooltip/dist/react-tooltip.css';
 
 const ProviderTree = buildProviderTree([
   [Provider, { store }],
