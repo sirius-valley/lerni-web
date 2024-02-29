@@ -27,7 +27,7 @@ const ProgramDetails = () => {
     <StyledRow style={{ gap: '24px', marginTop: '12px' }}>
       <img
         src={imageUrl}
-        style={{ objectFit: 'cover', height: '180px', width: '180px', borderRadius: '6px' }}
+        style={{ height: '180px', width: '180px', borderRadius: '6px', objectFit: 'cover' }}
       />
 
       <StyledColumn style={{ width: '-webkit-fill-available' }}>
