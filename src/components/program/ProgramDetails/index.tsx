@@ -25,7 +25,10 @@ const ProgramDetails = () => {
   const ProgramTitle = 'Detalles del programa';
   const ProgramBody = (
     <StyledRow style={{ gap: '24px', marginTop: '12px' }}>
-      <img src={imageUrl} style={{ height: '180px', width: '180px', borderRadius: '6px' }} />
+      <img
+        src={imageUrl}
+        style={{ objectFit: 'cover', height: '180px', width: '180px', borderRadius: '6px' }}
+      />
 
       <StyledColumn style={{ width: '-webkit-fill-available' }}>
         <TextInput
