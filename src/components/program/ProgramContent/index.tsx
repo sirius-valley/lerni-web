@@ -4,7 +4,7 @@ import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/sty
 import { ComponentVariantType } from '../../../utils/constants';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { ShowIcon } from '../../../assets/icons/ShowIcon';
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { useTheme } from 'styled-components';
 import Button from '../../styled/Button';
@@ -27,7 +27,7 @@ const ProgramContent = () => {
       <StyledBox style={{ marginBottom: '6px' }}>
         <Button
           variant={ComponentVariantType.PRIMARY}
-          onClick={() => console.log('open modal')}
+          onClick={() => alert('open modal')}
           labelSize={ButtonLabelSize.BODY3}
           css={{
             width: '114px',
@@ -59,7 +59,7 @@ const ProgramContent = () => {
           key={index}
           css={{
             justifyContent: 'space-between',
-            padding: '12px 0px 0px 0px',
+            padding: '8px 0px 0px 0px',
             marginLeft: '6px',
             borderBottom: `1px solid ${theme.gray200}`,
           }}
@@ -107,7 +107,16 @@ const ProgramContent = () => {
             </StyledBox>
             <StyledText variant="h4"> {name} </StyledText>
           </StyledRow>
-          <ShowIcon size={18} color={theme.gray400} />
+          <StyledRow
+            css={{
+              padding: '8px',
+              cursor: 'pointer',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <ShowIcon size={18} color={theme.gray400} />
+          </StyledRow>
         </StyledRow>
       ))}
     </StyledColumn>

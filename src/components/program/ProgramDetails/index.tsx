@@ -40,7 +40,7 @@ const ProgramDetails = () => {
         ></TextInput>
         <TextInput
           placeholder="https://www.pixels.com/321423534ng43g432g4f443f4545"
-          title="Url del programa"
+          title="URL del programa"
           required
           value={program.url}
           onChange={(value) => handleChange('url', value)}
@@ -52,6 +52,7 @@ const ProgramDetails = () => {
           required
           value={program.description}
           onChange={(value) => handleChange('description', value)}
+          multiline
         ></TextInput>
       </StyledColumn>
     </StyledRow>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { RootContainer } from '../styledComponents';
+import { RootContainer } from '../components/styled/styles';
 
 const NotFound = () => {
   return (

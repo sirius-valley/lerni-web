@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
-import { NavBar } from '../../Navbar';
 import { useTheme } from 'styled-components';
 import ProgramContent from '../ProgramContent';
 import ProgramDetails from '../ProgramDetails';
@@ -11,9 +10,9 @@ const CreateProgram = () => {
     <>
       <StyledRow
         css={{
-          width: '1440px',
+          width: '100%',
           height: '66px',
-          background: '#FAFAFA',
+          background: theme.white,
           justifyContent: 'center',
           alignItems: 'center',
         }}
@@ -24,12 +23,10 @@ const CreateProgram = () => {
       <StyledColumn
         css={{
           background: theme.gray200,
-          height: '100vh',
+          minHeight: '100vh',
           width: '100vw',
         }}
       >
-        <NavBar />
-
         <StyledColumn
           css={{ marginTop: '24px', justifyContent: 'center', alignItems: 'center', gap: '12px' }}
         >

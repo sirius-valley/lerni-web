@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTheme } from 'styled-components';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../styles';
 import { ShowIcon } from '../../../assets/icons/ShowIcon';
-import { StyledInput, StyledTextInputBox } from './styles';
+import { StyledInput, StyledTextArea, StyledTextInputBox } from './styles';
 import { HideIcon } from '../../../assets/icons/HideIcon';
 export interface TextInputProps {
   title?: string;
@@ -16,7 +16,9 @@ export interface TextInputProps {
   onBlur?: () => void;
   value: string;
   css?: { [key in string]: string | number | boolean };
+  multiline?: boolean;
 }
+
 type PasswordType = 'text' | 'password';
 export interface InputBoxProps {
   title?: string;
@@ -41,11 +43,14 @@ export const TextInput = ({
   onBlur,
   value,
   css,
+  multiline = false,
 }: TextInputProps) => {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(type === 'text');
+
   const handleShowPassword = () => setShowPassword((prev) => !prev);
+
   const handleFocus = () => {
     setFocused(true);
   };
@@ -82,19 +87,30 @@ export const TextInput = ({
         onBlur={handleBlur}
         focused={focused}
       >
-        <StyledInput
-          onChange={(event) => onChange(event.target.value)}
-          value={value}
-          type={showPassword ? 'text' : 'password'}
-          disabled={disabled}
-          placeholder={placeholder}
-        />
-        <StyledBox
-          style={{
+        {multiline ? (
+          <StyledTextArea
+            onChange={(event) => onChange(event.target.value)}
+            value={value}
+            type={showPassword ? 'text' : 'password'}
+            disabled={disabled}
+            placeholder={placeholder}
+          />
+        ) : (
+          <StyledInput
+            onChange={(event) => onChange(event.target.value)}
+            value={value}
+            type={showPassword ? 'text' : 'password'}
+            disabled={disabled}
+            placeholder={placeholder}
+          />
+        )}
+        <StyledRow
+          css={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             cursor: 'pointer',
+            height: '100%',
           }}
           onClick={handleShowPassword}
         >
@@ -105,7 +121,7 @@ export const TextInput = ({
               <HideIcon size={20} color={getShowIconColor()} />
             )
           ) : null}
-        </StyledBox>
+        </StyledRow>
       </StyledTextInputBox>
       <StyledText
         variant="body3"
