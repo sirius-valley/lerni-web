@@ -37,45 +37,29 @@ export const ProgramTrivia = ({ hasPills = true, hasTrivia }: ProgramTriviaProps
             fontFamily: 'Roboto-Bold',
           }}
         >
-          {'Cargar trivia'}
+          {'Agregar trivia'}
         </Button>
       </StyledBox>
     </StyledRow>
   );
 
   const TriviaBody = (
-    <StyledColumn css={{ gap: '6px', marginTop: '12px', borderBottom: '1px solid #DDDDDD' }}>
+    <StyledColumn css={{ gap: '6px', marginTop: '12px' }}>
       <StyledRow style={{ justifyContent: 'space-between', padding: '6px 0px 6px 6px' }}>
         <StyledRow style={{ gap: 6, alignItems: 'center' }}>
           <TriviaIcon size={18} color={theme.gray300} />
           <StyledText variant="h4" style={{ fontSize: 14, color: theme.primary950 }}>
-            {`Trivia - ${'Nombre del programa'}`}
+            {`Trivia + ${'Nombre del programa'}`}
           </StyledText>
         </StyledRow>
-        {!hasTrivia ? (
-          <Button
-            onClick={() => alert('open modal')}
-            variant={ComponentVariantType.PRIMARY}
-            labelSize={ButtonLabelSize.BODY3}
-            css={{
-              padding: '8px 16px 8px 16px',
-              width: 'auto',
-              height: '30px',
-              fontWeight: 400,
-            }}
-          >
-            {'Cargar trivia'}
-          </Button>
-        ) : (
-          <StyledRow css={{ gap: 8 }}>
-            <StyledBox onClick={() => setShow(true)}>
-              <ShowIcon size={18} color={theme.gray400} />
-            </StyledBox>
-            <StyledBox onClick={() => alert('removed')}>
-              <RemoveIcon size={18} color={theme.gray400} />
-            </StyledBox>
-          </StyledRow>
-        )}
+        <StyledRow css={{ gap: '8px' }}>
+          <StyledBox onClick={() => setShow(true)}>
+            <ShowIcon size={18} color={theme.gray400} />
+          </StyledBox>
+          <StyledBox onClick={() => alert('removed')}>
+            <RemoveIcon size={18} color={theme.gray400} />
+          </StyledBox>
+        </StyledRow>
       </StyledRow>
     </StyledColumn>
   );

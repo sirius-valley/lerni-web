@@ -8,6 +8,7 @@ interface CardProps {
   headerComponent?: React.ReactNode;
   width?: string;
   height?: string;
+  padding?: string;
   css?: CSSObject;
 }
 
@@ -15,6 +16,7 @@ const Card = ({
   title,
   children,
   headerComponent,
+  padding,
   width = '832px',
   height = '412px',
   css,
@@ -24,7 +26,7 @@ const Card = ({
     <StyledColumn
       style={{
         borderRadius: '16px',
-        padding: '24px',
+        padding: padding ?? '24px',
         gap: '12px',
         width: width,
         height: height,

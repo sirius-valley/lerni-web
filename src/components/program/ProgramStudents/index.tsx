@@ -59,7 +59,7 @@ export const ProgramStudents = ({ hasPills = true }: ProgramStudentsProps) => {
             fontFamily: 'Roboto-Bold',
           }}
         >
-          {'Cargar estudiantes'}
+          {'Agregar estudiantes'}
         </Button>
       </StyledBox>
     </StyledRow>
@@ -68,7 +68,7 @@ export const ProgramStudents = ({ hasPills = true }: ProgramStudentsProps) => {
   const StudentsBody = <StudentsTable students={mockedStudents} />;
 
   return (
-    <Card height="auto" headerComponent={StudentsHeader}>
+    <Card padding="18px" height="auto" headerComponent={StudentsHeader}>
       {mockedStudents.length ? (
         StudentsBody
       ) : (

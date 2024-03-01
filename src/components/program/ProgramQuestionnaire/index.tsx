@@ -27,7 +27,6 @@ export const ProgramQuestionnaire = ({
         {'Cuestionario'}
       </StyledText>
       <StyledBox style={{ marginBottom: '6px' }}>
-        {/* Acá hay dos opciones, o se bloquea el botón, o ni se muestra */}
         <Button
           variant={ComponentVariantType.PRIMARY}
           onClick={() => console.log('open modal')}
@@ -40,45 +39,29 @@ export const ProgramQuestionnaire = ({
             fontFamily: 'Roboto-Bold',
           }}
         >
-          {'Cargar cuestionario'}
+          {'Agregar cuestionario'}
         </Button>
       </StyledBox>
     </StyledRow>
   );
 
   const QustionnaireBody = (
-    <StyledColumn css={{ gap: '6px', marginTop: '12px', borderBottom: '1px solid #DDDDDD' }}>
+    <StyledColumn css={{ gap: '6px', marginTop: '12px' }}>
       <StyledRow style={{ justifyContent: 'space-between', padding: '6px 0px 6px 6px' }}>
         <StyledRow style={{ gap: 6, alignItems: 'center' }}>
           <QuestionnaireIcon size={18} color={theme.gray300} />
           <StyledText variant="h4" style={{ fontSize: 14, color: theme.primary950 }}>
-            {`Cuestionario - ${'Nombre de programa'}`}
+            {`Cuestionario + ${'Nombre de programa'}`}
           </StyledText>
         </StyledRow>
-        {!hasQuestionnaire ? (
-          <Button
-            onClick={() => alert('open modal')}
-            variant={ComponentVariantType.PRIMARY}
-            labelSize={ButtonLabelSize.BODY3}
-            css={{
-              width: 'auto',
-              height: '30px',
-              padding: '8px 16px 8px 16px',
-              fontWeight: 400,
-            }}
-          >
-            {'Cargar cuestionario'}
-          </Button>
-        ) : (
-          <StyledRow css={{ gap: 8 }}>
-            <StyledBox onClick={() => setShow(true)}>
-              <ShowIcon size={18} color={theme.gray400} />
-            </StyledBox>
-            <StyledBox onClick={() => alert('removed')}>
-              <RemoveIcon size={18} color={theme.gray400} />
-            </StyledBox>
-          </StyledRow>
-        )}
+        <StyledRow css={{ gap: '8px' }}>
+          <StyledBox onClick={() => setShow(true)}>
+            <ShowIcon size={18} color={theme.gray400} />
+          </StyledBox>
+          <StyledBox onClick={() => alert('removed')}>
+            <RemoveIcon size={18} color={theme.gray400} />
+          </StyledBox>
+        </StyledRow>
       </StyledRow>
     </StyledColumn>
   );

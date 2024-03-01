@@ -29,11 +29,11 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
       <StyledTable>
         <thead>
           <tr>
-            <th style={{ textAlign: 'left', padding: '14px 10px 14px 0px', width: 180 }}>
+            <th style={{ textAlign: 'left', padding: '14px 10px 14px 0px', width: '40%' }}>
               {'Email'}
             </th>
-            <th style={{ padding: '14px 10px 14px 10px' }}>{'Nombre'}</th>
-            <th style={{ padding: '14px 10px 14px 10px' }}>{'Status'}</th>
+            <th style={{ padding: '14px 10px 14px 10px', width: '25%' }}>{'Nombre'}</th>
+            <th style={{ padding: '14px 10px 14px 10px', width: '20%' }}>{'Status'}</th>
             <th style={{ textAlign: 'right', padding: '14px 0px 14px 10px' }}></th>
           </tr>
         </thead>
@@ -42,8 +42,8 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
             const fullname = `${student.name} ${student.lastname}`;
 
             return (
-              <tr key={idx}>
-                <td style={{ padding: '14px 10px 14px 0px' }}>
+              <tr key={idx} style={{ borderBottom: `1px solid ${theme.gray200}` }}>
+                <td style={{ padding: '12px 10px 12px 0px' }}>
                   <StyledRow
                     style={{ justifyContent: 'flex-start', alignItems: 'center', gap: 12 }}
                   >
@@ -58,7 +58,7 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                         whiteSpace: 'nowrap',
                       }}
                       data-tooltip-content={student.email}
-                      data-tooltip-id={student.email.length > 20 ? 'email' : undefined}
+                      data-tooltip-id={student.email.length > 30 ? 'email' : undefined}
                     >
                       {student.email}
                     </StyledText>
@@ -80,7 +80,7 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                     />
                   </StyledRow>
                 </td>
-                <td style={{ padding: '14px 10px 14px 10px' }}>
+                <td style={{ padding: '12px 10px 12px 10px' }}>
                   <StyledText
                     variant="body1"
                     style={{
@@ -114,14 +114,15 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                 </td>
                 <td
                   style={{
-                    padding: '14px 10px 14px 10px',
+                    padding: '12px 10px 12px 10px',
+
                     fontSize: 14,
                     color: student.status ? theme.gray900 : theme.red500,
                   }}
                 >
                   {student.status ? 'Registrado' : 'Sin registrar'}
                 </td>
-                <td style={{ textAlign: 'right', fontSize: 14, padding: '14px 0px 14px 10px' }}>
+                <td style={{ textAlign: 'right', fontSize: 14, padding: '12px 0px 12px 10px' }}>
                   <RemoveIcon size={18} color={theme.gray400} />
                 </td>
               </tr>

@@ -2,20 +2,8 @@ import styled from 'styled-components';
 
 export const StyledTable = styled.table`
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 10px;
-  margin-bottom: 20px;
-  margin-top: 18px;
+  border-collapse: collapse;
   font-family: 'Roboto', sans-serif;
-
-  th,
-  td {
-    border-bottom: 1px solid #ddd;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 
   th {
     font-weight: 700;
@@ -23,6 +11,8 @@ export const StyledTable = styled.table`
     font-style: bold;
     font-size: 14px;
     overflow: auto;
+    border-bottom: none;
+    text-align: center;
     color: ${(props) => props.theme.primary950};
   }
 
@@ -31,7 +21,15 @@ export const StyledTable = styled.table`
     font-size: 14px;
     color: ${(props) => props.theme.gray900};
     word-wrap: break-word;
+    text-overflow: ellipsis;
     overflow: hidden;
+    text-align: center;
     max-width: 0;
+  }
+
+  tr {
+    &:last-child {
+      border-bottom: none !important;
+    }
   }
 `;

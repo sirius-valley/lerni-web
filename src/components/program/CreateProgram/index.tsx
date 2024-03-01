@@ -35,11 +35,16 @@ const CreateProgram = () => {
           background: theme.gray200,
           minHeight: '100vh',
           width: '100vw',
-          paddingBottom: 32,
         }}
       >
         <StyledColumn
-          css={{ marginTop: '24px', justifyContent: 'center', alignItems: 'center', gap: '12px' }}
+          css={{
+            marginTop: '24px',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '12px',
+            paddingBottom: '32px',
+          }}
         >
           <ProgramDetails />
           <ProgramContent />
