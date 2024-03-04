@@ -3,7 +3,7 @@ import { QuestionnaireIcon } from '../../../assets/icons/QuestionnaireIcon';
 import Card from '../../Card';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import Button from '../../styled/Button';
-import React, { useState } from 'react';
+import React from 'react';
 import { ShowIcon } from '../../../assets/icons/ShowIcon';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { ComponentVariantType } from '../../../utils/constants';
@@ -19,7 +19,6 @@ export const ProgramQuestionnaire = ({
   hasPills = true,
 }: ProgramQuestionnaireProps) => {
   const theme = useTheme();
-  const [show, setShow] = useState(false);
 
   const QuestionnaireHeader = (
     <StyledRow style={{ justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
@@ -37,6 +36,7 @@ export const ProgramQuestionnaire = ({
             height: '30px',
             padding: '8px 16px 8px 16px',
             fontFamily: 'Roboto-Bold',
+            cursor: !hasQuestionnaire ? 'pointer' : '',
           }}
         >
           {'Agregar cuestionario'}
@@ -55,10 +55,10 @@ export const ProgramQuestionnaire = ({
           </StyledText>
         </StyledRow>
         <StyledRow css={{ gap: '8px' }}>
-          <StyledBox onClick={() => setShow(true)}>
+          <StyledBox onClick={() => alert('open modal')} css={{ cursor: 'pointer' }}>
             <ShowIcon size={18} color={theme.gray400} />
           </StyledBox>
-          <StyledBox onClick={() => alert('removed')}>
+          <StyledBox onClick={() => alert('removed')} css={{ cursor: 'pointer' }}>
             <RemoveIcon size={18} color={theme.gray400} />
           </StyledBox>
         </StyledRow>

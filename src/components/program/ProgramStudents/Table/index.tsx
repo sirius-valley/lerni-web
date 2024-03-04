@@ -122,7 +122,14 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                 >
                   {student.status ? 'Registrado' : 'Sin registrar'}
                 </td>
-                <td style={{ textAlign: 'right', fontSize: 14, padding: '12px 0px 12px 10px' }}>
+                <td
+                  style={{
+                    textAlign: 'right',
+                    fontSize: 14,
+                    padding: '12px 0px 12px 10px',
+                    cursor: 'pointer',
+                  }}
+                >
                   <RemoveIcon size={18} color={theme.gray400} />
                 </td>
               </tr>

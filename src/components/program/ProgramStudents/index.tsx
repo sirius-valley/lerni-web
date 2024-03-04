@@ -1,10 +1,8 @@
 import { useTheme } from 'styled-components';
-import { QuestionnaireIcon } from '../../../assets/icons/QuestionnaireIcon';
 import Card from '../../Card';
-import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
+import { StyledBox, StyledRow, StyledText } from '../../styled/styles';
 import Button from '../../styled/Button';
-import React, { useState } from 'react';
-import { ShowIcon } from '../../../assets/icons/ShowIcon';
+import React from 'react';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { ComponentVariantType } from '../../../utils/constants';
 import { StudentsTable } from './Table';
@@ -40,7 +38,6 @@ const mockedStudents = [
 
 export const ProgramStudents = ({ hasPills = true }: ProgramStudentsProps) => {
   const theme = useTheme();
-  const [show, setShow] = useState(false);
 
   const StudentsHeader = (
     <StyledRow style={{ justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
@@ -57,6 +54,7 @@ export const ProgramStudents = ({ hasPills = true }: ProgramStudentsProps) => {
             height: '30px',
             padding: '8px 16px 8px 16px',
             fontFamily: 'Roboto-Bold',
+            cursor: 'pointer',
           }}
         >
           {'Agregar estudiantes'}

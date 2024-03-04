@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
+import { StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
 import { useTheme } from 'styled-components';
-import ProgramContent from '../ProgramContent';
-import ProgramDetails from '../ProgramDetails';
-import { ProgramQuestionnaire } from '../ProgramQuestionnaire';
-import { ProgramTrivia } from '../ProgramTrivia';
-import { ProgramStudents } from '../ProgramStudents';
+import ProgramContent from '../components/program/ProgramContent';
+import ProgramDetails from '../components/program/ProgramDetails';
+import { ProgramQuestionnaire } from '../components/program/ProgramQuestionnaire';
+import { ProgramTrivia } from '../components/program/ProgramTrivia';
+import { ProgramStudents } from '../components/program/ProgramStudents';
 import { Card } from '@mui/material';
-import { TextInput } from '../../styled/TextInput';
+import { TextInput } from '../components/styled/TextInput';
 
 const CreateProgram = () => {
   const [value, setValue] = useState('');

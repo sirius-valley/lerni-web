@@ -2,7 +2,7 @@ import { useTheme } from 'styled-components';
 import Card from '../../Card';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import Button from '../../styled/Button';
-import React, { useState } from 'react';
+import React from 'react';
 import { ShowIcon } from '../../../assets/icons/ShowIcon';
 import { TriviaIcon } from '../../../assets/icons/TriviaIcon';
 import { ComponentVariantType } from '../../../utils/constants';
@@ -16,7 +16,6 @@ interface ProgramTriviaProps {
 
 export const ProgramTrivia = ({ hasPills = true, hasTrivia }: ProgramTriviaProps) => {
   const theme = useTheme();
-  const [show, setShow] = useState(false);
 
   const TriviaHeader = (
     <StyledRow style={{ justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
@@ -24,7 +23,6 @@ export const ProgramTrivia = ({ hasPills = true, hasTrivia }: ProgramTriviaProps
         {'Trivia'}
       </StyledText>
       <StyledBox style={{ marginBottom: '6px' }}>
-        {/* Acá hay dos opciones, o se bloquea el botón, o ni se muestra */}
         <Button
           variant={ComponentVariantType.PRIMARY}
           onClick={() => console.log('open modal')}
@@ -35,6 +33,7 @@ export const ProgramTrivia = ({ hasPills = true, hasTrivia }: ProgramTriviaProps
             height: '30px',
             padding: '8px 16px 8px 16px',
             fontFamily: 'Roboto-Bold',
+            cursor: !hasTrivia ? 'pointer' : '',
           }}
         >
           {'Agregar trivia'}
@@ -53,10 +52,10 @@ export const ProgramTrivia = ({ hasPills = true, hasTrivia }: ProgramTriviaProps
           </StyledText>
         </StyledRow>
         <StyledRow css={{ gap: '8px' }}>
-          <StyledBox onClick={() => setShow(true)}>
+          <StyledBox onClick={() => alert('open modal')} css={{ cursor: 'pointer' }}>
             <ShowIcon size={18} color={theme.gray400} />
           </StyledBox>
-          <StyledBox onClick={() => alert('removed')}>
+          <StyledBox onClick={() => alert('removed')} css={{ cursor: 'pointer' }}>
             <RemoveIcon size={18} color={theme.gray400} />
           </StyledBox>
         </StyledRow>

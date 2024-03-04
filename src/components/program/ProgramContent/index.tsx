@@ -32,6 +32,7 @@ const ProgramContent = () => {
           css={{
             width: '114px',
             height: '30px',
+            cursor: 'pointer',
           }}
         >
           Agregar pildora
