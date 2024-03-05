@@ -21,6 +21,8 @@ const SigninSchema = Yup.object().shape({
       'Password must contain at least one uppercase letter and one number or symbol',
     )
     .required('Password is required'),
+  name: Yup.string().length(3).required('Required'),
+  lastname: Yup.string().length(3).required('Required'),
 });
 
 const Login = () => {
@@ -53,7 +55,7 @@ const Login = () => {
           }}
         >
           <Formik
-            initialValues={{ email: '', password: '' }}
+            initialValues={{ email: '', password: '', name: '', lastname: '' }}
             onSubmit={(values) => handleSignIn(values)}
             validationSchema={SigninSchema}
           >
@@ -92,6 +94,30 @@ const Login = () => {
                 {values.password.length > 0 && (
                   <PasswordValidationDisplay password={values.password} />
                 )}
+                <TextInput
+                  title="Nombre"
+                  value={values.name}
+                  onChange={handleChange('name')}
+                  placeholder="Nombre"
+                  onBlur={() => handleBlur('name')}
+                  error={!!errors.name && touched.name}
+                  disabled={false}
+                  css={{
+                    width: '100%',
+                  }}
+                />
+                <TextInput
+                  title="Apellido"
+                  value={values.lastname}
+                  onChange={handleChange('lastname')}
+                  placeholder="Apellido"
+                  onBlur={() => handleBlur('lastname')}
+                  error={!!errors.lastname && touched.lastname}
+                  disabled={false}
+                  css={{
+                    width: '100%',
+                  }}
+                />
                 <Button
                   disabled={!isValid || !values.email || !values.password}
                   onClick={handleSubmit}

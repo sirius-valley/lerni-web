@@ -3,10 +3,12 @@ import counterSlice from './slices/counter.slice';
 import pokemonSlice from './slices/pokemon.slice';
 import { api } from './api/api';
 import { setupListeners } from '@reduxjs/toolkit/query';
+import authSlice from './slices/auth.slice';
 
 export const store = configureStore({
   reducer: {
     [api.reducerPath]: api.reducer,
+    auth: authSlice,
     counter: counterSlice,
     pokemon: pokemonSlice,
   },

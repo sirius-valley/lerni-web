@@ -8,6 +8,7 @@ import { TextInput } from '../components/styled/TextInput';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
+import { useLoginMutation } from '../redux/api/auth.service';
 
 const SigninSchema = Yup.object().shape({
   email: Yup.string()
@@ -27,9 +28,11 @@ const Login = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const handleLogin = (values: any) => {
-    // login(values).then(() => fetch());
-    alert(JSON.stringify(values, null, 3));
+  const [login, { isLoading, error }] = useLoginMutation();
+
+  const handleLogin = (values: { email: string; password: string }) => {
+    login(values);
+    // alert(JSON.stringify(values, null, 3));
   };
 
   const handleGoToRegisterScreen = () => navigate('/register');
