@@ -34,7 +34,7 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
             </th>
             <th style={{ padding: '14px 10px 14px 10px', width: '25%' }}>{'Nombre'}</th>
             <th style={{ padding: '14px 10px 14px 10px', width: '20%' }}>{'Status'}</th>
-            <th style={{ textAlign: 'right', padding: '14px 0px 14px 10px' }}></th>
+            <th style={{ textAlign: 'right', padding: '14px 0px 14px 10px', width: '15%' }}></th>
           </tr>
         </thead>
         <tbody>
@@ -115,7 +115,6 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                 <td
                   style={{
                     padding: '12px 10px 12px 10px',
-
                     fontSize: 14,
                     color: student.status ? theme.gray900 : theme.red500,
                   }}
@@ -124,13 +123,25 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                 </td>
                 <td
                   style={{
-                    textAlign: 'right',
                     fontSize: 14,
                     padding: '12px 0px 12px 10px',
-                    cursor: 'pointer',
                   }}
                 >
-                  <RemoveIcon size={18} color={theme.gray400} />
+                  <StyledBox
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignContent: 'flex-end',
+                    }}
+                  >
+                    <StyledBox
+                      style={{ cursor: 'pointer', width: 'auto' }}
+                      onClick={() => alert('hola')}
+                    >
+                      <RemoveIcon size={18} color={theme.gray400} />
+                    </StyledBox>
+                  </StyledBox>
                 </td>
               </tr>
             );
