@@ -26,11 +26,11 @@ const SigninSchema = Yup.object().shape({
     )
     .required('Password is required'),
   name: Yup.string()
-    .matches(/^[a-z ,.'-]+$/i)
+    .matches(/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/)
     .min(3)
     .required('Required'),
   lastname: Yup.string()
-    .matches(/^[a-z ,.'-]+$/i)
+    .matches(/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/)
     .min(3)
     .required('Required'),
 });
