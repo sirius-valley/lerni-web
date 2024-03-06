@@ -25,8 +25,14 @@ const SigninSchema = Yup.object().shape({
       'Password must contain at least one uppercase letter and one number or symbol',
     )
     .required('Password is required'),
-  name: Yup.string().length(3).required('Required'),
-  lastname: Yup.string().length(3).required('Required'),
+  name: Yup.string()
+    .matches(/^[a-z ,.'-]+$/i)
+    .min(3)
+    .required('Required'),
+  lastname: Yup.string()
+    .matches(/^[a-z ,.'-]+$/i)
+    .min(3)
+    .required('Required'),
 });
 
 const Login = () => {
