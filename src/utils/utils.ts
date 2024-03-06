@@ -11,6 +11,8 @@ export type CSSProperties = {
       };
 };
 
+export const getTokenFromLocalStorage = () => localStorage.getItem('token');
+
 const camelToDash = (str: string): string => {
   return str.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
 };

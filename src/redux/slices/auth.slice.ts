@@ -13,8 +13,8 @@ export const authSlice = createSlice({
   name: 'authSlice',
   initialState,
   reducers: {
-    setToken: (state, payload) => {
-      state.token = payload.payload;
+    setToken: (state, action) => {
+      state.token = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -24,8 +24,9 @@ export const authSlice = createSlice({
     builder.addMatcher(
       authApi.endpoints.login.matchFulfilled,
       (state, action: PayloadAction<AuthType>) => {
-        state.token = action.payload.token ?? '';
-        // SecureStore.setItemAsync('token', action.payload.token ?? '');
+        const token = action.payload.token ?? '';
+        state.token = token;
+        localStorage.setItem('token', token);
       },
     );
     builder.addMatcher(authApi.endpoints.register.matchPending, (state) => {
@@ -34,8 +35,9 @@ export const authSlice = createSlice({
     builder.addMatcher(
       authApi.endpoints.register.matchFulfilled,
       (state, action: PayloadAction<AuthType>) => {
-        state.token = action.payload.token ?? '';
-        // SecureStore.setItemAsync('token', action.payload.token ?? '');
+        const token = action.payload.token ?? '';
+        state.token = token;
+        localStorage.setItem('token', token);
       },
     );
   },

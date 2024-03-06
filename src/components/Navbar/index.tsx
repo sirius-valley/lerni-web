@@ -1,71 +1,22 @@
 import React from 'react';
-import { IconInterface } from '../../utils/utils';
-import { HomeIcon } from '../../assets/icons/HomeIcon';
-import { PillIcon } from '../../assets/icons/PillIcon';
-import { PeopleIcon } from '../../assets/icons/PeopleIcon';
 import { LogoutIcon } from '../../assets/icons/LogoutIcon';
 import { StyledBox, StyledColumn } from '../styled/styles';
 import { useTheme } from 'styled-components';
 import { NavbarItem } from './NavbarItem';
 import { LogoIcon } from '../../assets/icons/LogoIcon';
 import { RightArrowIcon } from '../../assets/icons/RightArrowIcon';
-import { LibraryIcon } from '../../assets/icons/LibraryIcon';
-import { TriviaIcon } from '../../assets/icons/TriviaIcon';
-import { ClassIcon } from '../../assets/icons/ClassIcon';
-
-interface NavbarItem {
-  id: string;
-  name: string;
-  screen: string;
-  iconName: React.FC<IconInterface>;
-}
-
-export const NavBarItems: NavbarItem[] = [
-  //Estaría bueno pasar esto a un constants ???
-  {
-    id: 'Home',
-    name: 'Home',
-    screen: 'home',
-    iconName: HomeIcon,
-  },
-  {
-    id: 'Library',
-    name: 'Library',
-    screen: 'library',
-    iconName: LibraryIcon,
-  },
-  {
-    id: 'Pill',
-    name: 'Pill',
-    screen: 'pill',
-    iconName: PillIcon,
-  },
-  {
-    id: 'Trivia',
-    name: 'Trivia',
-    screen: 'trivia',
-    iconName: TriviaIcon,
-  },
-  {
-    id: 'Class',
-    name: 'Class',
-    screen: 'class',
-    iconName: ClassIcon,
-  },
-  {
-    id: 'People',
-    name: 'People',
-    screen: 'people',
-    iconName: PeopleIcon,
-  },
-];
-
-const handleClick = () => {
-  alert('ruta pusheada');
-};
+import { useLDispatch } from '../../redux/hooks';
+import { resetAllStates } from '../../redux/store';
+import { useNavigate } from 'react-router-dom';
+import { NavBarItems } from './utils';
 
 export const NavBar = () => {
   const theme = useTheme();
+  const dispatch = useLDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => dispatch(resetAllStates());
+
   return (
     <StyledColumn
       style={{
@@ -120,7 +71,12 @@ export const NavBar = () => {
         </StyledColumn>
         <StyledColumn style={{ padding: '28px 12px 0px 12px', gap: 6 }}>
           {NavBarItems.map((item, idx) => (
-            <NavbarItem key={idx} name={item.name} icon={item.iconName} onClick={handleClick} />
+            <NavbarItem
+              key={idx}
+              name={item.name}
+              icon={item.icon}
+              onClick={() => navigate(item.redirect)}
+            />
           ))}
         </StyledColumn>
       </StyledColumn>
@@ -141,7 +97,7 @@ export const NavBar = () => {
             height: 42,
             cursor: 'pointer',
           }}
-          onClick={() => alert('Cerrar Sesión')}
+          onClick={handleLogout}
         >
           <LogoutIcon color={theme.gray400} size={18} />
         </StyledBox>

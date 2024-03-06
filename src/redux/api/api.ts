@@ -1,5 +1,10 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { store } from '../store';
+import {
+  BaseQueryFn,
+  FetchArgs,
+  FetchBaseQueryError,
+  createApi,
+  fetchBaseQuery,
+} from '@reduxjs/toolkit/query/react';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.REACT_APP_BASE_URL || '',
@@ -12,7 +17,18 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-const baseQueryInterceptor = async (args: any, api: any, extraOptions: any) => {
+export type CustomError =
+  | FetchBaseQueryError
+  | {
+      status: 'FETCH_ERROR';
+      data: any;
+    };
+
+const baseQueryInterceptor: BaseQueryFn<string | FetchArgs, unknown, CustomError> = async (
+  args,
+  api,
+  extraOptions,
+) => {
   const result = await baseQuery(args, api, extraOptions);
   if (result?.error?.status === 401) {
     api.dispatch({ type: 'login/logout', payload: result.data });

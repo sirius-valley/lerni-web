@@ -3,18 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useLSelector } from '../../redux/hooks';
 import { Outlet } from 'react-router-dom';
 
-const ProtectedRoute = () => {
+const PublicRoute = () => {
   const navigate = useNavigate();
   const token = useLSelector((state) => state.auth.token);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (!token) navigate('/login');
-    }, 150);
-    return () => clearTimeout(timeout);
+    if (token) navigate('/');
   }, [token]);
 
   return <Outlet />;
 };
 
-export default ProtectedRoute;
+export default PublicRoute;

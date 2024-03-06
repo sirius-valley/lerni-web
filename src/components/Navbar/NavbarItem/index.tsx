@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { useTheme } from 'styled-components';
 import { StyledBox } from '../../styled/styles';
+import { IconInterface } from '../../../utils/utils';
 
 interface NavbarItemProps {
   name: string;
-  icon: any;
-  onClick?: any;
+  icon: React.FC<IconInterface>;
+  onClick?: () => void;
   focused?: boolean;
 }
 
 export const NavbarItem = ({ name, icon: Icon, onClick, focused }: NavbarItemProps) => {
   const theme = useTheme();
   const [hover, setHover] = useState(false);
+
   return (
     <StyledBox
       onMouseEnter={() => setHover(true)}
@@ -32,7 +34,6 @@ export const NavbarItem = ({ name, icon: Icon, onClick, focused }: NavbarItemPro
       <Icon
         color={hover ? theme.primary500 : focused ? theme.primary950 : theme.gray400}
         size={20}
-        onClick={onClick}
       />
     </StyledBox>
   );

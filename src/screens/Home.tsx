@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
 import { ButtonLabelSize } from '../components/styled/Button/styles';
