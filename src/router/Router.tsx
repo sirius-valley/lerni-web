@@ -4,7 +4,7 @@ import Home from '../screens/Home';
 import NotFound from '../screens/NotFound404';
 import Login from '../screens/Login';
 import Register from '../screens/Register';
-import CreateProgram from '../components/program/CreateProgram';
+import CreateProgram from '../screens/CreateProgram';
 import NavigationLayout from '../screens/NavigationLayout';
 
 const Router = () => {

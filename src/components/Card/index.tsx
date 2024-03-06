@@ -1,6 +1,6 @@
 import React from 'react';
 import { CSSObject, DefaultTheme, useTheme } from 'styled-components';
-import { StyledBox, StyledRow, StyledText } from '../styled/styles';
+import { StyledBox, StyledColumn, StyledRow, StyledText } from '../styled/styles';
 
 interface CardProps {
   title?: string;
@@ -8,6 +8,7 @@ interface CardProps {
   headerComponent?: React.ReactNode;
   width?: string;
   height?: string;
+  padding?: string;
   css?: CSSObject;
 }
 
@@ -15,16 +16,17 @@ const Card = ({
   title,
   children,
   headerComponent,
+  padding,
   width = '832px',
   height = '412px',
   css,
 }: CardProps) => {
   const theme = useTheme() as DefaultTheme;
   return (
-    <StyledBox
+    <StyledColumn
       style={{
         borderRadius: '16px',
-        padding: '24px',
+        padding: padding ?? '24px',
         gap: '12px',
         width: width,
         height: height,
@@ -40,7 +42,7 @@ const Card = ({
         )}
       </StyledRow>
       <StyledBox>{children}</StyledBox>
-    </StyledBox>
+    </StyledColumn>
   );
 };
 
