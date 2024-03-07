@@ -2,7 +2,6 @@ import styled, { css as styledComponent } from 'styled-components';
 import { jsToCss } from '../../../utils/utils';
 import { MyTheme, theme } from '../../../utils/theme';
 import { ComponentVariantType } from '../../../utils/constants';
-import { rgba } from 'polished';
 
 export interface StyledProps {
   css?: { [x: string]: any };
@@ -50,8 +49,8 @@ const getButtonStyles = (theme: MyTheme): StyleByOptionsProps => {
       },
       [ButtonState.DISABLED]: {
         border: 'none',
-        backgroundColor: rgba(theme.primary500, 0.2),
-        color: theme.white,
+        backgroundColor: theme.gray300,
+        color: theme.gray500,
       },
     },
     [ComponentVariantType.DARK]: {
@@ -68,8 +67,8 @@ const getButtonStyles = (theme: MyTheme): StyleByOptionsProps => {
 
       [ButtonState.DISABLED]: {
         border: 'none',
-        backgroundColor: rgba(theme.primary500, 0.2),
-        color: theme.white,
+        backgroundColor: theme.gray300,
+        color: theme.gray500,
       },
     },
     [ComponentVariantType.GHOST]: {
@@ -85,8 +84,8 @@ const getButtonStyles = (theme: MyTheme): StyleByOptionsProps => {
       },
       [ButtonState.DISABLED]: {
         border: 'none',
-        backgroundColor: rgba(theme.primary500, 0.2),
-        color: theme.white,
+        backgroundColor: theme.gray300,
+        color: theme.gray500,
       },
     },
     [ComponentVariantType.RED]: {
@@ -101,8 +100,8 @@ const getButtonStyles = (theme: MyTheme): StyleByOptionsProps => {
       },
       [ButtonState.DISABLED]: {
         border: 'none',
-        backgroundColor: rgba(theme.primary500, 0.2),
-        color: theme.white,
+        backgroundColor: theme.gray300,
+        color: theme.gray500,
       },
     },
   };

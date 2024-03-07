@@ -25,16 +25,6 @@ export const StyledText = styled.p<StyledTextInterface>`
 
 export const StyledImage = styled.img``;
 
-export const StyledAvatar = styled.img<StyledPropertiesInterface>`
-  border-radius: 50px;
-  display: flex;
-  justify-content: center;
-  height: 36px;
-  width: 36px;
-  background-color: ${(props) => props.theme.gray100};
-  ${({ css }) => css && jsToCss(css)};
-`;
-
 export const StyledRow = styled.div<StyledPropertiesInterface>`
   display: flex;
   flex-direction: row;
