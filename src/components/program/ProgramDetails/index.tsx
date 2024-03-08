@@ -40,7 +40,7 @@ const ProgramDetails = () => {
         ></TextInput>
         <TextInput
           placeholder="https://www.pixels.com/321423534ng43g432g4f443f4545"
-          title="URL del programa"
+          title="URL de la imagen"
           required
           value={program.url}
           onChange={(value) => handleChange('url', value)}
