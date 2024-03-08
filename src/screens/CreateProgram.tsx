@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
+import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
 import { useTheme } from 'styled-components';
 import ProgramContent from '../components/program/ProgramContent';
 import ProgramDetails from '../components/program/ProgramDetails';
 import { ProgramQuestionnaire } from '../components/program/ProgramQuestionnaire';
 import { ProgramTrivia } from '../components/program/ProgramTrivia';
 import { ProgramStudents } from '../components/program/ProgramStudents';
-import { Card } from '@mui/material';
-import { TextInput } from '../components/styled/TextInput';
+import Button from '../components/styled/Button';
+import { ComponentVariantType } from '../utils/constants';
+import { ButtonLabelSize } from '../components/styled/Button/styles';
 
 const CreateProgram = () => {
   const [value, setValue] = useState('');
@@ -51,6 +52,21 @@ const CreateProgram = () => {
           <ProgramQuestionnaire hasPills hasQuestionnaire={true} />
           <ProgramTrivia hasPills hasTrivia={false} />
           <ProgramStudents hasPills />
+          <Button
+            variant={ComponentVariantType.PRIMARY}
+            onClick={() => console.log('open modal')}
+            labelSize={'body3'}
+            css={{
+              marginTop: '8px',
+              width: 'auto',
+              height: '30px',
+              padding: '8px 16px 8px 16px',
+              fontFamily: 'Roboto-Bold',
+              cursor: 'pointer',
+            }}
+          >
+            Guardar
+          </Button>
         </StyledColumn>
       </StyledColumn>
     </>

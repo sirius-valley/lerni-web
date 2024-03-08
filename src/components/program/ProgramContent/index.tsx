@@ -60,7 +60,7 @@ const ProgramContent = () => {
           key={index}
           css={{
             justifyContent: 'space-between',
-            padding: '8px 0px 0px 0px',
+            padding: '8px 0px 4px 0px',
             marginLeft: '6px',
             borderBottom: `1px solid ${theme.gray200}`,
           }}
@@ -68,13 +68,13 @@ const ProgramContent = () => {
           <StyledRow
             style={{
               gap: '6px',
-              marginBottom: '6px',
+              alignItems: 'center',
             }}
           >
             <StyledBox
-              style={{
-                height: '18px',
-                width: '18px',
+              css={{
+                height: '24px',
+                width: '24px',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
@@ -101,12 +101,17 @@ const ProgramContent = () => {
                   },
                 }}
                 maxValue={1}
-                strokeWidth={15}
+                strokeWidth={12}
                 value={percentageDone}
                 text={pillNumber}
               />
             </StyledBox>
-            <StyledText variant="h4"> {name} </StyledText>
+            <StyledText
+              variant="h4"
+              css={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            >
+              {name}
+            </StyledText>
           </StyledRow>
           <StyledRow
             css={{

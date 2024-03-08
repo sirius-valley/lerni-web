@@ -3,6 +3,7 @@ import { ButtonLabelSize, ButtonState, StyledButton } from './styles';
 import { ComponentVariantType } from '../../../utils/constants';
 import { ThemeFonts, theme } from '../../../utils/theme';
 import Spinner from '../../Spinner/Spinner';
+import { StyledText } from '../styles';
 
 export interface ButtonProps {
   onClick: () => void;

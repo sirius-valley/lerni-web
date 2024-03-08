@@ -38,6 +38,7 @@ export const StyledTextArea = styled.textarea<StyledInputProps>`
   transition: all 0.2s ease-in-out;
   padding: 6px 8px;
   width: 100%;
+  height: 100%;
   color: ${(props) => {
     if (props.disabled) {
       return props.theme.gray400;
@@ -55,6 +56,11 @@ export const StyledTextArea = styled.textarea<StyledInputProps>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  resize: none;
+  font-family: Roboto;
+  &::placeholder {
+    color: ${(props) => (props.disabled ? props.theme.gray400 : props.theme.gray300)};
+  }
 `;
 
 export const StyledTextInputBox = styled(StyledRow)<InputBoxProps>`
