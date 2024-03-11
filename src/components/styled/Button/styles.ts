@@ -139,5 +139,8 @@ export const StyledButton = styled.button<ButtonProps>`
       `;
     }
   }}
-  ${({ css }) => css && jsToCss(css)};
+  ${({ css }) => {
+    console.log('hola', css);
+    return css && jsToCss(css);
+  }};
 `;

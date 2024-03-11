@@ -23,7 +23,9 @@ export const StyledText = styled.p<StyledTextInterface>`
   ${({ css }) => css && jsToCss(css)};
 `;
 
-export const StyledImage = styled.img``;
+export const StyledImage = styled.img<StyledPropertiesInterface>`
+  ${({ css }) => css && jsToCss(css)};
+`;
 
 export const StyledAvatar = styled.img<StyledPropertiesInterface>`
   border-radius: 50px;
