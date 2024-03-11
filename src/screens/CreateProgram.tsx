@@ -9,14 +9,17 @@ import { ProgramStudents } from '../components/program/ProgramStudents';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
 import { ButtonLabelSize } from '../components/styled/Button/styles';
+import { useLDispatch } from '../redux/hooks';
+import { setModalOpen } from '../redux/slices/utils.slice';
 
 const CreateProgram = () => {
-  const [value, setValue] = useState('');
-
-  const handleChange = (value: string) => {
-    setValue(value);
-  };
   const theme = useTheme();
+  const dispatch = useLDispatch();
+
+  const handleShowModal = () => {
+    dispatch(setModalOpen({ modalType: 'PILL_CREATE' }));
+  };
+
   return (
     <>
       <StyledRow
@@ -54,7 +57,7 @@ const CreateProgram = () => {
           <ProgramStudents hasPills />
           <Button
             variant={ComponentVariantType.PRIMARY}
-            onClick={() => console.log('open modal')}
+            onClick={handleShowModal}
             labelSize={'body3'}
             css={{
               marginTop: '8px',

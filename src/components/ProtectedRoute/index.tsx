@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLSelector } from '../../redux/hooks';
 import { Outlet } from 'react-router-dom';
+import { withModal } from '../../hoc/withModal';
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
@@ -17,4 +18,4 @@ const ProtectedRoute = () => {
   return <Outlet />;
 };
 
-export default ProtectedRoute;
+export default withModal(ProtectedRoute);

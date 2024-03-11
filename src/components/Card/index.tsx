@@ -34,13 +34,13 @@ const Card = ({
         ...css,
       }}
     >
-      <StyledRow style={{ borderBottom: `1px solid ${theme.gray200}` }}>
-        {headerComponent ?? (
+      {headerComponent ?? (
+        <StyledRow style={{ borderBottom: `1px solid ${theme.gray200}` }}>
           <StyledText variant="h2" style={{ marginBottom: '6px' }}>
             {title}
           </StyledText>
-        )}
-      </StyledRow>
+        </StyledRow>
+      )}
       <StyledBox>{children}</StyledBox>
     </StyledColumn>
   );

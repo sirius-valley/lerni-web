@@ -15,7 +15,9 @@ const NavigationLayout = () => {
       }}
     >
       <NavBar />
-      <StyledColumn css={{ justifyContent: 'center', alignItems: 'center', gap: '12px' }}>
+      <StyledColumn
+        css={{ justifyContent: 'center', alignItems: 'center', gap: '12px', overflowX: 'hidden' }}
+      >
         <Outlet />
       </StyledColumn>
     </StyledColumn>
