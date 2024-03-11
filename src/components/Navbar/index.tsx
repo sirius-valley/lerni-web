@@ -7,7 +7,7 @@ import { LogoIcon } from '../../assets/icons/LogoIcon';
 import { RightArrowIcon } from '../../assets/icons/RightArrowIcon';
 import { useLDispatch } from '../../redux/hooks';
 import { resetAllStates } from '../../redux/store';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { NavBarItems } from './utils';
 
 export const NavBar = () => {
@@ -16,6 +16,7 @@ export const NavBar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => dispatch(resetAllStates());
+  const { pathname } = useLocation();
 
   return (
     <StyledColumn
@@ -76,6 +77,7 @@ export const NavBar = () => {
               key={idx}
               name={item.name}
               icon={item.icon}
+              isSelected={item.activeRoutes.includes(pathname)}
               onClick={() => navigate(item.redirect)}
             />
           ))}

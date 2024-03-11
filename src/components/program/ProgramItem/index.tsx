@@ -26,7 +26,7 @@ export const ProgramItem = () => {
           width={40}
           height={40}
           style={{ borderRadius: 4 }}
-          src="https://media.discordapp.net/attachments/1163814783913562132/1205135747443855371/image_1.png?ex=65d74520&is=65c4d020&hm=3083227db29e72488b3f85c474178f024f2a838149f14330187c027b8591eb9b&=&format=webp&quality=lossless&width=218&height=220"
+          src="https://thumbs.dreamstime.com/b/bello-planeta-tierra-y-estrellas-brillantes-en-el-cosmos-infinito-nuevos-horizontes-la-exploraci%C3%B3n-del-espacio-elementos-de-esta-186771413.jpg"
         />
         <StyledColumn style={{ gap: 2 }}>
           <StyledText variant="body1" style={{ color: theme.primary950 }}>
