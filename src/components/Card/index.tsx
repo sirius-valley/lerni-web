@@ -10,6 +10,7 @@ interface CardProps {
   height?: string;
   padding?: string;
   css?: CSSObject;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
 const Card = ({
@@ -20,6 +21,7 @@ const Card = ({
   width = '832px',
   height = '412px',
   css,
+  onClick,
 }: CardProps) => {
   const theme = useTheme() as DefaultTheme;
   return (
@@ -33,6 +35,7 @@ const Card = ({
         background: theme.white,
         ...css,
       }}
+      onClick={onClick && onClick}
     >
       {headerComponent ?? (
         <StyledRow style={{ borderBottom: `1px solid ${theme.gray200}` }}>

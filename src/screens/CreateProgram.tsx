@@ -14,11 +14,6 @@ import { setModalOpen } from '../redux/slices/utils.slice';
 
 const CreateProgram = () => {
   const theme = useTheme();
-  const dispatch = useLDispatch();
-
-  const handleShowModal = () => {
-    dispatch(setModalOpen({ modalType: 'PILL_CREATE' }));
-  };
 
   return (
     <>
@@ -57,7 +52,7 @@ const CreateProgram = () => {
           <ProgramStudents hasPills />
           <Button
             variant={ComponentVariantType.PRIMARY}
-            onClick={handleShowModal}
+            onClick={() => alert('To be defined')}
             labelSize={'body3'}
             css={{
               marginTop: '8px',

@@ -24,5 +24,6 @@ export const BlurView = styled(StyledBox)`
   justify-content: center;
   align-items: center;
   overflow-x: hidden;
-  background: rgba(0, 42, 55, 0.87);
+  background: rgba(0, 42, 55, 0.7);
+  backdrop-filter: blur(10px);
 `;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTheme } from 'styled-components';
-import { StyledBox, StyledColumn, StyledRow, StyledText } from '../styles';
+import { StyledColumn, StyledRow, StyledText } from '../styles';
 import { ShowIcon } from '../../../assets/icons/ShowIcon';
 import { StyledInput, StyledTextArea, StyledTextInputBox } from './styles';
 import { HideIcon } from '../../../assets/icons/HideIcon';
@@ -68,6 +68,7 @@ export const TextInput = ({
       style={{
         gap: 8,
         justifyContent: 'flex-start',
+        width: '100%',
       }}
     >
       <StyledRow style={{ alignContent: 'center', gap: 4 }}>

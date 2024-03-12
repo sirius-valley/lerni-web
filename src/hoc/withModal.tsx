@@ -17,20 +17,13 @@ export const withModal = (Component: FunctionComponent) => (props: any) => {
     switch (type) {
       case 'PILL_CREATE':
         return <CreatePillModal handleOnClose={handleOnClose} />;
+      default:
+        <></>;
     }
   };
 
   const ModalContainer = () => {
-    return (
-      <BlurView
-        onClick={(event) => {
-          event.stopPropagation();
-          handleOnClose();
-        }}
-      >
-        {renderModal()}
-      </BlurView>
-    );
+    return <BlurView onClick={() => handleOnClose()}>{renderModal()}</BlurView>;
   };
 
   return (

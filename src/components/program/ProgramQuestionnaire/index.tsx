@@ -21,7 +21,14 @@ export const ProgramQuestionnaire = ({
   const theme = useTheme();
 
   const QuestionnaireHeader = (
-    <StyledRow style={{ justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+    <StyledRow
+      style={{
+        justifyContent: 'space-between',
+        width: '100%',
+        alignItems: 'center',
+        borderBottom: `1px solid ${theme.gray200}`,
+      }}
+    >
       <StyledText variant="h2" style={{ marginBottom: '6px' }}>
         {'Cuestionario'}
       </StyledText>
