@@ -39,6 +39,13 @@ const FileUpload = ({
   };
 
   const handleInputFileChange = (e: any) => onChange(e.target.files[0]);
+  const renderFileSize = () => {
+    if (value?.size) {
+      if (value?.size < 1048575) return `${(value?.size / 1000).toString().slice(0, 5)} kb`;
+      return `${(value.size / 1000000).toString().slice(0, 4)} MB`;
+    }
+    return null;
+  };
 
   return (
     <StyledColumn
@@ -95,7 +102,7 @@ const FileUpload = ({
                 {value?.name && <StyledText variant="body1">{value?.name}</StyledText>}
                 {value?.size && (
                   <StyledText variant="body3" color="gray400">
-                    {value?.size / 1000} kb
+                    {renderFileSize()}
                   </StyledText>
                 )}
               </StyledColumn>

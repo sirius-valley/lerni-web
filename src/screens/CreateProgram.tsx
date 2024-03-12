@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
+import React from 'react';
+import { StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
 import { useTheme } from 'styled-components';
 import ProgramContent from '../components/program/ProgramContent';
 import ProgramDetails from '../components/program/ProgramDetails';
@@ -8,9 +8,6 @@ import { ProgramTrivia } from '../components/program/ProgramTrivia';
 import { ProgramStudents } from '../components/program/ProgramStudents';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
-import { ButtonLabelSize } from '../components/styled/Button/styles';
-import { useLDispatch } from '../redux/hooks';
-import { setModalOpen } from '../redux/slices/utils.slice';
 
 const CreateProgram = () => {
   const theme = useTheme();
