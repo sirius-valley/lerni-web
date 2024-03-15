@@ -8,10 +8,14 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { useTheme } from 'styled-components';
 import Button from '../../styled/Button';
+import { useLDispatch } from '../../../redux/hooks';
+import { setModalOpen } from '../../../redux/slices/utils.slice';
 
 const ProgramContent = () => {
   const theme = useTheme();
+  const dispatch = useLDispatch();
   const emptyPills = false;
+
   const pills = [
     { name: 'Pildora 1', percentageDone: 0, pillNumber: '1' },
     { name: 'Pildora 2', percentageDone: 0, pillNumber: '2' },
@@ -19,15 +23,27 @@ const ProgramContent = () => {
     { name: 'Pildora 4', percentageDone: 0, pillNumber: '4' },
     { name: 'Pildora 5', percentageDone: 0, pillNumber: '5' },
   ];
+
+  const handleShowModal = () => {
+    dispatch(setModalOpen({ modalType: 'PILL_CREATE' }));
+  };
+
   const ProgramHeader = (
-    <StyledRow style={{ justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+    <StyledRow
+      style={{
+        justifyContent: 'space-between',
+        width: '100%',
+        alignItems: 'center',
+        borderBottom: `1px solid ${theme.gray200}`,
+      }}
+    >
       <StyledText variant="h2" style={{ marginBottom: '6px' }}>
         Contenido
       </StyledText>
       <StyledBox style={{ marginBottom: '6px' }}>
         <Button
           variant={ComponentVariantType.PRIMARY}
-          onClick={() => alert('open modal')}
+          onClick={handleShowModal}
           labelSize={ButtonLabelSize.BODY3}
           css={{
             width: '114px',
@@ -40,6 +56,7 @@ const ProgramContent = () => {
       </StyledBox>
     </StyledRow>
   );
+
   const ProgramBody = emptyPills ? (
     <StyledRow
       style={{

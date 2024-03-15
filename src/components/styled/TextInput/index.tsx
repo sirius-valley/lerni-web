@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTheme } from 'styled-components';
-import { StyledBox, StyledColumn, StyledRow, StyledText } from '../styles';
+import { StyledColumn, StyledRow, StyledText } from '../styles';
 import { ShowIcon } from '../../../assets/icons/ShowIcon';
 import { StyledInput, StyledTextArea, StyledTextInputBox } from './styles';
 import { HideIcon } from '../../../assets/icons/HideIcon';
@@ -17,6 +17,7 @@ export interface TextInputProps {
   value: string;
   css?: { [key in string]: string | number | boolean };
   multiline?: boolean;
+  maxLength?: number;
 }
 
 type PasswordType = 'text' | 'password';
@@ -44,6 +45,7 @@ export const TextInput = ({
   value,
   css,
   multiline = false,
+  maxLength = 400,
 }: TextInputProps) => {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
@@ -68,6 +70,7 @@ export const TextInput = ({
       style={{
         gap: 8,
         justifyContent: 'flex-start',
+        width: '100%',
       }}
     >
       <StyledRow style={{ alignContent: 'center', gap: 4 }}>
@@ -94,6 +97,7 @@ export const TextInput = ({
             type={showPassword ? 'text' : 'password'}
             disabled={disabled}
             placeholder={placeholder}
+            maxLength={maxLength}
           />
         ) : (
           <StyledInput
@@ -102,6 +106,7 @@ export const TextInput = ({
             type={showPassword ? 'text' : 'password'}
             disabled={disabled}
             placeholder={placeholder}
+            maxLength={400}
           />
         )}
         <StyledRow

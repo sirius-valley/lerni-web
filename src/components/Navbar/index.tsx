@@ -30,6 +30,7 @@ export const NavBar = () => {
         backgroundColor: theme.white,
         padding: '18px 15px 24px 15px',
         gap: 12,
+        zIndex: 20,
       }}
     >
       <StyledColumn style={{ gap: 15 }}>

@@ -18,7 +18,14 @@ export const ProgramTrivia = ({ hasPills = true, hasTrivia }: ProgramTriviaProps
   const theme = useTheme();
 
   const TriviaHeader = (
-    <StyledRow style={{ justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+    <StyledRow
+      style={{
+        justifyContent: 'space-between',
+        width: '100%',
+        alignItems: 'center',
+        borderBottom: `1px solid ${theme.gray200}`,
+      }}
+    >
       <StyledText variant="h2" style={{ marginBottom: '6px' }}>
         {'Trivia'}
       </StyledText>

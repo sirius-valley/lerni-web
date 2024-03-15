@@ -4,10 +4,12 @@ import pokemonSlice from './slices/pokemon.slice';
 import { api } from './api/api';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import authSlice from './slices/auth.slice';
+import utilsSlice from './slices/utils.slice';
 
 const reducers = combineReducers({
   [api.reducerPath]: api.reducer,
   auth: authSlice,
+  utils: utilsSlice,
   counter: counterSlice,
   pokemon: pokemonSlice,
 });

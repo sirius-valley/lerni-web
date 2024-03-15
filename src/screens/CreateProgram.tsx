@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
 import { useTheme } from 'styled-components';
 import ProgramContent from '../components/program/ProgramContent';
@@ -8,17 +8,12 @@ import { ProgramTrivia } from '../components/program/ProgramTrivia';
 import { ProgramStudents } from '../components/program/ProgramStudents';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
-import { ButtonLabelSize } from '../components/styled/Button/styles';
 
 const CreateProgram = () => {
-  const [value, setValue] = useState('');
-
-  const handleChange = (value: string) => {
-    setValue(value);
-  };
   const theme = useTheme();
+
   return (
-    <>
+    <StyledBox css={{ height: '100%' }}>
       <StyledRow
         css={{
           width: '100%',
@@ -34,7 +29,7 @@ const CreateProgram = () => {
       <StyledColumn
         css={{
           background: theme.gray200,
-          minHeight: '100vh',
+          minHeight: '90vh',
           width: '100vw',
         }}
       >
@@ -54,7 +49,7 @@ const CreateProgram = () => {
           <ProgramStudents hasPills />
           <Button
             variant={ComponentVariantType.PRIMARY}
-            onClick={() => console.log('open modal')}
+            onClick={() => alert('To be defined')}
             labelSize={'body3'}
             css={{
               marginTop: '8px',
@@ -69,7 +64,7 @@ const CreateProgram = () => {
           </Button>
         </StyledColumn>
       </StyledColumn>
-    </>
+    </StyledBox>
   );
 };
 
