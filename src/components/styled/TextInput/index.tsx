@@ -17,6 +17,7 @@ export interface TextInputProps {
   value: string;
   css?: { [key in string]: string | number | boolean };
   multiline?: boolean;
+  maxLength?: number;
 }
 
 type PasswordType = 'text' | 'password';
@@ -44,6 +45,7 @@ export const TextInput = ({
   value,
   css,
   multiline = false,
+  maxLength = 400,
 }: TextInputProps) => {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
@@ -95,6 +97,7 @@ export const TextInput = ({
             type={showPassword ? 'text' : 'password'}
             disabled={disabled}
             placeholder={placeholder}
+            maxLength={maxLength}
           />
         ) : (
           <StyledInput
@@ -103,6 +106,7 @@ export const TextInput = ({
             type={showPassword ? 'text' : 'password'}
             disabled={disabled}
             placeholder={placeholder}
+            maxLength={400}
           />
         )}
         <StyledRow

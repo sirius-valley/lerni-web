@@ -42,6 +42,8 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     errors.file ||
     !inputValues.name ||
     !inputValues.description ||
+    !inputValues.instructor ||
+    !inputValues.studentMessage ||
     !inputValues.file;
 
   const handleChange = (att: keyof typeof inputValues, value: string) => {
@@ -69,7 +71,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
       }}
     >
       <StyledColumn css={{ marginTop: '8px', gap: '12px' }}>
-        <StyledText variant="h1" css={{ fontFamily: 'Roboto' }}>
+        <StyledText variant="h1" css={{ fontFamily: 'Roboto-Bold' }}>
           Cargar píldora
         </StyledText>
         <StyledText variant="body2">
@@ -121,8 +123,8 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           />
         </StyledRow>
         <TextInput
-          placeholder="Descripcion de la píldora"
-          title="Descripcion"
+          placeholder="Descripción de la píldora"
+          title="Descripción"
           value={inputValues.description}
           onChange={(value) => handleChange('description', value)}
           error={errors.description}
@@ -141,10 +143,11 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           required
         />
         <FileUpload
-          title="Subir Json"
+          title="Cargar JSON"
           value={inputValues.file}
           onChange={(value) => handleInputFileChange(value)}
           error={errors.file}
+          fileExtensionAllowed=".json"
           required
         />
         <StyledRow

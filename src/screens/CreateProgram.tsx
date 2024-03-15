@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
+import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
 import { useTheme } from 'styled-components';
 import ProgramContent from '../components/program/ProgramContent';
 import ProgramDetails from '../components/program/ProgramDetails';
@@ -13,7 +13,7 @@ const CreateProgram = () => {
   const theme = useTheme();
 
   return (
-    <>
+    <StyledBox css={{ height: '100%' }}>
       <StyledRow
         css={{
           width: '100%',
@@ -29,7 +29,7 @@ const CreateProgram = () => {
       <StyledColumn
         css={{
           background: theme.gray200,
-          minHeight: '100vh',
+          minHeight: '90vh',
           width: '100vw',
         }}
       >
@@ -64,7 +64,7 @@ const CreateProgram = () => {
           </Button>
         </StyledColumn>
       </StyledColumn>
-    </>
+    </StyledBox>
   );
 };
 

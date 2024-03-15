@@ -19,6 +19,7 @@ export interface FileUploadProps {
     type?: string;
   };
   css?: CSSProperties;
+  fileExtensionAllowed?: string;
 }
 
 const FileUpload = ({
@@ -29,6 +30,7 @@ const FileUpload = ({
   onChange,
   value,
   css,
+  fileExtensionAllowed = '',
 }: FileUploadProps) => {
   const theme = useTheme();
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
@@ -84,6 +86,7 @@ const FileUpload = ({
               type="file"
               style={{ display: 'none' }}
               onChange={handleInputFileChange}
+              accept={fileExtensionAllowed}
             />
             <StyledColumn
               css={{
