@@ -5,12 +5,14 @@ import { api } from './api/api';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import authSlice from './slices/auth.slice';
 import utilsSlice from './slices/utils.slice';
+import programSlice from './slices/program.slice';
 
 const reducers = combineReducers({
   [api.reducerPath]: api.reducer,
   auth: authSlice,
   utils: utilsSlice,
   counter: counterSlice,
+  program: programSlice,
   pokemon: pokemonSlice,
 });
 
@@ -22,6 +24,7 @@ const combinedReducer = (state: any, action: any) => {
     state = undefined;
     localStorage.removeItem('token');
   }
+  // @ts-ignore
   return reducers(state, action);
 };
 

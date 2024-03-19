@@ -8,21 +8,16 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { useTheme } from 'styled-components';
 import Button from '../../styled/Button';
-import { useLDispatch } from '../../../redux/hooks';
+import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
+import TrashIcon from '../../../assets/icons/TrashIcon';
+import { removePill } from '../../../redux/slices/program.slice';
 
 const ProgramContent = () => {
   const theme = useTheme();
   const dispatch = useLDispatch();
-  const emptyPills = false;
-
-  const pills = [
-    { name: 'Pildora 1', percentageDone: 0, pillNumber: '1' },
-    { name: 'Pildora 2', percentageDone: 0, pillNumber: '2' },
-    { name: 'Pildora 3', percentageDone: 0, pillNumber: '3' },
-    { name: 'Pildora 4', percentageDone: 0, pillNumber: '4' },
-    { name: 'Pildora 5', percentageDone: 0, pillNumber: '5' },
-  ];
+  const pills = useLSelector((state) => state.program.pills);
+  const emptyPills = pills.length === 0;
 
   const handleShowModal = () => {
     dispatch(setModalOpen({ modalType: 'PILL_CREATE' }));
@@ -57,96 +52,109 @@ const ProgramContent = () => {
     </StyledRow>
   );
 
-  const ProgramBody = emptyPills ? (
-    <StyledRow
-      style={{
-        gap: '24px',
-        marginTop: '36px',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <StyledText color="gray400" variant="body3">
-        No se agregó ninguna píldora todavía
-      </StyledText>
-    </StyledRow>
-  ) : (
-    <StyledColumn css={{ gap: '6px', marginTop: '12px', overflowY: 'scroll', height: '230px' }}>
-      {pills.map(({ name, percentageDone, pillNumber }, index) => (
+  return (
+    <Card height={'auto'} headerComponent={ProgramHeader}>
+      {emptyPills ? (
         <StyledRow
-          key={index}
-          css={{
-            justifyContent: 'space-between',
-            padding: '8px 0px 4px 0px',
-            marginLeft: '6px',
-            borderBottom: `1px solid ${theme.gray200}`,
+          style={{
+            gap: '24px',
+            padding: '16px',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
-          <StyledRow
-            style={{
-              gap: '6px',
-              alignItems: 'center',
-            }}
-          >
-            <StyledBox
+          <StyledText color="gray400" variant="body3">
+            No se agregó ninguna píldora todavía
+          </StyledText>
+        </StyledRow>
+      ) : (
+        <StyledColumn
+          css={{ gap: '6px', marginTop: '12px', overflowY: 'scroll', maxHeight: '230px' }}
+        >
+          {pills.map(({ title, id }, index) => (
+            <StyledRow
+              key={index}
               css={{
-                height: '24px',
-                width: '24px',
-                justifyContent: 'center',
-                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '8px 0px 4px 0px',
+                marginLeft: '6px',
+                borderBottom: `1px solid ${theme.gray200}`,
               }}
             >
-              <CircularProgressbar
-                styles={{
-                  root: {
-                    display: 'flex',
-                  },
-                  path: {
-                    stroke: '#18BAC8', // check with ceci
-                    strokeLinecap: 'butt',
-                    transition: 'none',
-                  },
-                  trail: {
-                    stroke: '#D3DDEB',
-                    strokeLinecap: 'butt',
-                  },
-                  text: {
-                    fontFamily: 'Roboto-bold',
-                    fill: '#000000',
-                    fontSize: '60px',
-                    fontWeight: 600,
-                  },
+              <StyledRow
+                style={{
+                  gap: '6px',
+                  alignItems: 'center',
                 }}
-                maxValue={1}
-                strokeWidth={12}
-                value={percentageDone}
-                text={pillNumber}
-              />
-            </StyledBox>
-            <StyledText
-              variant="h4"
-              css={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-            >
-              {name}
-            </StyledText>
-          </StyledRow>
-          <StyledRow
-            css={{
-              padding: '8px',
-              cursor: 'pointer',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <ShowIcon size={18} color={theme.gray400} />
-          </StyledRow>
-        </StyledRow>
-      ))}
-    </StyledColumn>
-  );
-  return (
-    <Card height={'325px'} headerComponent={ProgramHeader}>
-      {ProgramBody}
+              >
+                <StyledBox
+                  css={{
+                    height: '24px',
+                    width: '24px',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <CircularProgressbar
+                    styles={{
+                      root: {
+                        display: 'flex',
+                      },
+                      path: {
+                        stroke: '#18BAC8', // check with ceci
+                        strokeLinecap: 'butt',
+                        transition: 'none',
+                      },
+                      trail: {
+                        stroke: '#D3DDEB',
+                        strokeLinecap: 'butt',
+                      },
+                      text: {
+                        fontFamily: 'Roboto-bold',
+                        fill: '#000000',
+                        fontSize: '60px',
+                        fontWeight: 600,
+                      },
+                    }}
+                    maxValue={1}
+                    strokeWidth={12}
+                    value={0}
+                    text={String(index + 1)}
+                  />
+                </StyledBox>
+                <StyledText
+                  variant="h4"
+                  css={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                >
+                  {title}
+                </StyledText>
+              </StyledRow>
+              <StyledRow
+                css={{
+                  padding: '8px',
+                  cursor: 'pointer',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+              >
+                <StyledColumn
+                  onClick={() => dispatch(removePill(id))}
+                  css={{ alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <ShowIcon size={20} color={theme.gray400} />
+                </StyledColumn>
+                <StyledColumn
+                  onClick={() => dispatch(removePill(id))}
+                  css={{ alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <TrashIcon size={20} color={theme.gray400} />
+                </StyledColumn>
+              </StyledRow>
+            </StyledRow>
+          ))}
+        </StyledColumn>
+      )}
     </Card>
   );
 };

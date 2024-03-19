@@ -7,43 +7,47 @@ import { TextInput } from '../../../components/styled/TextInput';
 import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
+import { fileToJSONText } from '../../../utils/utils';
+import { useConvertToLerniPillMutation } from '../../../redux/api/program.service';
+import { useLDispatch } from '../../../redux/hooks';
+import { addNewPill } from '../../../redux/slices/program.slice';
+import { ConvertTypeResponse } from '../../../redux/api/types/program.types';
+import { nanoid } from '@reduxjs/toolkit';
+import { errorToast } from '../../../components/Toasts';
 
 interface CreatePillModalProps extends ModalProps {
   openModal?: boolean;
 }
 
 const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
+  const [convertQuery, { data, isLoading, error: convertError }] = useConvertToLerniPillMutation();
   const [inputValues, setInputValues] = useState<{
     name: string;
     instructor: string;
     description: string;
-    studentMessage: string;
     file: any;
   }>({
     name: '',
     instructor: '',
     description: '',
-    studentMessage: '',
     file: null,
   });
   const [errors, setErrors] = useState({
     name: false,
     instructor: false,
     description: false,
-    studentMessage: false,
     file: false,
   });
+  const dispatch = useLDispatch();
 
   const isConfirmButtonDisabled =
     errors.name ||
     errors.instructor ||
     errors.description ||
-    errors.studentMessage ||
     errors.file ||
     !inputValues.name ||
     !inputValues.description ||
     !inputValues.instructor ||
-    !inputValues.studentMessage ||
     !inputValues.file;
 
   const handleChange = (att: keyof typeof inputValues, value: string) => {
@@ -61,6 +65,24 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
       file: value,
     }));
   };
+
+  const handleSavePill = async () => {
+    const JSON = await fileToJSONText(inputValues.file);
+    const response = (await convertQuery({ thread: JSON })) as { data: ConvertTypeResponse };
+    if (response?.data !== undefined) {
+      dispatch(
+        addNewPill({
+          id: nanoid(),
+          title: inputValues.name,
+          description: inputValues.description,
+          lerniPill: response.data?.pillBlock,
+        }),
+      );
+      handleOnClose();
+    }
+  };
+
+  if (convertError) errorToast('Algo salió mal, revisa el formato del JSON');
 
   const cardHeader = () => (
     <StyledRow
@@ -97,7 +119,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
         zIndex: 30,
       }}
     >
-      <StyledColumn css={{ height: '530px', width: '100%', gap: '16px' }}>
+      <StyledColumn css={{ height: '400px', width: '100%', gap: '16px' }}>
         <StyledRow
           css={{
             width: '100%',
@@ -112,6 +134,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
             onChange={(value) => handleChange('name', value)}
             error={errors.name}
             required
+            disabled={isLoading}
           />
           <TextInput
             placeholder="Nombre del instructor"
@@ -119,6 +142,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
             value={inputValues.instructor}
             onChange={(value) => handleChange('instructor', value)}
             error={errors.instructor}
+            disabled={isLoading}
             required
           />
         </StyledRow>
@@ -130,16 +154,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           error={errors.description}
           css={{ height: '100px' }}
           multiline
-          required
-        />
-        <TextInput
-          placeholder="Mensaje del profesor para los alumnos"
-          title="Mensaje para el alumno"
-          value={inputValues.studentMessage}
-          onChange={(value) => handleChange('studentMessage', value)}
-          error={errors.studentMessage}
-          css={{ height: '80px' }}
-          multiline
+          disabled={isLoading}
           required
         />
         <FileUpload
@@ -161,6 +176,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           <Button
             variant={ComponentVariantType.GHOST}
             onClick={handleOnClose}
+            disabled={isLoading}
             css={{
               paddingLeft: '50px',
               paddingRight: '50px',
@@ -170,8 +186,8 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           </Button>
           <Button
             variant={ComponentVariantType.PRIMARY}
-            onClick={() => alert(JSON.stringify(inputValues, null, 3))}
-            disabled={isConfirmButtonDisabled}
+            onClick={handleSavePill}
+            disabled={isConfirmButtonDisabled || isLoading}
             css={{
               paddingLeft: '50px',
               paddingRight: '50px',
