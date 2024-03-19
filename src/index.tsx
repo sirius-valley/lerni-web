@@ -9,6 +9,8 @@ import { theme } from './utils/theme';
 import Router from './router/Router';
 import './index.css';
 import 'react-tooltip/dist/react-tooltip.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProviderTree = buildProviderTree([
   [Provider, { store }],
@@ -23,5 +25,6 @@ root.render(
     <ProviderTree>
       <Router />
     </ProviderTree>
+    <ToastContainer limit={1} />
   </React.StrictMode>,
 );
