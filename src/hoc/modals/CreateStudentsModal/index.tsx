@@ -33,15 +33,20 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
   const theme = useTheme();
 
   const handleInputFileChange = (value: any) => {
-    if (value?.type === 'application/csv' || value?.type === 'application/xlsx') setErrors(false);
-    else setErrors(true);
+    if (
+      value?.type === 'text/csv' ||
+      value?.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ) {
+      setErrors(false);
+    } else {
+      setErrors(true);
+    }
     setInputValues({
       file: value,
     });
   };
 
   const handleSavePill = async () => {
-    const JSON = await fileToJSONText(inputValues.file);
     const response = (await convertQuery({ thread: JSON })) as { data: ConvertTypeResponse };
     if (response?.data !== undefined) {
       dispatch(
@@ -108,7 +113,7 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
           value={inputValues.file}
           onChange={(value) => handleInputFileChange(value)}
           error={errors}
-          fileExtensionAllowed=".json"
+          fileExtensionAllowed="/\.(csv|xlsx)$/"
         />
         <StyledRow
           css={{
