@@ -102,7 +102,7 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
             fontFamily: 'Roboto-Bold',
           }}
         >
-          Subir Json
+          Subir CSV o XLSX
         </StyledText>
         <FileUpload
           value={inputValues.file}
