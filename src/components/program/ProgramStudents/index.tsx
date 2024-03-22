@@ -6,6 +6,8 @@ import React from 'react';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { ComponentVariantType } from '../../../utils/constants';
 import { StudentsTable } from './Table';
+import { useLDispatch } from '../../../redux/hooks';
+import { setModalOpen } from '../../../redux/slices/utils.slice';
 
 interface ProgramStudentsProps {
   hasPills: boolean;
@@ -38,6 +40,11 @@ const mockedStudents = [
 
 export const ProgramStudents = ({ hasPills = true }: ProgramStudentsProps) => {
   const theme = useTheme();
+  const dispatch = useLDispatch();
+
+  const handleShowModal = () => {
+    dispatch(setModalOpen({ modalType: 'STUDENTS_CREATE' }));
+  };
 
   const StudentsHeader = (
     <StyledRow
@@ -54,7 +61,7 @@ export const ProgramStudents = ({ hasPills = true }: ProgramStudentsProps) => {
       <StyledBox style={{ marginBottom: '6px' }}>
         <Button
           variant={ComponentVariantType.PRIMARY}
-          onClick={() => console.log('open modal')}
+          onClick={handleShowModal}
           labelSize={ButtonLabelSize.BODY3}
           css={{
             width: 'auto',

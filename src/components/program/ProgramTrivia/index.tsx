@@ -8,6 +8,8 @@ import { TriviaIcon } from '../../../assets/icons/TriviaIcon';
 import { ComponentVariantType } from '../../../utils/constants';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { RemoveIcon } from '../../../assets/icons/RemoveIcon';
+import { useLDispatch } from '../../../redux/hooks';
+import { setModalOpen } from '../../../redux/slices/utils.slice';
 
 interface ProgramTriviaProps {
   hasPills: boolean;
@@ -17,6 +19,10 @@ interface ProgramTriviaProps {
 export const ProgramTrivia = ({ hasPills = true, hasTrivia }: ProgramTriviaProps) => {
   const theme = useTheme();
 
+  const dispatch = useLDispatch();
+  const handleShowModal = () => {
+    dispatch(setModalOpen({ modalType: 'TRIVIA_CREATE' }));
+  };
   const TriviaHeader = (
     <StyledRow
       style={{
@@ -32,7 +38,7 @@ export const ProgramTrivia = ({ hasPills = true, hasTrivia }: ProgramTriviaProps
       <StyledBox style={{ marginBottom: '6px' }}>
         <Button
           variant={ComponentVariantType.PRIMARY}
-          onClick={() => console.log('open modal')}
+          onClick={handleShowModal}
           labelSize={ButtonLabelSize.BODY3}
           disabled={!hasTrivia && hasPills ? false : true}
           css={{

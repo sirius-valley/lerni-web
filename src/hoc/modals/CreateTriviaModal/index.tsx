@@ -3,7 +3,6 @@ import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../compone
 import { ModalProps } from '../interfaces';
 import Card from '../../../components/Card';
 import CloseIcon from '../../../assets/icons/CloseIcon';
-import { TextInput } from '../../../components/styled/TextInput';
 import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
@@ -14,63 +13,38 @@ import { addNewPill } from '../../../redux/slices/program.slice';
 import { ConvertTypeResponse } from '../../../redux/api/types/program.types';
 import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
+import { useTheme } from 'styled-components';
 
-interface CreatePillModalProps extends ModalProps {
+interface CreateTriviaModalProps extends ModalProps {
   openModal?: boolean;
 }
 
-const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
+const CreateTriviaModal = ({ handleOnClose }: CreateTriviaModalProps) => {
   const [convertQuery, { data, isLoading, error: convertError, isSuccess }] =
     useConvertToLerniPillMutation();
   const [inputValues, setInputValues] = useState<{
-    name: string;
-    instructor: string;
-    description: string;
     file: any;
   }>({
-    name: '',
-    instructor: '',
-    description: '',
     file: null,
   });
-  const [errors, setErrors] = useState({
-    name: false,
-    instructor: false,
-    description: false,
-    file: false,
-  });
+  const [errors, setErrors] = useState(false);
+
   const dispatch = useLDispatch();
+  const theme = useTheme();
+
   useEffect(() => {
-    if (convertError) errorToast('Algo salió mal, revisa el formato del csv/xlsx');
+    if (convertError) errorToast('Algo salió mal, revisa el formato del JSON');
   }, [convertError]);
   useEffect(() => {
-    if (isSuccess) successToast('El archivo csv/xlsx se ha cargado con exito!');
+    if (isSuccess) successToast('El archivo JSON se ha cargado con exito!');
   }, [isSuccess]);
 
-  const isConfirmButtonDisabled =
-    errors.name ||
-    errors.instructor ||
-    errors.description ||
-    errors.file ||
-    !inputValues.name ||
-    !inputValues.description ||
-    !inputValues.instructor ||
-    !inputValues.file;
-
-  const handleChange = (att: keyof typeof inputValues, value: string) => {
-    setInputValues((prev) => ({
-      ...prev,
-      [att]: value,
-    }));
-  };
-
   const handleInputFileChange = (value: any) => {
-    if (value?.type !== 'application/json') setErrors((prev) => ({ ...prev, file: true }));
-    else setErrors((prev) => ({ ...prev, file: false }));
-    setInputValues((prev) => ({
-      ...prev,
+    if (value?.type !== 'application/json') setErrors(true);
+    else setErrors(false);
+    setInputValues({
       file: value,
-    }));
+    });
   };
 
   const handleSavePill = async () => {
@@ -80,8 +54,6 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
       dispatch(
         addNewPill({
           id: nanoid(),
-          title: inputValues.name,
-          description: inputValues.description,
           lerniPill: response.data?.pillBlock,
         }),
       );
@@ -99,10 +71,10 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     >
       <StyledColumn css={{ marginTop: '8px', gap: '12px' }}>
         <StyledText variant="h1" css={{ fontFamily: 'Roboto-Bold' }}>
-          Cargar píldora
+          Cargar Trivia
         </StyledText>
         <StyledText variant="body2">
-          En esta sección se deberá cargar la píldora del programa
+          En esta sección se deberá cargar la trivia del programa
         </StyledText>
       </StyledColumn>
       <StyledBox onClick={() => handleOnClose()} css={{ padding: 8, cursor: 'pointer' }}>
@@ -115,7 +87,6 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     <Card
       headerComponent={cardHeader()}
       onClick={(event) => {
-        // this prevents the card to intefere with the onClose modal functionality
         event.stopPropagation();
       }}
       css={{
@@ -124,55 +95,28 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
         zIndex: 30,
       }}
     >
-      <StyledColumn css={{ height: '400px', width: '100%', gap: '16px' }}>
-        <StyledRow
-          css={{
+      <StyledColumn css={{ width: '100%' }}>
+        <StyledText
+          variant="body2"
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
             width: '100%',
-            justifyContent: 'space-between',
-            gap: '16px',
+            color: theme.gray600,
+            fontFamily: 'Roboto-Bold',
           }}
         >
-          <TextInput
-            placeholder="Nombre de la píldora"
-            title="Nombre"
-            value={inputValues.name}
-            onChange={(value) => handleChange('name', value)}
-            error={errors.name}
-            required
-            disabled={isLoading}
-          />
-          <TextInput
-            placeholder="Nombre del instructor"
-            title="Instructor"
-            value={inputValues.instructor}
-            onChange={(value) => handleChange('instructor', value)}
-            error={errors.instructor}
-            disabled={isLoading}
-            required
-          />
-        </StyledRow>
-        <TextInput
-          placeholder="Descripción de la píldora"
-          title="Descripción"
-          value={inputValues.description}
-          onChange={(value) => handleChange('description', value)}
-          error={errors.description}
-          css={{ height: '100px' }}
-          multiline
-          disabled={isLoading}
-          required
-        />
+          Subir Json
+        </StyledText>
         <FileUpload
-          title="Cargar JSON"
           value={inputValues.file}
           onChange={(value) => handleInputFileChange(value)}
-          error={errors.file}
+          error={errors}
           fileExtensionAllowed=".json"
-          required
         />
         <StyledRow
           css={{
-            marginTop: '16px',
+            marginTop: '24px',
             width: '100%',
             gap: '16px',
             justifyContent: 'flex-end',
@@ -192,7 +136,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={handleSavePill}
-            disabled={isConfirmButtonDisabled || isLoading}
+            disabled={errors || isLoading}
             css={{
               paddingLeft: '50px',
               paddingRight: '50px',
@@ -206,4 +150,4 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
   );
 };
 
-export default CreatePillModal;
+export default CreateTriviaModal;

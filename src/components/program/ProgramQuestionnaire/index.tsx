@@ -8,6 +8,8 @@ import { ShowIcon } from '../../../assets/icons/ShowIcon';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { ComponentVariantType } from '../../../utils/constants';
 import { RemoveIcon } from '../../../assets/icons/RemoveIcon';
+import { useLDispatch } from '../../../redux/hooks';
+import { setModalOpen } from '../../../redux/slices/utils.slice';
 
 interface ProgramQuestionnaireProps {
   hasQuestionnaire: boolean;
@@ -19,6 +21,10 @@ export const ProgramQuestionnaire = ({
   hasPills = true,
 }: ProgramQuestionnaireProps) => {
   const theme = useTheme();
+  const dispatch = useLDispatch();
+  const handleShowModal = () => {
+    dispatch(setModalOpen({ modalType: 'QUESTIONNAIRE_CREATE' }));
+  };
 
   const QuestionnaireHeader = (
     <StyledRow
@@ -35,7 +41,7 @@ export const ProgramQuestionnaire = ({
       <StyledBox style={{ marginBottom: '6px' }}>
         <Button
           variant={ComponentVariantType.PRIMARY}
-          onClick={() => console.log('open modal')}
+          onClick={handleShowModal}
           labelSize={ButtonLabelSize.BODY3}
           disabled={!hasQuestionnaire && hasPills ? false : true}
           css={{
