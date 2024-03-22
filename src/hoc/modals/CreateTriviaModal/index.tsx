@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../components/styled/styles';
 import { ModalProps } from '../interfaces';
 import Card from '../../../components/Card';
@@ -32,6 +32,13 @@ const CreateTriviaModal = ({ handleOnClose }: CreateTriviaModalProps) => {
   const dispatch = useLDispatch();
   const theme = useTheme();
 
+  useEffect(() => {
+    if (convertError) errorToast('Algo salió mal, revisa el formato del JSON');
+  }, [convertError]);
+  useEffect(() => {
+    if (isSuccess) successToast('El archivo JSON se ha cargado con exito!');
+  }, [isSuccess]);
+
   const handleInputFileChange = (value: any) => {
     if (value?.type !== 'application/json') setErrors(true);
     else setErrors(false);
@@ -53,9 +60,6 @@ const CreateTriviaModal = ({ handleOnClose }: CreateTriviaModalProps) => {
       handleOnClose();
     }
   };
-
-  if (convertError) errorToast('Algo salió mal, revisa el formato del JSON');
-  if (isSuccess) successToast('El archivo Json se ha cargado con exito!');
 
   const cardHeader = () => (
     <StyledRow

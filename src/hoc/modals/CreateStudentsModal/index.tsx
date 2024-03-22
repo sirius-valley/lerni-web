@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../components/styled/styles';
 import { ModalProps } from '../interfaces';
 import Card from '../../../components/Card';
@@ -32,6 +32,13 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
   const dispatch = useLDispatch();
   const theme = useTheme();
 
+  useEffect(() => {
+    if (convertError) errorToast('Algo salió mal, revisa el formato del JSON');
+  }, [convertError]);
+  useEffect(() => {
+    if (isSuccess) successToast('El archivo JSON se ha cargado con exito!');
+  }, [isSuccess]);
+
   const handleInputFileChange = (value: any) => {
     if (
       value?.type === 'text/csv' ||
@@ -58,9 +65,6 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
       handleOnClose();
     }
   };
-
-  if (convertError) errorToast('Algo salió mal, revisa el formato del csv/xlsx');
-  if (isSuccess) successToast('El archivo csv/xlsx se ha cargado con exito!');
 
   const cardHeader = () => (
     <StyledRow
@@ -113,7 +117,7 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
           value={inputValues.file}
           onChange={(value) => handleInputFileChange(value)}
           error={errors}
-          fileExtensionAllowed="/\.(csv|xlsx)$/"
+          fileExtensionAllowed=".csv, .xlsx"
         />
         <StyledRow
           css={{

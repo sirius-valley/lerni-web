@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../components/styled/styles';
 import { ModalProps } from '../interfaces';
 import Card from '../../../components/Card';
@@ -13,14 +13,15 @@ import { useLDispatch } from '../../../redux/hooks';
 import { addNewPill } from '../../../redux/slices/program.slice';
 import { ConvertTypeResponse } from '../../../redux/api/types/program.types';
 import { nanoid } from '@reduxjs/toolkit';
-import { errorToast } from '../../../components/Toasts';
+import { errorToast, successToast } from '../../../components/Toasts';
 
 interface CreatePillModalProps extends ModalProps {
   openModal?: boolean;
 }
 
 const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
-  const [convertQuery, { data, isLoading, error: convertError }] = useConvertToLerniPillMutation();
+  const [convertQuery, { data, isLoading, error: convertError, isSuccess }] =
+    useConvertToLerniPillMutation();
   const [inputValues, setInputValues] = useState<{
     name: string;
     instructor: string;
@@ -39,6 +40,12 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     file: false,
   });
   const dispatch = useLDispatch();
+  useEffect(() => {
+    if (convertError) errorToast('Algo salió mal, revisa el formato del csv/xlsx');
+  }, [convertError]);
+  useEffect(() => {
+    if (isSuccess) successToast('El archivo csv/xlsx se ha cargado con exito!');
+  }, [isSuccess]);
 
   const isConfirmButtonDisabled =
     errors.name ||
@@ -81,8 +88,6 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
       handleOnClose();
     }
   };
-
-  if (convertError) errorToast('Algo salió mal, revisa el formato del JSON');
 
   const cardHeader = () => (
     <StyledRow
