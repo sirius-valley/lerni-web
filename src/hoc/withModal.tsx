@@ -6,6 +6,7 @@ import { BlurView } from './modals/styles';
 import CreateQuestionnaireModal from './modals/CreateQuestionnaireModal';
 import CreateTriviaModal from './modals/CreateTriviaModal';
 import CreateStudentsModal from './modals/CreateStudentsModal';
+import CreateProfessorModal from './modals/CreateProfessorModal';
 
 export const withModal = (Component: FunctionComponent) => (props: any) => {
   const type = useLSelector((state) => state.utils.modalType);
@@ -26,6 +27,8 @@ export const withModal = (Component: FunctionComponent) => (props: any) => {
         return <CreateTriviaModal handleOnClose={handleOnClose} />;
       case 'STUDENTS_CREATE':
         return <CreateStudentsModal handleOnClose={handleOnClose} />;
+      case 'PROFESSOR_CREATE':
+        return <CreateProfessorModal handleOnClose={handleOnClose} />;
       default:
         <></>;
     }
