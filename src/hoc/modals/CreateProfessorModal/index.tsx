@@ -131,7 +131,7 @@ const CreateProfessorModal = ({ handleOnClose }: CreateProfessorModalProps) => {
           required
         />
         <TextInput
-          placeholder="Descripción de la píldora"
+          placeholder="Descripción del profesor"
           title="Descripción"
           value={inputValues.description}
           onChange={(value) => handleChange('description', value)}
