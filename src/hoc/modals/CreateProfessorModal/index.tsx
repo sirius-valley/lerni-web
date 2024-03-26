@@ -8,6 +8,7 @@ import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import { useCreateProfessorMutation } from '../../../redux/api/professor.service';
 import { errorToast, successToast } from '../../../components/Toasts';
+import { useTheme } from 'styled-components';
 
 interface CreateProfessorModalProps extends ModalProps {
   openModal?: boolean;
@@ -16,6 +17,8 @@ interface CreateProfessorModalProps extends ModalProps {
 const CreateProfessorModal = ({ handleOnClose }: CreateProfessorModalProps) => {
   const [createProfessor, { data: isLoading, error: createError, isSuccess }] =
     useCreateProfessorMutation();
+
+  const theme = useTheme();
 
   const [inputValues, setInputValues] = useState<{
     name: string;
@@ -136,7 +139,8 @@ const CreateProfessorModal = ({ handleOnClose }: CreateProfessorModalProps) => {
           disabled={isLoading}
           required
         />
-        <StyledRow css={{ gap: '12px' }}>
+
+        <StyledRow css={{ gap: '12px', height: '70px' }}>
           {inputValues.image ? (
             <img
               src={inputValues.image}
@@ -144,22 +148,29 @@ const CreateProfessorModal = ({ handleOnClose }: CreateProfessorModalProps) => {
                 height: '70px',
                 width: '70px',
                 borderRadius: '8px',
-                objectFit: 'contain',
+                objectFit: 'cover',
               }}
             />
           ) : (
             <StyledBox
-              css={{ height: '70px', width: '70px', borderRadius: '8px', background: '#D9D9D9' }}
+              css={{
+                height: '70px',
+                width: '70px',
+                borderRadius: '8px',
+                background: theme.gray300,
+              }}
             />
           )}
-          <TextInput
-            placeholder="Link de la foto"
-            title="Link de imagen"
-            value={inputValues.image}
-            onChange={(value) => handleChange('image', value)}
-            disabled={isLoading}
-            required
-          />
+          <StyledRow css={{ width: '440px' }}>
+            <TextInput
+              placeholder="Link de la foto"
+              title="Link de imagen"
+              value={inputValues.image}
+              onChange={(value) => handleChange('image', value)}
+              disabled={isLoading}
+              required
+            />
+          </StyledRow>
         </StyledRow>
         <StyledRow
           css={{
