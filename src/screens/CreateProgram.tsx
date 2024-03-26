@@ -8,10 +8,16 @@ import { ProgramTrivia } from '../components/program/ProgramTrivia';
 import { ProgramStudents } from '../components/program/ProgramStudents';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
+import { useLDispatch } from '../redux/hooks';
+import { setModalOpen } from '../redux/slices/utils.slice';
 
 const CreateProgram = () => {
   const theme = useTheme();
+  const dispatch = useLDispatch();
 
+  const createProfessor = () => {
+    dispatch(setModalOpen({ modalType: 'PROFESSOR_CREATE' }));
+  };
   return (
     <StyledBox css={{ height: '100%' }}>
       <StyledRow
@@ -47,6 +53,21 @@ const CreateProgram = () => {
           <ProgramQuestionnaire hasPills hasQuestionnaire={true} />
           <ProgramTrivia hasPills hasTrivia={false} />
           <ProgramStudents hasPills />
+          <Button
+            variant={ComponentVariantType.PRIMARY}
+            onClick={createProfessor}
+            labelSize={'body3'}
+            css={{
+              marginTop: '8px',
+              width: 'auto',
+              height: '30px',
+              padding: '8px 16px 8px 16px',
+              fontFamily: 'Roboto-Bold',
+              cursor: 'pointer',
+            }}
+          >
+            Crear profesor
+          </Button>
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={() => alert('To be defined')}

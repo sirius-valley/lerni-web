@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../components/styled/styles';
 import { ModalProps } from '../interfaces';
 import Card from '../../../components/Card';
@@ -6,16 +6,17 @@ import CloseIcon from '../../../assets/icons/CloseIcon';
 import { TextInput } from '../../../components/styled/TextInput';
 import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
-import { useConvertToLerniPillMutation } from '../../../redux/api/program.service';
-import { useLDispatch } from '../../../redux/hooks';
+import { useCreateProfessorMutation } from '../../../redux/api/professor.service';
+import { errorToast, successToast } from '../../../components/Toasts';
 
 interface CreateProfessorModalProps extends ModalProps {
   openModal?: boolean;
 }
 
 const CreateProfessorModal = ({ handleOnClose }: CreateProfessorModalProps) => {
-  const [convertQuery, { data, isLoading, error: convertError, isSuccess }] =
-    useConvertToLerniPillMutation();
+  const [createProfessor, { data: isLoading, error: createError, isSuccess }] =
+    useCreateProfessorMutation();
+
   const [inputValues, setInputValues] = useState<{
     name: string;
     lastname: string;
@@ -30,8 +31,6 @@ const CreateProfessorModal = ({ handleOnClose }: CreateProfessorModalProps) => {
     image: null,
   });
 
-  const dispatch = useLDispatch();
-
   const isConfirmButtonDisabled =
     !inputValues.name ||
     !inputValues.lastname ||
@@ -45,6 +44,20 @@ const CreateProfessorModal = ({ handleOnClose }: CreateProfessorModalProps) => {
       [att]: value,
     }));
   };
+
+  const handleCreateProfessor = () => {
+    createProfessor(inputValues);
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      successToast('El profesor se ha creado con exito!');
+      handleOnClose();
+    }
+  }, [isSuccess]);
+  useEffect(() => {
+    if (createError) errorToast('Algo salió mal, revisa los campos nuevamente');
+  }, [createError]);
 
   const cardHeader = () => (
     <StyledRow
@@ -106,7 +119,7 @@ const CreateProfessorModal = ({ handleOnClose }: CreateProfessorModalProps) => {
           />
         </StyledRow>
         <TextInput
-          placeholder="Profesión del docente"
+          placeholder="Profesión del profesor"
           title="Profesión"
           value={inputValues.profession}
           onChange={(value) => handleChange('profession', value)}
@@ -168,9 +181,7 @@ const CreateProfessorModal = ({ handleOnClose }: CreateProfessorModalProps) => {
           </Button>
           <Button
             variant={ComponentVariantType.PRIMARY}
-            onClick={() => {
-              console.log(inputValues);
-            }}
+            onClick={handleCreateProfessor}
             disabled={isConfirmButtonDisabled || isLoading}
             css={{
               paddingLeft: '50px',
