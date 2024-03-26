@@ -8,8 +8,6 @@ import { ProgramTrivia } from '../components/program/ProgramTrivia';
 import { ProgramStudents } from '../components/program/ProgramStudents';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
-import { useLDispatch } from '../redux/hooks';
-import { setModalOpen } from '../redux/slices/utils.slice';
 
 const CreateProgram = () => {
   const theme = useTheme();
