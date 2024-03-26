@@ -47,7 +47,6 @@ const CreateProgram = () => {
           <ProgramQuestionnaire hasPills hasQuestionnaire={true} />
           <ProgramTrivia hasPills hasTrivia={false} />
           <ProgramStudents hasPills />
-
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={() => alert('To be defined')}
