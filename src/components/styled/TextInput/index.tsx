@@ -106,7 +106,7 @@ export const TextInput = ({
             type={showPassword ? 'text' : 'password'}
             disabled={disabled}
             placeholder={placeholder}
-            maxLength={400}
+            maxLength={maxLength}
           />
         )}
         <StyledRow

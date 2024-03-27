@@ -1,7 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface initialStateUtilsType {
-  modalType?: 'PILL_CREATE' | 'QUESTIONNAIRE_CREATE' | 'TRIVIA_CREATE' | 'STUDENTS_CREATE';
+  modalType?:
+    | 'PILL_CREATE'
+    | 'QUESTIONNAIRE_CREATE'
+    | 'TRIVIA_CREATE'
+    | 'STUDENTS_CREATE'
+    | 'PROFESSOR_CREATE';
 }
 
 const initialState: initialStateUtilsType = {
