@@ -1,103 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTheme } from 'styled-components';
 import CloseIcon from '../../../assets/icons/CloseIcon';
 import Card from '../../../components/Card';
 import Button from '../../../components/styled/Button';
-import {
-  StyledBox,
-  StyledColumn,
-  StyledImage,
-  StyledRow,
-  StyledText,
-} from '../../../components/styled/styles';
-import { useLDispatch } from '../../../redux/hooks';
-import { useConvertToLerniPillMutation } from '../../../redux/service/program.service';
+import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../components/styled/styles';
 import { ComponentVariantType } from '../../../utils/constants';
 import { ModalProps } from '../interfaces';
-import { removeHtmlTags } from '../../../utils/utils';
-import EllipseIcon from '../../../assets/icons/EllipseIcon';
-import { SquaredIcon } from '../../../assets/icons/SquaredIcon';
+import { ElementTypeRender } from './ElementTypeRender';
 import { mockedPill } from './mocked';
-
-interface BubbleProps {
-  type: string;
-  id: string;
-  metadata?: {
-    metadata?: { lerni_question_type: string };
-    options?: string[];
-  };
-  name: string;
-  question_type?: string;
-}
-
-const RenderBubble = ({ type, id, metadata, name, question_type }: BubbleProps) => {
-  if (type === 'ACTION') {
-    if (!metadata) {
-      return (
-        <StyledColumn css={{ justifyContent: 'center', alignItems: 'left', gap: '4px' }}>
-          <StyledText variant="body3" color="primary500" css={{ fontFamily: 'Roboto-Bold' }}>
-            {'Text'}
-          </StyledText>
-          <StyledText variant="body2" color="gray950">
-            {removeHtmlTags(name)}
-          </StyledText>
-        </StyledColumn>
-      );
-    } else if (metadata && metadata.metadata && metadata.metadata.lerni_question_type === 'image') {
-      return (
-        <StyledColumn css={{ justifyContent: 'center', alignItems: 'left', gap: '4px' }}>
-          <StyledText variant="body3" color="primary500" css={{ fontFamily: 'Roboto-Bold' }}>
-            {'Imagen'}
-          </StyledText>
-          <StyledImage src={name} css={{ borderRadius: '8px' }} width={150} height={150} />
-        </StyledColumn>
-      );
-    } else return null;
-  } else if (question_type === 'SINGLECHOICE') {
-    console.log('question');
-    return (
-      <StyledColumn css={{ justifyContent: 'left', alignItems: 'left', gap: '4px' }}>
-        <StyledText variant="body3" css={{ fontFamily: 'Roboto-Bold', color: '#C642A9' }}>
-          {'Single Choice'}
-        </StyledText>
-        {metadata?.options?.map((option: any, idx: number) => (
-          <StyledRow css={{ gap: '4px', alignItems: 'left' }} key={idx}>
-            <EllipseIcon />
-            <StyledText variant="body2" color="gray950">
-              {option}
-            </StyledText>
-          </StyledRow>
-        ))}
-      </StyledColumn>
-    );
-  } else if (question_type === 'MULTIPLECHOICE') {
-    return (
-      <StyledColumn css={{ justifyContent: 'left', alignItems: 'left', gap: '4px' }}>
-        <StyledText variant="body3" css={{ fontFamily: 'Roboto-Bold', color: '#C642A9' }}>
-          {'Multiple Choice'}
-        </StyledText>
-        {metadata?.options?.map((option: any, idx: number) => (
-          <StyledRow css={{ gap: '4px', alignItems: 'left' }} key={idx}>
-            <SquaredIcon />
-            <StyledText variant="body2" color="gray950">
-              {option}
-            </StyledText>
-          </StyledRow>
-        ))}
-      </StyledColumn>
-    );
-  } else {
-    return null;
-  }
-};
 
 interface CreateQuestionnaireModalProps extends ModalProps {
   openModal?: boolean;
 }
 
 const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
-  const [errors, setErrors] = useState(false);
-  const dispatch = useLDispatch();
   const theme = useTheme();
 
   const cardHeader = () => (
@@ -151,7 +67,7 @@ const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
           {mockedPill &&
             mockedPill.elements &&
             mockedPill.elements.map((bubble, idx) => (
-              <RenderBubble
+              <ElementTypeRender
                 key={idx}
                 type={bubble.type}
                 id={bubble.id}

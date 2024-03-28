@@ -61,12 +61,12 @@ export const mockedPill = {
       id: '130a719d-6a5f-4602-8b28-e700d9fa686c',
       type: 'QUESTION',
       name: '',
-      question_type: 'SINGLECHOICE',
+      question_type: 'MULTIPLECHOICE',
       metadata: {
         metadata: {
-          lerni_question_type: 'single-choice',
+          lerni_question_type: 'multiple-choice',
         },
-        options: ['Es un montón! 🤯'],
+        options: ['Es un montón! 🤯', 'Es un montón! 🤯', 'Es un montón! 🤯', 'Es un montón! 🤯'],
       },
     },
     {
