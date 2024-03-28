@@ -8,10 +8,10 @@ import { TextInput } from '../components/styled/TextInput';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
 import PasswordValidationDisplay from '../components/register/PasswordValidationDisplay';
-import { useRegisterMutation } from '../redux/api/auth.service';
+import { useRegisterMutation } from '../redux/service/auth.service';
 import BackArrow from '../assets/icons/BackArrow';
 import { useNavigate } from 'react-router-dom';
-import { CustomError } from '../redux/api/api';
+import { CustomError } from '../redux/service/api';
 
 const SigninSchema = Yup.object().shape({
   email: Yup.string()

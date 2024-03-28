@@ -6,7 +6,7 @@ import CloseIcon from '../../../assets/icons/CloseIcon';
 import { TextInput } from '../../../components/styled/TextInput';
 import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
-import { useCreateProfessorMutation } from '../../../redux/api/professor.service';
+import { useCreateProfessorMutation } from '../../../redux/service/professor.service';
 import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
 

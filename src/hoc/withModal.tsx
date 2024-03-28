@@ -7,6 +7,7 @@ import CreateQuestionnaireModal from './modals/CreateQuestionnaireModal';
 import CreateTriviaModal from './modals/CreateTriviaModal';
 import CreateStudentsModal from './modals/CreateStudentsModal';
 import CreateProfessorModal from './modals/CreateProfessorModal';
+import ReadPillModal from './modals/ReadPillModal';
 
 export const withModal = (Component: FunctionComponent) => (props: any) => {
   const type = useLSelector((state) => state.utils.modalType);
@@ -21,6 +22,8 @@ export const withModal = (Component: FunctionComponent) => (props: any) => {
     switch (type) {
       case 'PILL_CREATE':
         return <CreatePillModal handleOnClose={handleOnClose} />;
+      case 'PILL_READ':
+        return <ReadPillModal handleOnClose={handleOnClose} />;
       case 'QUESTIONNAIRE_CREATE':
         return <CreateQuestionnaireModal handleOnClose={handleOnClose} />;
       case 'TRIVIA_CREATE':

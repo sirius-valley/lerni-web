@@ -41,6 +41,10 @@ export interface IconInterface {
   size?: number;
 }
 
+export const removeHtmlTags = (inputString: string) => {
+  return inputString.replace(/<.*?>/g, '');
+};
+
 export const fileToJSONText = (file: File) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

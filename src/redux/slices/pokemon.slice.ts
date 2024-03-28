@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { pokemonApi } from '../api/pokemon.service';
-import { PokemonResponse } from '../api/types/pokemon.types';
+import { pokemonApi } from '../service/pokemon.service';
+import { PokemonResponse } from '../service/types/pokemon.types';
 
 type initialStateHomeType = {
   pokemon: any;
