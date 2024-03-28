@@ -17,11 +17,15 @@ interface Professor {
 }
 
 const ProfessorList = () => {
-  const { data: professors, isLoading } = useGetProfessorsQuery();
+  const { data, isLoading } = useGetProfessorsQuery();
 
   const handleAddNewProfessor = () => {
     console.log('h');
   };
+
+  const professors = data.result;
+  const noProfessors = professors.result.length == 0;
+
   return (
     <StyledColumn
       css={{
@@ -49,13 +53,13 @@ const ProfessorList = () => {
         <StyledRow css={{ height: '242px', justifyContent: 'center', alignItems: 'center' }}>
           <Spinner />
         </StyledRow>
-      ) : professors.result.length == 0 ? (
+      ) : noProfessors ? (
         <StyledRow css={{ height: '242px', justifyContent: 'center', alignItems: 'center' }}>
           <StyledText>No hay profesores</StyledText>
         </StyledRow>
       ) : (
         <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
-          {professors.result.map(({ name, lastname, image }: Professor, index: number) => (
+          {professors.map(({ name, lastname, image }: Professor, index: number) => (
             <ProfessorItem
               key={'professor-' + index}
               id={''}
