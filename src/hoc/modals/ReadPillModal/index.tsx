@@ -3,95 +3,91 @@ import { useTheme } from 'styled-components';
 import CloseIcon from '../../../assets/icons/CloseIcon';
 import Card from '../../../components/Card';
 import Button from '../../../components/styled/Button';
-import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../components/styled/styles';
+import {
+  StyledBox,
+  StyledColumn,
+  StyledImage,
+  StyledRow,
+  StyledText,
+} from '../../../components/styled/styles';
 import { useLDispatch } from '../../../redux/hooks';
 import { useConvertToLerniPillMutation } from '../../../redux/service/program.service';
 import { ComponentVariantType } from '../../../utils/constants';
 import { ModalProps } from '../interfaces';
 import { removeHtmlTags } from '../../../utils/utils';
 import EllipseIcon from '../../../assets/icons/EllipseIcon';
-
-enum bubbleType {
-  ACTION = 'ACTION',
-  QUESTION = 'QUESTION',
-}
-enum metadataType {
-  SINGLECHOICE = 'SINGLE_CHOICE',
-  MULTIPLECHOICE = 'MULTIPLE_CHOICE',
-  IMAGE = 'IMAGE',
-  FREETEXT = 'FREE_TEXT',
-}
-
-const bubbles = [
-  {
-    type: bubbleType.ACTION,
-    id: '1',
-    content: 'Hola, ¿como estas?',
-  },
-  {
-    type: bubbleType.QUESTION,
-    id: '2',
-    metadata: {
-      type: metadataType.SINGLECHOICE,
-    },
-    content: [
-      {
-        id: '1',
-        content: 'Muy bien',
-      },
-      {
-        id: '2',
-        content: 'Acá andamos',
-      },
-    ],
-  },
-  {
-    type: bubbleType.ACTION,
-    id: '3',
-    content: 'Arranquemos con la clase entonces!',
-  },
-];
+import { SquaredIcon } from '../../../assets/icons/SquaredIcon';
+import { mockedPill } from './mocked';
 
 interface BubbleProps {
-  type: bubbleType;
+  type: string;
   id: string;
   metadata?: {
-    type: metadataType;
+    metadata?: { lerni_question_type: string };
+    options?: string[];
   };
-  content: any;
+  name: string;
+  question_type?: string;
 }
 
-const RenderBubble = ({ type, id, metadata, content }: BubbleProps) => {
-  console.log(id, content);
-  if (type === bubbleType.ACTION) {
-    console.log('action');
-    return (
-      <StyledColumn css={{ justifyContent: 'center', alignItems: 'left', gap: '4px' }}>
-        <StyledText variant="body3" color="primary500" css={{ fontFamily: 'Roboto-Bold' }}>
-          {'Text'}
-        </StyledText>
-        <StyledText variant="body2" color="gray950">
-          {removeHtmlTags(content)}
-        </StyledText>
-      </StyledColumn>
-    );
-  } else if (metadata?.type === metadataType.SINGLECHOICE) {
+const RenderBubble = ({ type, id, metadata, name, question_type }: BubbleProps) => {
+  if (type === 'ACTION') {
+    if (!metadata) {
+      return (
+        <StyledColumn css={{ justifyContent: 'center', alignItems: 'left', gap: '4px' }}>
+          <StyledText variant="body3" color="primary500" css={{ fontFamily: 'Roboto-Bold' }}>
+            {'Text'}
+          </StyledText>
+          <StyledText variant="body2" color="gray950">
+            {removeHtmlTags(name)}
+          </StyledText>
+        </StyledColumn>
+      );
+    } else if (metadata && metadata.metadata && metadata.metadata.lerni_question_type === 'image') {
+      return (
+        <StyledColumn css={{ justifyContent: 'center', alignItems: 'left', gap: '4px' }}>
+          <StyledText variant="body3" color="primary500" css={{ fontFamily: 'Roboto-Bold' }}>
+            {'Imagen'}
+          </StyledText>
+          <StyledImage src={name} css={{ borderRadius: '8px' }} width={150} height={150} />
+        </StyledColumn>
+      );
+    } else return null;
+  } else if (question_type === 'SINGLECHOICE') {
     console.log('question');
     return (
       <StyledColumn css={{ justifyContent: 'left', alignItems: 'left', gap: '4px' }}>
         <StyledText variant="body3" css={{ fontFamily: 'Roboto-Bold', color: '#C642A9' }}>
           {'Single Choice'}
         </StyledText>
-        {content.map((option: any, idx: number) => (
+        {metadata?.options?.map((option: any, idx: number) => (
           <StyledRow css={{ gap: '4px', alignItems: 'left' }} key={idx}>
             <EllipseIcon />
             <StyledText variant="body2" color="gray950">
-              {option.content}
+              {option}
             </StyledText>
           </StyledRow>
         ))}
       </StyledColumn>
     );
+  } else if (question_type === 'MULTIPLECHOICE') {
+    return (
+      <StyledColumn css={{ justifyContent: 'left', alignItems: 'left', gap: '4px' }}>
+        <StyledText variant="body3" css={{ fontFamily: 'Roboto-Bold', color: '#C642A9' }}>
+          {'Multiple Choice'}
+        </StyledText>
+        {metadata?.options?.map((option: any, idx: number) => (
+          <StyledRow css={{ gap: '4px', alignItems: 'left' }} key={idx}>
+            <SquaredIcon />
+            <StyledText variant="body2" color="gray950">
+              {option}
+            </StyledText>
+          </StyledRow>
+        ))}
+      </StyledColumn>
+    );
+  } else {
+    return null;
   }
 };
 
@@ -100,31 +96,9 @@ interface CreateQuestionnaireModalProps extends ModalProps {
 }
 
 const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
-  const [convertQuery, { data, isLoading, error: convertError, isSuccess }] =
-    useConvertToLerniPillMutation();
-  const [inputValues, setInputValues] = useState<{
-    file: any;
-  }>({
-    file: null,
-  });
   const [errors, setErrors] = useState(false);
   const dispatch = useLDispatch();
   const theme = useTheme();
-
-  // useEffect(() => {
-  //   if (convertError) errorToast('Algo salió mal, revisa el formato del JSON');
-  // }, [convertError]);
-  // useEffect(() => {
-  //   if (isSuccess) successToast('El archivo JSON se ha cargado con exito!');
-  // }, [isSuccess]);
-
-  const handleInputFileChange = (value: any) => {
-    if (value?.type !== 'application/json') setErrors(true);
-    else setErrors(false);
-    setInputValues({
-      file: value,
-    });
-  };
 
   const cardHeader = () => (
     <StyledRow
@@ -155,14 +129,16 @@ const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
         event.stopPropagation();
       }}
       css={{
-        height: 'fit-content',
         width: '568px',
         zIndex: 30,
       }}
+      height={`${window.innerHeight * 0.7}px`}
     >
       <StyledColumn css={{ width: '100%' }}>
         <StyledColumn
           css={{
+            maxHeight: `${window.innerHeight * 0.5}px`,
+            overflow: 'auto',
             width: '100%',
             justifyContent: 'left',
             alignItems: 'left',
@@ -172,26 +148,18 @@ const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
             backgroundColor: theme.gray100,
           }}
         >
-          <StyledColumn
-            css={{
-              maxHeight: 600,
-              overflowY: 'auto',
-              gap: '24px',
-              justifyContent: 'center',
-              alignItems: 'left',
-            }}
-          >
-            {bubbles.map((bubble, idx) => (
+          {mockedPill &&
+            mockedPill.elements &&
+            mockedPill.elements.map((bubble, idx) => (
               <RenderBubble
                 key={idx}
                 type={bubble.type}
                 id={bubble.id}
-                content={bubble.content}
+                name={bubble.name}
                 metadata={bubble.metadata}
+                question_type={bubble.question_type}
               />
             ))}
-          </StyledColumn>
-          {/* Acá se debe renderizar cada pill */}
         </StyledColumn>
         <StyledRow
           css={{
@@ -204,7 +172,6 @@ const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
           <Button
             variant={ComponentVariantType.GHOST}
             onClick={handleOnClose}
-            disabled={isLoading}
             css={{
               paddingLeft: '50px',
               paddingRight: '50px',
