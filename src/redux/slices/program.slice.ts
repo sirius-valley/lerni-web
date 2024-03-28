@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { programApi } from '../api/program.service';
+import { programApi } from '../service/program.service';
 
 type Pill = {
   id: string;
