@@ -21,7 +21,9 @@ const CreateProgram = () => {
   const [createProgram, { isError, error, data, isSuccess }] = useCreateProgramMutation();
 
   const handleSave = () => {
-    createProgram(program);
+    const allFieldsFilled = Object.values(program).every((value) => value !== '');
+
+    if (!allFieldsFilled) createProgram(program);
   };
 
   useEffect(() => {
