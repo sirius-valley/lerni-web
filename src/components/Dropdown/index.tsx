@@ -28,6 +28,8 @@ export const Dropdown = ({
   content,
 }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [rowWidth, setRowWidth] = useState<number | null>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 
   const handleDropdownStatus = () => {
@@ -42,18 +44,15 @@ export const Dropdown = ({
     }
   };
 
-  const rowRef = useRef<HTMLDivElement>(null);
-  const [rowWidth, setRowWidth] = useState<number | null>(null);
+  const getMenuBackground = (index: number): string => {
+    return index % 2 === 0 ? theme.gray100 : theme.white;
+  };
 
   useEffect(() => {
     if (rowRef.current) {
       setRowWidth(rowRef.current.offsetWidth);
     }
   }, [isOpen]);
-
-  const getMenuBackground = (index: number): string => {
-    return index % 2 === 0 ? theme.gray100 : theme.white;
-  };
 
   return (
     <StyledColumn css={{ minWidth: '120px', gap: '8px' }}>
