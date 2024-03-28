@@ -9,7 +9,7 @@ import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
 import { fileToJSONText } from '../../../utils/utils';
 import { useConvertToLerniPillMutation } from '../../../redux/api/program.service';
-import { useLDispatch } from '../../../redux/hooks';
+import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { addNewPill } from '../../../redux/slices/program.slice';
 import { ConvertTypeResponse } from '../../../redux/api/types/program.types';
 import { nanoid } from '@reduxjs/toolkit';
@@ -44,7 +44,9 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     if (convertError) errorToast('Algo salió mal, revisa el formato del csv/xlsx');
   }, [convertError]);
   useEffect(() => {
-    if (isSuccess) successToast('El archivo csv/xlsx se ha cargado con exito!');
+    if (isSuccess) {
+      successToast('El archivo csv/xlsx se ha cargado con exito!');
+    }
   }, [isSuccess]);
 
   const isConfirmButtonDisabled =

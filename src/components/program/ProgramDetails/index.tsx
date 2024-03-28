@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Card from '../../Card';
 import { StyledColumn, StyledRow } from '../../styled/styles';
 import { TextInput } from '../../styled/TextInput';
+import { useLDispatch } from '../../../redux/hooks';
+import { updatePillInfo } from '../../../redux/slices/program.slice';
 
 const ProgramDetails = () => {
   const initialState = {
@@ -10,6 +12,7 @@ const ProgramDetails = () => {
     description: '',
   };
   const [program, setProgram] = useState(initialState);
+  const dispatch = useLDispatch();
 
   const handleChange = (name: string, value: string) => {
     setProgram((prevalue) => {
@@ -18,6 +21,7 @@ const ProgramDetails = () => {
         [name]: value,
       };
     });
+    dispatch(updatePillInfo(program));
   };
   const imageUrl =
     'https://digital55.com/wp-content/uploads/2022/01/%C2%BFQue%CC%81-cualidades-debe-tener-un-desarrollador-especialista-en-React.png';

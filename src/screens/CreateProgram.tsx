@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
 import { useTheme } from 'styled-components';
 import ProgramContent from '../components/program/ProgramContent';
@@ -8,9 +8,33 @@ import { ProgramTrivia } from '../components/program/ProgramTrivia';
 import { ProgramStudents } from '../components/program/ProgramStudents';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
+import { useLSelector } from '../redux/hooks';
+import { useNavigate } from 'react-router-dom';
+import { useCreateProgramMutation } from '../redux/api/program.service';
+import { errorToast, successToast } from '../components/Toasts';
 
 const CreateProgram = () => {
   const theme = useTheme();
+  const program = useLSelector((state) => state.program);
+  const navigate = useNavigate();
+
+  const [createProgram, { isError, error, data, isSuccess }] = useCreateProgramMutation();
+
+  const handleSave = () => {
+    createProgram(program);
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('/');
+      successToast('Programa creado exitosamente!');
+    }
+  }, [isSuccess]);
+  useEffect(() => {
+    if (isError) {
+      errorToast('Algo ha salido mal! ');
+    }
+  }, [isError]);
 
   return (
     <StyledBox css={{ height: '100%' }}>
@@ -49,7 +73,7 @@ const CreateProgram = () => {
           <ProgramStudents hasPills />
           <Button
             variant={ComponentVariantType.PRIMARY}
-            onClick={() => alert('To be defined')}
+            onClick={handleSave}
             labelSize={'body3'}
             css={{
               marginTop: '8px',

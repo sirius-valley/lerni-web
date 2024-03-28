@@ -6,10 +6,12 @@ import CloseIcon from '../../../assets/icons/CloseIcon';
 import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
-import { fileToJSONText } from '../../../utils/utils';
-import { useConvertToLerniPillMutation } from '../../../redux/api/program.service';
-import { useLDispatch } from '../../../redux/hooks';
-import { addNewPill } from '../../../redux/slices/program.slice';
+import {
+  useConvertToLerniPillMutation,
+  useVerifyStudentsMutation,
+} from '../../../redux/api/program.service';
+import { useLDispatch, useLSelector } from '../../../redux/hooks';
+import { addNewPill, updatePillInfo } from '../../../redux/slices/program.slice';
 import { ConvertTypeResponse } from '../../../redux/api/types/program.types';
 import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
@@ -18,10 +20,28 @@ import { useTheme } from 'styled-components';
 interface CreateStudentsModal extends ModalProps {
   openModal?: boolean;
 }
+interface EmailObject {
+  email: string;
+}
+
+interface Student {
+  id: string;
+  name: string;
+  lastname: string;
+  city: string;
+  profession: string;
+  career: string;
+  image: string;
+  hasCompletedIntroduction: boolean;
+  points: number;
+}
 
 const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
   const [convertQuery, { data, isLoading, error: convertError, isSuccess }] =
     useConvertToLerniPillMutation();
+  const [verifyStudents, { isLoading: studentsLoading, isError, error, data: studentsData }] =
+    useVerifyStudentsMutation();
+
   const [inputValues, setInputValues] = useState<{
     file: any;
   }>({
@@ -45,6 +65,32 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
       value?.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     ) {
       setErrors(false);
+      const reader = new FileReader();
+
+      reader.onload = (event: any) => {
+        const result = event.target.result;
+        const lines = result.split(/\r?\n/);
+
+        const emails = lines
+          .map((line: any, index: number) => {
+            if (index === 0) return null;
+            return line.trim();
+          })
+          .filter((email: any) => email);
+
+        setInputValues({
+          file: value,
+        });
+        verifyStudents(emails);
+        if (!studentsLoading) {
+          const registeredStudents = studentsData.filter(
+            (obj: EmailObject | Student) => 'name' in obj,
+          );
+          dispatch(updatePillInfo({ students: registeredStudents }));
+        }
+      };
+
+      reader.readAsText(value);
     } else {
       setErrors(true);
     }
