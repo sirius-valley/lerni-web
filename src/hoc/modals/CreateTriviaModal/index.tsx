@@ -7,21 +7,20 @@ import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
 import { fileToJSONText } from '../../../utils/utils';
-import { useConvertToLerniPillMutation } from '../../../redux/api/program.service';
+import { useConvertTriviaToLerniPillMutation } from '../../../redux/api/program.service';
 import { useLDispatch } from '../../../redux/hooks';
-import { addNewPill } from '../../../redux/slices/program.slice';
 import { ConvertTypeResponse } from '../../../redux/api/types/program.types';
-import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
+import { updatePillInfo } from '../../../redux/slices/program.slice';
 
 interface CreateTriviaModalProps extends ModalProps {
   openModal?: boolean;
 }
 
 const CreateTriviaModal = ({ handleOnClose }: CreateTriviaModalProps) => {
-  const [convertQuery, { data, isLoading, error: convertError, isSuccess }] =
-    useConvertToLerniPillMutation();
+  const [convertTrivia, { data, isLoading, error: convertTriviaError, isSuccess }] =
+    useConvertTriviaToLerniPillMutation();
   const [inputValues, setInputValues] = useState<{
     file: any;
   }>({
@@ -33,8 +32,8 @@ const CreateTriviaModal = ({ handleOnClose }: CreateTriviaModalProps) => {
   const theme = useTheme();
 
   useEffect(() => {
-    if (convertError) errorToast('Algo salió mal, revisa el formato del JSON');
-  }, [convertError]);
+    if (convertTriviaError) errorToast('Algo salió mal, revisa el formato del JSON');
+  }, [convertTriviaError]);
   useEffect(() => {
     if (isSuccess) successToast('El archivo JSON se ha cargado con exito!');
   }, [isSuccess]);
@@ -49,14 +48,9 @@ const CreateTriviaModal = ({ handleOnClose }: CreateTriviaModalProps) => {
 
   const handleSavePill = async () => {
     const JSON = await fileToJSONText(inputValues.file);
-    const response = (await convertQuery({ thread: JSON })) as { data: ConvertTypeResponse };
+    const response = (await convertTrivia({ thread: JSON })) as { data: ConvertTypeResponse };
     if (response?.data !== undefined) {
-      dispatch(
-        addNewPill({
-          id: nanoid(),
-          lerniPill: response.data?.pillBlock,
-        }),
-      );
+      dispatch(updatePillInfo({ trivia: response.data?.pillBlock }));
       handleOnClose();
     }
   };
