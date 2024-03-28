@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { FormControl, InputLabel } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
@@ -10,44 +10,28 @@ import { StyledColumn, StyledRow, StyledText } from '../styled/styles';
 
 export interface DropdownProps {
   css?: any;
-  content?: string[];
+  content: string[];
   label?: string;
   required?: boolean;
   placeholder?: string;
+  onChange: (value: string) => void;
+  value: string;
 }
-
-const content = [
-  'Option 1',
-  'Option 2',
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
 
 export const Dropdown = ({
   css,
   label = 'Profesor',
   required = true,
   placeholder = 'Elegir profesor',
-  // content
+  onChange,
+  value,
+  content,
 }: DropdownProps) => {
-  const [selectedTeacher, setSelectedTeacher] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const theme = useTheme();
 
   const handleDropdownStatus = () => {
     setIsOpen(!isOpen);
-  };
-
-  const handleChange = (event: any) => {
-    setSelectedTeacher(event.target.value as string);
   };
 
   const handleIcon = () => {
@@ -57,6 +41,15 @@ export const Dropdown = ({
       return <DownArrowIcon size={20} />;
     }
   };
+
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [rowWidth, setRowWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (rowRef.current) {
+      setRowWidth(rowRef.current.offsetWidth);
+    }
+  }, [isOpen]);
 
   const getMenuBackground = (index: number): string => {
     return index % 2 === 0 ? theme.gray100 : theme.white;
@@ -85,6 +78,7 @@ export const Dropdown = ({
           alignItems: 'center',
           backgroundColor: theme.white,
         }}
+        ref={rowRef}
       >
         <FormControl
           style={{
@@ -94,7 +88,7 @@ export const Dropdown = ({
             padding: '12px 16px',
           }}
         >
-          {!selectedTeacher && (
+          {!value && (
             <InputLabel
               style={{ width: '100%', color: theme.gray300, position: 'absolute', top: -3 }}
               shrink={false}
@@ -106,8 +100,8 @@ export const Dropdown = ({
             placeholder={placeholder}
             title={placeholder}
             id="demo-simple-select"
-            value={selectedTeacher}
-            onChange={handleChange}
+            value={value}
+            onChange={(event) => onChange(event.target.value)}
             onOpen={handleDropdownStatus}
             onClose={handleDropdownStatus}
             IconComponent={handleIcon}
@@ -127,8 +121,8 @@ export const Dropdown = ({
               PaperProps: {
                 style: {
                   maxHeight: 300,
-                  width: '31.3%',
                   marginTop: 7,
+                  width: rowWidth ?? '100%',
                   backgroundColor: theme.white,
                 },
               },
