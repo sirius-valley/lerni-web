@@ -20,9 +20,9 @@ export interface DropdownProps {
 
 export const Dropdown = ({
   css,
-  label = 'Profesor',
+  label,
   required = true,
-  placeholder = 'Elegir profesor',
+  placeholder,
   onChange,
   value,
   content,
@@ -141,17 +141,17 @@ export const Dropdown = ({
               },
             }}
           >
-            {content.map((teacher, idx) => (
+            {content.map((option, idx) => (
               <MenuItem
                 key={idx}
-                value={teacher}
+                value={option}
                 style={{
                   backgroundColor: getMenuBackground(idx),
                   gap: '8px',
                   padding: '12px 16px',
                 }}
               >
-                {teacher}
+                {option}
               </MenuItem>
             ))}
           </Select>
