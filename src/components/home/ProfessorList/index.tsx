@@ -23,8 +23,8 @@ const ProfessorList = () => {
     console.log('h');
   };
 
-  const professors = data.result;
-  const noProfessors = professors.result.length == 0;
+  const professors = data?.result;
+  const noProfessors = professors?.length == 0;
 
   return (
     <StyledColumn
