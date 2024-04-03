@@ -1,16 +1,31 @@
 import React from 'react';
-import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
+import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import Card from '../../Card';
 import Button from '../../styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import { ProgramItem } from '../../program/ProgramItem';
 import ProfessorItem from '../ProfessorItem';
+import { useGetProfessorsQuery } from '../../../redux/api/professor.service';
+import Spinner from '../../Spinner/Spinner';
+
+interface Professor {
+  name: string;
+  lastname: string;
+  profession: string;
+  description: string;
+  image: string;
+}
 
 const ProfessorList = () => {
-  const l = [1, 2, 3, 4, 5, 6, 7, 55, 5, 5, 5, 5, 5, 5, 5];
+  const { data, isLoading } = useGetProfessorsQuery();
+
   const handleAddNewProfessor = () => {
     console.log('h');
   };
+
+  const professors = data?.result;
+  const noProfessors = professors?.length == 0;
+
   return (
     <StyledColumn
       css={{
@@ -34,19 +49,27 @@ const ProfessorList = () => {
           Agregar
         </Button>
       </StyledRow>
-      <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
-        {l.map((item, index) => (
-          <ProfessorItem
-            key={'professor-' + index}
-            id={''}
-            name={'Cristian'}
-            surname={'Romero'}
-            imgURL={
-              'https://thumbs.dreamstime.com/b/bello-planeta-tierra-y-estrellas-brillantes-en-el-cosmos-infinito-nuevos-horizontes-la-exploraci%C3%B3n-del-espacio-elementos-de-esta-186771413.jpg'
-            }
-          />
-        ))}
-      </StyledColumn>
+      {isLoading ? (
+        <StyledRow css={{ height: '242px', justifyContent: 'center', alignItems: 'center' }}>
+          <Spinner />
+        </StyledRow>
+      ) : noProfessors ? (
+        <StyledRow css={{ height: '242px', justifyContent: 'center', alignItems: 'center' }}>
+          <StyledText>No hay profesores</StyledText>
+        </StyledRow>
+      ) : (
+        <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
+          {professors.map(({ name, lastname, image }: Professor, index: number) => (
+            <ProfessorItem
+              key={'professor-' + index}
+              id={''}
+              name={name}
+              surname={lastname}
+              imgURL={image}
+            />
+          ))}
+        </StyledColumn>
+      )}
     </StyledColumn>
   );
 };
