@@ -6,14 +6,10 @@ import CloseIcon from '../../../assets/icons/CloseIcon';
 import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
-import {
-  useConvertToLerniPillMutation,
-  useVerifyStudentsMutation,
-} from '../../../redux/api/program.service';
-import { useLDispatch, useLSelector } from '../../../redux/hooks';
-import { addNewPill, updatePillInfo } from '../../../redux/slices/program.slice';
-import { ConvertTypeResponse } from '../../../redux/api/types/program.types';
-import { nanoid } from '@reduxjs/toolkit';
+import { useVerifyStudentsMutation } from '../../../redux/api/program.service';
+import { useLDispatch } from '../../../redux/hooks';
+import { updatePillInfo } from '../../../redux/slices/program.slice';
+
 import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
 
@@ -37,10 +33,10 @@ interface Student {
 }
 
 const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
-  const [convertQuery, { data, isLoading, error: convertError, isSuccess }] =
-    useConvertToLerniPillMutation();
-  const [verifyStudents, { isLoading: studentsLoading, isError, error, data: studentsData }] =
-    useVerifyStudentsMutation();
+  const [
+    verifyStudents,
+    { isLoading: studentsLoading, error, data: studentsData, isSuccess: studentsSuccess },
+  ] = useVerifyStudentsMutation();
 
   const [inputValues, setInputValues] = useState<{
     file: any;
@@ -53,11 +49,11 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
   const theme = useTheme();
 
   useEffect(() => {
-    if (convertError) errorToast('Algo salió mal, revisa el formato del JSON');
-  }, [convertError]);
-  useEffect(() => {
-    if (isSuccess) successToast('El archivo JSON se ha cargado con exito!');
-  }, [isSuccess]);
+    if (errors || error) {
+      setInputValues({ file: null });
+      errorToast('Algo salió mal, revisa el formato del archivo');
+    }
+  }, [errors, error]);
 
   const handleInputFileChange = (value: any) => {
     if (
@@ -71,7 +67,7 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
         const result = event.target.result;
         const lines = result.split(/\r?\n/);
 
-        const emails = lines
+        const mails = lines
           .map((line: any, index: number) => {
             if (index === 0) return null;
             return line.trim();
@@ -81,13 +77,7 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
         setInputValues({
           file: value,
         });
-        verifyStudents(emails);
-        if (!studentsLoading) {
-          const registeredStudents = studentsData.filter(
-            (obj: EmailObject | Student) => 'name' in obj,
-          );
-          dispatch(updatePillInfo({ students: registeredStudents }));
-        }
+        verifyStudents({ emails: mails });
       };
 
       reader.readAsText(value);
@@ -99,16 +89,15 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
     });
   };
 
-  const handleSavePill = async () => {
-    const response = (await convertQuery({ thread: JSON })) as { data: ConvertTypeResponse };
-    if (response?.data !== undefined) {
-      dispatch(
-        addNewPill({
-          id: nanoid(),
-          lerniPill: response.data?.pillBlock,
-        }),
-      );
-      handleOnClose();
+  const handleSavePill = () => {
+    if (studentsSuccess) {
+      if (studentsData) {
+        dispatch(updatePillInfo({ students: studentsData }));
+        successToast('Estudiantes cargados con exito!');
+        handleOnClose();
+      } else {
+        errorToast('Los estudiantes no forman parte de LERNI');
+      }
     }
   };
 
@@ -176,7 +165,6 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
           <Button
             variant={ComponentVariantType.GHOST}
             onClick={handleOnClose}
-            disabled={isLoading}
             css={{
               paddingLeft: '50px',
               paddingRight: '50px',
@@ -187,7 +175,7 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={handleSavePill}
-            disabled={errors || isLoading}
+            disabled={errors || studentsLoading || !inputValues.file}
             css={{
               paddingLeft: '50px',
               paddingRight: '50px',

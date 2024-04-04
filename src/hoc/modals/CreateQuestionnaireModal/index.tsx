@@ -133,7 +133,7 @@ const CreateQuestionnaireModal = ({ handleOnClose }: CreateQuestionnaireModalPro
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={handleSavePill}
-            disabled={errors || isLoading}
+            disabled={errors || isLoading || !inputValues.file}
             css={{
               paddingLeft: '50px',
               paddingRight: '50px',

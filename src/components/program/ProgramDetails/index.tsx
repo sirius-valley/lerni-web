@@ -30,7 +30,7 @@ const ProgramDetails = () => {
   const ProgramBody = (
     <StyledRow style={{ gap: '24px', marginTop: '12px' }}>
       <img
-        src={imageUrl}
+        src={program.url ? program.url : imageUrl}
         style={{ height: '180px', width: '180px', borderRadius: '6px', objectFit: 'cover' }}
       />
 

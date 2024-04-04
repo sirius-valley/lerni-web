@@ -130,7 +130,7 @@ const CreateTriviaModal = ({ handleOnClose }: CreateTriviaModalProps) => {
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={handleSavePill}
-            disabled={errors || isLoading}
+            disabled={errors || isLoading || !inputValues.file}
             css={{
               paddingLeft: '50px',
               paddingRight: '50px',
