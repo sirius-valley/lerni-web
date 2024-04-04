@@ -26,7 +26,7 @@ const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
     >
       <StyledColumn css={{ marginTop: '8px', gap: '12px' }}>
         <StyledText variant="h1" css={{ fontFamily: 'Roboto-Bold' }}>
-          {'Visuzalizar JSON'}
+          {'Visualizar JSON'}
         </StyledText>
         <StyledText variant="body2">
           {'En esta sección, se puede visualizar el contenido que se consumirán en la aplicación.'}
@@ -47,10 +47,11 @@ const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
       css={{
         width: '568px',
         zIndex: 30,
+        padding: '32px',
       }}
       height={`${window.innerHeight * 0.7}px`}
     >
-      <StyledColumn css={{ width: '100%' }}>
+      <StyledColumn css={{ width: '100%', gap: 24 }}>
         <StyledColumn
           css={{
             maxHeight: `${window.innerHeight * 0.5}px`,
@@ -89,11 +90,10 @@ const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
             variant={ComponentVariantType.GHOST}
             onClick={handleOnClose}
             css={{
-              paddingLeft: '50px',
-              paddingRight: '50px',
+              padding: '24px 32px 32px 50px',
             }}
           >
-            Cancelar
+            {'Cerrar'}
           </Button>
         </StyledRow>
       </StyledColumn>

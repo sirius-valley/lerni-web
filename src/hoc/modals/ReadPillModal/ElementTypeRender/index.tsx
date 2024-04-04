@@ -26,7 +26,7 @@ export const ElementTypeRender = ({ type, id, metadata, name, question_type }: B
       return (
         <StyledColumn css={{ justifyContent: 'center', alignItems: 'left', gap: '4px' }}>
           <StyledText variant="body3" color="primary500" css={{ fontFamily: 'Roboto-Bold' }}>
-            {'Text'}
+            {'Texto'}
           </StyledText>
           <StyledText variant="body2" color="gray950">
             {removeHtmlTags(name)}
@@ -39,7 +39,7 @@ export const ElementTypeRender = ({ type, id, metadata, name, question_type }: B
           <StyledText variant="body3" color="primary500" css={{ fontFamily: 'Roboto-Bold' }}>
             {'Imagen'}
           </StyledText>
-          <StyledImage src={name} css={{ borderRadius: '8px' }} width={150} height={150} />
+          <StyledImage src={name} css={{ borderRadius: '8px' }} />
         </StyledColumn>
       );
     } else return null;
@@ -50,7 +50,7 @@ export const ElementTypeRender = ({ type, id, metadata, name, question_type }: B
     return (
       <StyledColumn css={{ justifyContent: 'left', alignItems: 'left', gap: '4px' }}>
         <StyledText variant="body3" css={{ fontFamily: 'Roboto-Bold', color: '#C642A9' }}>
-          {'Single Choice'}
+          {'Selección única'}
         </StyledText>
         {metadata?.options?.map((option: any, idx: number) => (
           <StyledRow css={{ gap: '4px', alignItems: 'left' }} key={idx}>
@@ -69,7 +69,7 @@ export const ElementTypeRender = ({ type, id, metadata, name, question_type }: B
     return (
       <StyledColumn css={{ justifyContent: 'left', alignItems: 'left', gap: '4px' }}>
         <StyledText variant="body3" css={{ fontFamily: 'Roboto-Bold', color: '#C642A9' }}>
-          {'Multiple Choice'}
+          {'Selección multiple'}
         </StyledText>
         {metadata?.options?.map((option: any, idx: number) => (
           <StyledRow css={{ gap: '4px', alignItems: 'left' }} key={idx}>
