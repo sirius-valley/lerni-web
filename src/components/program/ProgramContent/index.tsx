@@ -23,6 +23,10 @@ const ProgramContent = () => {
     dispatch(setModalOpen({ modalType: 'PILL_CREATE' }));
   };
 
+  const handleShowQuestionnaire = () => {
+    dispatch(setModalOpen({ modalType: 'PILL_READ' }));
+  };
+
   const ProgramHeader = (
     <StyledRow
       style={{
@@ -139,7 +143,7 @@ const ProgramContent = () => {
                 }}
               >
                 <StyledColumn
-                  onClick={() => dispatch(removePill(id))}
+                  onClick={() => dispatch(handleShowQuestionnaire())}
                   css={{ alignItems: 'center', justifyContent: 'center' }}
                 >
                   <ShowIcon size={20} color={theme.gray400} />
