@@ -6,12 +6,8 @@ import React from 'react';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { ComponentVariantType } from '../../../utils/constants';
 import { StudentsTable } from './Table';
-import { useLDispatch } from '../../../redux/hooks';
+import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
-
-interface ProgramStudentsProps {
-  hasPills: boolean;
-}
 
 const mockedStudents = [
   {
@@ -38,51 +34,53 @@ const mockedStudents = [
   },
 ];
 
-export const ProgramStudents = ({ hasPills = true }: ProgramStudentsProps) => {
+export const ProgramStudents = () => {
   const theme = useTheme();
   const dispatch = useLDispatch();
+
+  const students = useLSelector((state) => state.program.students);
 
   const handleShowModal = () => {
     dispatch(setModalOpen({ modalType: 'STUDENTS_CREATE' }));
   };
 
-  const StudentsHeader = (
-    <StyledRow
-      style={{
-        justifyContent: 'space-between',
-        width: '100%',
-        alignItems: 'center',
-        borderBottom: `1px solid ${theme.gray200}`,
-      }}
-    >
-      <StyledText variant="h2" style={{ marginBottom: '6px' }}>
-        {'Estudiantes'}
-      </StyledText>
-      <StyledBox style={{ marginBottom: '6px' }}>
-        <Button
-          variant={ComponentVariantType.PRIMARY}
-          onClick={handleShowModal}
-          labelSize={ButtonLabelSize.BODY3}
-          css={{
-            width: 'auto',
-            height: '30px',
-            padding: '8px 16px 8px 16px',
-            fontFamily: 'Roboto-Bold',
-            cursor: 'pointer',
+  return (
+    <Card
+      padding="18px"
+      height="auto"
+      headerComponent={
+        <StyledRow
+          style={{
+            justifyContent: 'space-between',
+            width: '100%',
+            alignItems: 'center',
+            borderBottom: `1px solid ${theme.gray200}`,
           }}
         >
-          {'Agregar estudiantes'}
-        </Button>
-      </StyledBox>
-    </StyledRow>
-  );
-
-  const StudentsBody = <StudentsTable students={mockedStudents} />;
-
-  return (
-    <Card padding="18px" height="auto" headerComponent={StudentsHeader}>
-      {mockedStudents.length ? (
-        StudentsBody
+          <StyledText variant="h2" style={{ marginBottom: '6px' }}>
+            {'Estudiantes'}
+          </StyledText>
+          <StyledBox style={{ marginBottom: '6px' }}>
+            <Button
+              variant={ComponentVariantType.PRIMARY}
+              onClick={handleShowModal}
+              labelSize={ButtonLabelSize.BODY3}
+              css={{
+                width: 'auto',
+                height: '30px',
+                padding: '8px 16px 8px 16px',
+                fontFamily: 'Roboto-Bold',
+                cursor: 'pointer',
+              }}
+            >
+              {'Agregar estudiantes'}
+            </Button>
+          </StyledBox>
+        </StyledRow>
+      }
+    >
+      {students.length ? (
+        <StudentsTable students={students} />
       ) : (
         <StyledBox
           css={{

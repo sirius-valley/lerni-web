@@ -8,78 +8,74 @@ import { TriviaIcon } from '../../../assets/icons/TriviaIcon';
 import { ComponentVariantType } from '../../../utils/constants';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { RemoveIcon } from '../../../assets/icons/RemoveIcon';
-import { useLDispatch } from '../../../redux/hooks';
+import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
+import { removeTrivia } from '../../../redux/slices/program.slice';
 
-interface ProgramTriviaProps {
-  hasPills: boolean;
-  hasTrivia: boolean;
-}
-
-export const ProgramTrivia = ({ hasPills = true, hasTrivia }: ProgramTriviaProps) => {
+export const ProgramTrivia = () => {
   const theme = useTheme();
+  const hasPills = useLSelector((state) => state.program.pills)?.length > 0;
+  const hasTrivia = useLSelector((state) => state.program.trivia) !== undefined;
 
   const dispatch = useLDispatch();
   const handleShowModal = () => {
     dispatch(setModalOpen({ modalType: 'TRIVIA_CREATE' }));
   };
-  const TriviaHeader = (
-    <StyledRow
-      style={{
-        justifyContent: 'space-between',
-        width: '100%',
-        alignItems: 'center',
-        borderBottom: `1px solid ${theme.gray200}`,
-      }}
-    >
-      <StyledText variant="h2" style={{ marginBottom: '6px' }}>
-        {'Trivia'}
-      </StyledText>
-      <StyledBox style={{ marginBottom: '6px' }}>
-        <Button
-          variant={ComponentVariantType.PRIMARY}
-          onClick={handleShowModal}
-          labelSize={ButtonLabelSize.BODY3}
-          disabled={!hasTrivia && hasPills ? false : true}
-          css={{
-            width: 'auto',
-            height: '30px',
-            padding: '8px 16px 8px 16px',
-            fontFamily: 'Roboto-Bold',
-            cursor: !hasTrivia ? 'pointer' : '',
-          }}
-        >
-          {'Agregar trivia'}
-        </Button>
-      </StyledBox>
-    </StyledRow>
-  );
-
-  const TriviaBody = (
-    <StyledColumn css={{ gap: '6px', marginTop: '12px' }}>
-      <StyledRow style={{ justifyContent: 'space-between', padding: '6px 0px 6px 6px' }}>
-        <StyledRow style={{ gap: 6, alignItems: 'center' }}>
-          <TriviaIcon size={18} color={theme.gray300} />
-          <StyledText variant="h4" style={{ fontSize: 14, color: theme.primary950 }}>
-            {`Trivia + ${'Nombre del programa'}`}
-          </StyledText>
-        </StyledRow>
-        <StyledRow css={{ gap: '8px' }}>
-          <StyledBox onClick={() => alert('open modal')} css={{ cursor: 'pointer' }}>
-            <ShowIcon size={18} color={theme.gray400} />
-          </StyledBox>
-          <StyledBox onClick={() => alert('removed')} css={{ cursor: 'pointer' }}>
-            <RemoveIcon size={18} color={theme.gray400} />
-          </StyledBox>
-        </StyledRow>
-      </StyledRow>
-    </StyledColumn>
-  );
 
   return (
-    <Card height="auto" headerComponent={TriviaHeader}>
+    <Card
+      height="auto"
+      headerComponent={
+        <StyledRow
+          style={{
+            justifyContent: 'space-between',
+            width: '100%',
+            alignItems: 'center',
+            borderBottom: `1px solid ${theme.gray200}`,
+          }}
+        >
+          <StyledText variant="h2" style={{ marginBottom: '6px' }}>
+            {'Trivia'}
+          </StyledText>
+          <StyledBox style={{ marginBottom: '6px' }}>
+            <Button
+              variant={ComponentVariantType.PRIMARY}
+              onClick={handleShowModal}
+              labelSize={ButtonLabelSize.BODY3}
+              disabled={!(!hasTrivia && hasPills)}
+              css={{
+                width: 'auto',
+                height: '30px',
+                padding: '8px 16px 8px 16px',
+                fontFamily: 'Roboto-Bold',
+                cursor: !hasTrivia ? 'pointer' : '',
+              }}
+            >
+              {'Agregar trivia'}
+            </Button>
+          </StyledBox>
+        </StyledRow>
+      }
+    >
       {hasTrivia ? (
-        TriviaBody
+        <StyledColumn css={{ gap: '6px', marginTop: '12px' }}>
+          <StyledRow style={{ justifyContent: 'space-between', padding: '6px 0px 6px 6px' }}>
+            <StyledRow style={{ gap: 6, alignItems: 'center' }}>
+              <TriviaIcon size={18} color={theme.gray300} />
+              <StyledText variant="h4" style={{ fontSize: 14, color: theme.primary950 }}>
+                {`Trivia`}
+              </StyledText>
+            </StyledRow>
+            <StyledRow css={{ gap: '8px' }}>
+              <StyledBox onClick={() => alert('open modal')} css={{ cursor: 'pointer' }}>
+                <ShowIcon size={18} color={theme.gray400} />
+              </StyledBox>
+              <StyledBox onClick={() => dispatch(removeTrivia())} css={{ cursor: 'pointer' }}>
+                <RemoveIcon size={18} color={theme.gray400} />
+              </StyledBox>
+            </StyledRow>
+          </StyledRow>
+        </StyledColumn>
       ) : (
         <StyledBox
           css={{

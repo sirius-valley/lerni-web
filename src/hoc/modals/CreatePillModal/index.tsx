@@ -24,18 +24,15 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     useConvertToLerniPillMutation();
   const [inputValues, setInputValues] = useState<{
     name: string;
-    instructor: string;
     description: string;
     file: any;
   }>({
     name: '',
-    instructor: '',
     description: '',
     file: null,
   });
   const [errors, setErrors] = useState({
     name: false,
-    instructor: false,
     description: false,
     file: false,
   });
@@ -51,12 +48,10 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
 
   const isConfirmButtonDisabled =
     errors.name ||
-    errors.instructor ||
     errors.description ||
     errors.file ||
     !inputValues.name ||
     !inputValues.description ||
-    !inputValues.instructor ||
     !inputValues.file;
 
   const handleChange = (att: keyof typeof inputValues, value: string) => {
@@ -142,15 +137,6 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
             error={errors.name}
             required
             disabled={isLoading}
-          />
-          <TextInput
-            placeholder="Nombre del instructor"
-            title="Instructor"
-            value={inputValues.instructor}
-            onChange={(value) => handleChange('instructor', value)}
-            error={errors.instructor}
-            disabled={isLoading}
-            required
           />
         </StyledRow>
         <TextInput

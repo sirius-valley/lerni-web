@@ -11,20 +11,6 @@ import { Dropdown } from '../components/Dropdown';
 
 const Home = () => {
   const [selectedValue, setSelectedValue] = useState<string>('');
-  const content = [
-    'Option 1',
-    'Option 2',
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-  ];
 
   const handleChange = (value: string) => {
     setSelectedValue(value);
@@ -47,7 +33,6 @@ const Home = () => {
       <StyledRow css={{ width: '1100px', height: '870px', gap: '40px' }}>
         <ProgramsList />
         <StyledColumn css={{ flex: 1, gap: '12px' }}>
-          <Dropdown onChange={handleChange} value={selectedValue} content={content} />
           <ProfessorList />
         </StyledColumn>
       </StyledRow>
