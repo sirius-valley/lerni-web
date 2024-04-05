@@ -26,6 +26,7 @@ export const theme = {
   success: '#0EB51F',
   warning: '#F99D32',
   error: '#D84545',
+  error500: '#FC6464',
   h1: {
     fontFamily: 'Roboto-Bold',
     fontSize: '24px',
