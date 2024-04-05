@@ -10,19 +10,23 @@ import {
 import { StyledTable } from './styles';
 import { Tooltip } from 'react-tooltip';
 import React, { useEffect, useRef, useState } from 'react';
+import { useLDispatch } from '../../../../redux/hooks';
+import { removeStudent } from '../../../../redux/slices/program.slice';
 
 interface StudentsTableProps {
   students: {
+    authId: string;
     email: string;
     name?: string;
     lastname?: string;
-    status: boolean;
-    profilePicture: string;
+    status?: boolean;
+    profilePicture?: string;
   }[];
 }
 
 export const StudentsTable = ({ students }: StudentsTableProps) => {
   const theme = useTheme();
+  const dispatch = useLDispatch();
 
   return (
     <StyledBox style={{ maxWidth: '100%', overflowX: 'auto' }}>
@@ -40,6 +44,7 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
         <tbody>
           {students.map((student, idx) => {
             const fullname = `${student.name} ${student.lastname}`;
+            const isRegistered = student.name !== undefined;
 
             return (
               <tr key={idx} style={{ borderBottom: `1px solid ${theme.gray200}` }}>
@@ -116,10 +121,10 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                   style={{
                     padding: '12px 10px 12px 10px',
                     fontSize: 14,
-                    color: student.status ? theme.gray900 : theme.red500,
+                    color: isRegistered ? theme.gray900 : theme.red500,
                   }}
                 >
-                  {student.status ? 'Registrado' : 'Sin registrar'}
+                  {isRegistered ? 'Registrado' : 'Sin registrar'}
                 </td>
                 <td
                   style={{
@@ -137,7 +142,7 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                   >
                     <StyledBox
                       style={{ cursor: 'pointer', width: 'auto' }}
-                      onClick={() => alert('hola')}
+                      onClick={() => dispatch(removeStudent({ email: student.email }))}
                     >
                       <RemoveIcon size={18} color={theme.gray400} />
                     </StyledBox>

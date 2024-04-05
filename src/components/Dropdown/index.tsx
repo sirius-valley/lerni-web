@@ -10,7 +10,7 @@ import { StyledColumn, StyledRow, StyledText } from '../styled/styles';
 
 export interface DropdownProps {
   css?: any;
-  content: string[];
+  content: { id: string; text: string }[];
   label?: string;
   required?: boolean;
   placeholder?: string;
@@ -100,7 +100,10 @@ export const Dropdown = ({
             title={placeholder}
             id="demo-simple-select"
             value={value}
-            onChange={(event) => onChange(event.target.value)}
+            onChange={(event) => {
+              onChange(event.target.value);
+            }}
+            defaultValue={''}
             onOpen={handleDropdownStatus}
             onClose={handleDropdownStatus}
             IconComponent={handleIcon}
@@ -144,14 +147,14 @@ export const Dropdown = ({
             {content.map((option, idx) => (
               <MenuItem
                 key={idx}
-                value={option}
+                value={option.id}
                 style={{
                   backgroundColor: getMenuBackground(idx),
                   gap: '8px',
                   padding: '12px 16px',
                 }}
               >
-                {option}
+                {option.text}
               </MenuItem>
             ))}
           </Select>

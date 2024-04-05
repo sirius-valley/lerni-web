@@ -9,11 +9,10 @@ import FileUpload from '../../../components/styled/FileUpload';
 import { fileToJSONText } from '../../../utils/utils';
 import { useConvertToLerniPillMutation } from '../../../redux/api/program.service';
 import { useLDispatch } from '../../../redux/hooks';
-import { addNewPill } from '../../../redux/slices/program.slice';
 import { ConvertTypeResponse } from '../../../redux/api/types/program.types';
-import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
+import { updatePillInfo } from '../../../redux/slices/program.slice';
 
 interface CreateQuestionnaireModalProps extends ModalProps {
   openModal?: boolean;
@@ -51,9 +50,8 @@ const CreateQuestionnaireModal = ({ handleOnClose }: CreateQuestionnaireModalPro
     const response = (await convertQuery({ thread: JSON })) as { data: ConvertTypeResponse };
     if (response?.data !== undefined) {
       dispatch(
-        addNewPill({
-          id: nanoid(),
-          lerniPill: response.data?.pillBlock,
+        updatePillInfo({
+          questionnaire: response.data?.pillBlock,
         }),
       );
       handleOnClose();
@@ -135,7 +133,7 @@ const CreateQuestionnaireModal = ({ handleOnClose }: CreateQuestionnaireModalPro
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={handleSavePill}
-            disabled={errors || isLoading}
+            disabled={errors || isLoading || !inputValues.file}
             css={{
               paddingLeft: '50px',
               paddingRight: '50px',

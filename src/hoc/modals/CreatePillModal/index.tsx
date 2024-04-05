@@ -9,7 +9,7 @@ import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
 import { fileToJSONText } from '../../../utils/utils';
 import { useConvertToLerniPillMutation } from '../../../redux/api/program.service';
-import { useLDispatch } from '../../../redux/hooks';
+import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { addNewPill } from '../../../redux/slices/program.slice';
 import { ConvertTypeResponse } from '../../../redux/api/types/program.types';
 import { nanoid } from '@reduxjs/toolkit';
@@ -24,18 +24,15 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     useConvertToLerniPillMutation();
   const [inputValues, setInputValues] = useState<{
     name: string;
-    instructor: string;
     description: string;
     file: any;
   }>({
     name: '',
-    instructor: '',
     description: '',
     file: null,
   });
   const [errors, setErrors] = useState({
     name: false,
-    instructor: false,
     description: false,
     file: false,
   });
@@ -44,17 +41,17 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     if (convertError) errorToast('Algo salió mal, revisa el formato del csv/xlsx');
   }, [convertError]);
   useEffect(() => {
-    if (isSuccess) successToast('El archivo csv/xlsx se ha cargado con exito!');
+    if (isSuccess) {
+      successToast('El archivo csv/xlsx se ha cargado con exito!');
+    }
   }, [isSuccess]);
 
   const isConfirmButtonDisabled =
     errors.name ||
-    errors.instructor ||
     errors.description ||
     errors.file ||
     !inputValues.name ||
     !inputValues.description ||
-    !inputValues.instructor ||
     !inputValues.file;
 
   const handleChange = (att: keyof typeof inputValues, value: string) => {
@@ -140,15 +137,6 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
             error={errors.name}
             required
             disabled={isLoading}
-          />
-          <TextInput
-            placeholder="Nombre del instructor"
-            title="Instructor"
-            value={inputValues.instructor}
-            onChange={(value) => handleChange('instructor', value)}
-            error={errors.instructor}
-            disabled={isLoading}
-            required
           />
         </StyledRow>
         <TextInput

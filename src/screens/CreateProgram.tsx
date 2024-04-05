@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
 import { useTheme } from 'styled-components';
 import ProgramContent from '../components/program/ProgramContent';
@@ -8,9 +8,39 @@ import { ProgramTrivia } from '../components/program/ProgramTrivia';
 import { ProgramStudents } from '../components/program/ProgramStudents';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
+import { useLDispatch, useLSelector } from '../redux/hooks';
+import { useNavigate } from 'react-router-dom';
+import { useCreateProgramMutation } from '../redux/api/program.service';
+import { errorToast, successToast } from '../components/Toasts';
+import { transformedValues } from '../utils/transformBody';
+import { resetProgramSlice } from '../redux/slices/program.slice';
 
 const CreateProgram = () => {
   const theme = useTheme();
+  const program = useLSelector((state) => state.program);
+  const navigate = useNavigate();
+  const dispatch = useLDispatch();
+
+  const [createProgram, { isError, error, data, isSuccess }] = useCreateProgramMutation();
+
+  const handleSave = () => {
+    const allFieldsFilled = Object.values(program).every((value) => value !== '');
+    if (allFieldsFilled) {
+      createProgram(transformedValues(program)).then((res) => dispatch(resetProgramSlice()));
+    }
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('/');
+      successToast('Programa creado exitosamente!');
+    }
+  }, [isSuccess]);
+  useEffect(() => {
+    if (isError) {
+      errorToast('Algo ha salido mal! ');
+    }
+  }, [isError]);
 
   return (
     <StyledBox css={{ height: '100%' }}>
@@ -44,12 +74,12 @@ const CreateProgram = () => {
         >
           <ProgramDetails />
           <ProgramContent />
-          <ProgramQuestionnaire hasPills hasQuestionnaire={true} />
-          <ProgramTrivia hasPills hasTrivia={false} />
-          <ProgramStudents hasPills />
+          <ProgramQuestionnaire />
+          <ProgramTrivia />
+          <ProgramStudents />
           <Button
             variant={ComponentVariantType.PRIMARY}
-            onClick={() => alert('To be defined')}
+            onClick={handleSave}
             labelSize={'body3'}
             css={{
               marginTop: '8px',

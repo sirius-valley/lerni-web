@@ -7,6 +7,8 @@ import { ProgramItem } from '../../program/ProgramItem';
 import ProfessorItem from '../ProfessorItem';
 import { useGetProfessorsQuery } from '../../../redux/api/professor.service';
 import Spinner from '../../Spinner/Spinner';
+import { useLDispatch } from '../../../redux/hooks';
+import { setModalOpen } from '../../../redux/slices/utils.slice';
 
 interface Professor {
   name: string;
@@ -18,9 +20,10 @@ interface Professor {
 
 const ProfessorList = () => {
   const { data, isLoading } = useGetProfessorsQuery();
+  const dispatch = useLDispatch();
 
   const handleAddNewProfessor = () => {
-    console.log('h');
+    dispatch(setModalOpen({ modalType: 'PROFESSOR_CREATE' }));
   };
 
   const professors = data?.result;
@@ -59,7 +62,7 @@ const ProfessorList = () => {
         </StyledRow>
       ) : (
         <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
-          {professors.map(({ name, lastname, image }: Professor, index: number) => (
+          {professors?.map(({ name, lastname, image }: Professor, index: number) => (
             <ProfessorItem
               key={'professor-' + index}
               id={''}
