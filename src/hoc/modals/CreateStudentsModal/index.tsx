@@ -6,10 +6,9 @@ import CloseIcon from '../../../assets/icons/CloseIcon';
 import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
-import { useVerifyStudentsMutation } from '../../../redux/api/program.service';
-import { useLDispatch, useLSelector } from '../../../redux/hooks';
+import { useLDispatch } from '../../../redux/hooks';
 import { updatePillInfo } from '../../../redux/slices/program.slice';
-
+import { useVerifyStudentsMutation } from '../../../redux/service/program.service';
 import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
 

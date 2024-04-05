@@ -22,6 +22,9 @@ export const ProgramQuestionnaire = () => {
   const handleShowModal = () => {
     dispatch(setModalOpen({ modalType: 'QUESTIONNAIRE_CREATE' }));
   };
+  const handleShowQuestionnaire = () => {
+    dispatch(setModalOpen({ modalType: 'PILL_READ' }));
+  };
 
   return (
     <Card
@@ -68,7 +71,7 @@ export const ProgramQuestionnaire = () => {
               </StyledText>
             </StyledRow>
             <StyledRow css={{ gap: '8px' }}>
-              <StyledBox onClick={() => alert('open modal')} css={{ cursor: 'pointer' }}>
+              <StyledBox onClick={handleShowQuestionnaire} css={{ cursor: 'pointer' }}>
                 <ShowIcon size={18} color={theme.gray400} />
               </StyledBox>
               <StyledBox

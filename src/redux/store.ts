@@ -1,7 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import counterSlice from './slices/counter.slice';
 import pokemonSlice from './slices/pokemon.slice';
-import { api } from './api/api';
+import { api } from './service/api';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import authSlice from './slices/auth.slice';
 import utilsSlice from './slices/utils.slice';

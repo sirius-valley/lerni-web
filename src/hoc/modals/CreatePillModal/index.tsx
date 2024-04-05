@@ -8,10 +8,10 @@ import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
 import { fileToJSONText } from '../../../utils/utils';
-import { useConvertToLerniPillMutation } from '../../../redux/api/program.service';
-import { useLDispatch, useLSelector } from '../../../redux/hooks';
+import { useConvertToLerniPillMutation } from '../../../redux/service/program.service';
+import { useLDispatch } from '../../../redux/hooks';
 import { addNewPill } from '../../../redux/slices/program.slice';
-import { ConvertTypeResponse } from '../../../redux/api/types/program.types';
+import { ConvertTypeResponse } from '../../../redux/service/types/program.types';
 import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
 

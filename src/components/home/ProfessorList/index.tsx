@@ -1,12 +1,10 @@
 import React from 'react';
-import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
-import Card from '../../Card';
+import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import Button from '../../styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
-import { ProgramItem } from '../../program/ProgramItem';
 import ProfessorItem from '../ProfessorItem';
-import { useGetProfessorsQuery } from '../../../redux/api/professor.service';
 import Spinner from '../../Spinner/Spinner';
+import { useGetProfessorsQuery } from '../../../redux/service/professor.service';
 import { useLDispatch } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
 
