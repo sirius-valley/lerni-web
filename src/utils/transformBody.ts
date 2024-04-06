@@ -37,7 +37,7 @@ export const transformedValues = (values: CreateProgramState) => {
     questionnaire: {
       name: 'Cuestionario',
       description: '',
-      passingScore: 50,
+      passsing_score: 50,
       cooldownInMinutes: 2880,
       block: JSON.stringify(values.questionnaire),
       questionCount: amountOfQuestions,

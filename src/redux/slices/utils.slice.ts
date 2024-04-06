@@ -8,10 +8,12 @@ export interface initialStateUtilsType {
     | 'TRIVIA_CREATE'
     | 'STUDENTS_CREATE'
     | 'PROFESSOR_CREATE';
+  metadata?: any;
 }
 
 const initialState: initialStateUtilsType = {
   modalType: undefined,
+  metadata: undefined,
 };
 
 export const utilsSlice = createSlice({
@@ -20,6 +22,7 @@ export const utilsSlice = createSlice({
   reducers: {
     setModalOpen: (state, action) => {
       state.modalType = action.payload?.modalType;
+      state.metadata = action.payload?.metadata;
     },
     closeModal: (state) => {
       state.modalType = undefined;

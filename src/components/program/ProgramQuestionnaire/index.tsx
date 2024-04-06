@@ -23,7 +23,7 @@ export const ProgramQuestionnaire = () => {
     dispatch(setModalOpen({ modalType: 'QUESTIONNAIRE_CREATE' }));
   };
   const handleShowQuestionnaire = () => {
-    dispatch(setModalOpen({ modalType: 'PILL_READ' }));
+    dispatch(setModalOpen({ modalType: 'PILL_READ', metadata: { type: 'questionnaire' } }));
   };
 
   return (

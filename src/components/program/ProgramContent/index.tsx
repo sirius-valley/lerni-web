@@ -23,8 +23,8 @@ const ProgramContent = () => {
     dispatch(setModalOpen({ modalType: 'PILL_CREATE' }));
   };
 
-  const handleShowQuestionnaire = () => {
-    dispatch(setModalOpen({ modalType: 'PILL_READ' }));
+  const handleShowQuestionnaire = (id: string) => {
+    dispatch(setModalOpen({ modalType: 'PILL_READ', metadata: { type: 'pill', id: id } }));
   };
 
   const ProgramHeader = (
@@ -143,7 +143,7 @@ const ProgramContent = () => {
                 }}
               >
                 <StyledColumn
-                  onClick={() => dispatch(handleShowQuestionnaire())}
+                  onClick={() => handleShowQuestionnaire(id)}
                   css={{ alignItems: 'center', justifyContent: 'center' }}
                 >
                   <ShowIcon size={20} color={theme.gray400} />

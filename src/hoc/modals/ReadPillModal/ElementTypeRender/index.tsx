@@ -48,19 +48,31 @@ export const ElementTypeRender = ({ type, id, metadata, name, question_type }: B
     metadata?.metadata?.lerni_question_type === 'single-choice'
   ) {
     return (
-      <StyledColumn css={{ justifyContent: 'left', alignItems: 'left', gap: '4px' }}>
-        <StyledText variant="body3" css={{ fontFamily: 'Roboto-Bold', color: '#C642A9' }}>
-          {'Selección única'}
-        </StyledText>
-        {metadata?.options?.map((option: any, idx: number) => (
-          <StyledRow css={{ gap: '4px', alignItems: 'left' }} key={idx}>
-            <EllipseIcon />
-            <StyledText variant="body2" color="gray950">
-              {option}
+      <>
+        {name && (
+          <StyledColumn css={{ justifyContent: 'center', alignItems: 'left', gap: '4px' }}>
+            <StyledText variant="body3" color="primary500" css={{ fontFamily: 'Roboto-Bold' }}>
+              {'Texto'}
             </StyledText>
-          </StyledRow>
-        ))}
-      </StyledColumn>
+            <StyledText variant="body2" color="gray950">
+              {removeHtmlTags(name)}
+            </StyledText>
+          </StyledColumn>
+        )}
+        <StyledColumn css={{ justifyContent: 'left', alignItems: 'left', gap: '4px' }}>
+          <StyledText variant="body3" css={{ fontFamily: 'Roboto-Bold', color: '#C642A9' }}>
+            {'Selección única'}
+          </StyledText>
+          {metadata?.options?.map((option: any, idx: number) => (
+            <StyledRow css={{ gap: '4px', alignItems: 'left' }} key={idx}>
+              <EllipseIcon />
+              <StyledText variant="body2" color="gray950">
+                {option}
+              </StyledText>
+            </StyledRow>
+          ))}
+        </StyledColumn>
+      </>
     );
   } else if (
     question_type === 'MULTIPLECHOICE' &&

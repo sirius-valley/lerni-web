@@ -8,6 +8,8 @@ import { ComponentVariantType } from '../../../utils/constants';
 import { ModalProps } from '../interfaces';
 import { ElementTypeRender } from './ElementTypeRender';
 import { mockedPill } from './mocked';
+import { useLSelector } from '../../../redux/hooks';
+import { getBlockByType } from '../../../redux/slices/program.slice';
 
 interface CreateQuestionnaireModalProps extends ModalProps {
   openModal?: boolean;
@@ -15,32 +17,36 @@ interface CreateQuestionnaireModalProps extends ModalProps {
 
 const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
   const theme = useTheme();
+  const metadata = useLSelector((state) => state.utils.metadata);
 
-  const cardHeader = () => (
-    <StyledRow
-      css={{
-        justifyContent: 'space-between',
-        width: '100%',
-        marginBottom: '12px',
-      }}
-    >
-      <StyledColumn css={{ marginTop: '8px', gap: '12px' }}>
-        <StyledText variant="h1" css={{ fontFamily: 'Roboto-Bold' }}>
-          {'Visualizar JSON'}
-        </StyledText>
-        <StyledText variant="body2">
-          {'En esta sección, se puede visualizar el contenido que se consumirán en la aplicación.'}
-        </StyledText>
-      </StyledColumn>
-      <StyledBox onClick={() => handleOnClose()} css={{ padding: 8, cursor: 'pointer' }}>
-        <CloseIcon />
-      </StyledBox>
-    </StyledRow>
+  const block = useLSelector((state) =>
+    getBlockByType(state, { type: metadata.type, id: metadata?.id }),
   );
-
   return (
     <Card
-      headerComponent={cardHeader()}
+      headerComponent={
+        <StyledRow
+          css={{
+            justifyContent: 'space-between',
+            width: '100%',
+            marginBottom: '12px',
+          }}
+        >
+          <StyledColumn css={{ marginTop: '8px', gap: '12px' }}>
+            <StyledText variant="h1" css={{ fontFamily: 'Roboto-Bold' }}>
+              {'Visualizar JSON'}
+            </StyledText>
+            <StyledText variant="body2">
+              {
+                'En esta sección, se puede visualizar el contenido que se consumirán en la aplicación.'
+              }
+            </StyledText>
+          </StyledColumn>
+          <StyledBox onClick={handleOnClose} css={{ padding: 8, cursor: 'pointer' }}>
+            <CloseIcon />
+          </StyledBox>
+        </StyledRow>
+      }
       onClick={(event) => {
         event.stopPropagation();
       }}
@@ -49,7 +55,7 @@ const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
         zIndex: 30,
         padding: '32px',
       }}
-      height={`${window.innerHeight * 0.7}px`}
+      height={'min-content'}
     >
       <StyledColumn css={{ width: '100%', gap: 24 }}>
         <StyledColumn
@@ -60,14 +66,14 @@ const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
             justifyContent: 'left',
             alignItems: 'left',
             borderRadius: '8px',
-            padding: '8px',
+            padding: '8px 8px 24px',
             gap: '24px',
             backgroundColor: theme.gray100,
           }}
         >
-          {mockedPill &&
-            mockedPill.elements &&
-            mockedPill.elements.map((bubble, idx) => (
+          {block &&
+            block.elements &&
+            block.elements.map((bubble: any, idx: any) => (
               <ElementTypeRender
                 key={idx}
                 type={bubble.type}
@@ -86,13 +92,7 @@ const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
             justifyContent: 'flex-end',
           }}
         >
-          <Button
-            variant={ComponentVariantType.GHOST}
-            onClick={handleOnClose}
-            css={{
-              padding: '24px 32px 32px 50px',
-            }}
-          >
+          <Button variant={ComponentVariantType.GHOST} onClick={handleOnClose}>
             {'Cerrar'}
           </Button>
         </StyledRow>

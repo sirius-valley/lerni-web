@@ -22,6 +22,10 @@ export const ProgramTrivia = () => {
     dispatch(setModalOpen({ modalType: 'TRIVIA_CREATE' }));
   };
 
+  const handleShowPreview = () => {
+    dispatch(setModalOpen({ modalType: 'PILL_READ', metadata: { type: 'trivia' } }));
+  };
+
   return (
     <Card
       height="auto"
@@ -67,7 +71,7 @@ export const ProgramTrivia = () => {
               </StyledText>
             </StyledRow>
             <StyledRow css={{ gap: '8px' }}>
-              <StyledBox onClick={() => alert('open modal')} css={{ cursor: 'pointer' }}>
+              <StyledBox onClick={handleShowPreview} css={{ cursor: 'pointer' }}>
                 <ShowIcon size={18} color={theme.gray400} />
               </StyledBox>
               <StyledBox onClick={() => dispatch(removeTrivia())} css={{ cursor: 'pointer' }}>

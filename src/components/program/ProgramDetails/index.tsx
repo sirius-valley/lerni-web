@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Card from '../../Card';
 import { StyledColumn, StyledRow } from '../../styled/styles';
 import { TextInput } from '../../styled/TextInput';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { updatePillInfo } from '../../../redux/slices/program.slice';
-import { useGetProfessorsQuery } from '../../../redux/api/professor.service';
+import { useGetProfessorsQuery } from '../../../redux/service/professor.service';
 import { Dropdown } from '../../Dropdown';
 
 const ProgramDetails = () => {
   const program = useLSelector((state) => state.program);
   const dispatch = useLDispatch();
   const { data: professors } = useGetProfessorsQuery(undefined, {
-    selectFromResult: (res) => {
+    selectFromResult: (res: any) => {
       return {
         ...res,
         data: {

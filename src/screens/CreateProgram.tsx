@@ -10,7 +10,7 @@ import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
 import { useLDispatch, useLSelector } from '../redux/hooks';
 import { useNavigate } from 'react-router-dom';
-import { useCreateProgramMutation } from '../redux/api/program.service';
+import { useCreateProgramMutation } from '../redux/service/program.service';
 import { errorToast, successToast } from '../components/Toasts';
 import { transformedValues } from '../utils/transformBody';
 import { resetProgramSlice } from '../redux/slices/program.slice';
@@ -26,7 +26,7 @@ const CreateProgram = () => {
   const handleSave = () => {
     const allFieldsFilled = Object.values(program).every((value) => value !== '');
     if (allFieldsFilled) {
-      createProgram(transformedValues(program)).then((res) => dispatch(resetProgramSlice()));
+      createProgram(transformedValues(program)).then((res: any) => dispatch(resetProgramSlice()));
     }
   };
 

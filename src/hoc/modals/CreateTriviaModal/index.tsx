@@ -7,15 +7,12 @@ import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
 import { fileToJSONText } from '../../../utils/utils';
-import { useConvertTriviaToLerniPillMutation } from '../../../redux/api/program.service';
-import { useConvertToLerniPillMutation } from '../../../redux/service/program.service';
+import { useConvertTriviaToLerniPillMutation } from '../../../redux/service/program.service';
 import { useLDispatch } from '../../../redux/hooks';
-import { addNewPill } from '../../../redux/slices/program.slice';
+import { updatePillInfo } from '../../../redux/slices/program.slice';
 import { ConvertTypeResponse } from '../../../redux/service/types/program.types';
-import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
-import { updatePillInfo } from '../../../redux/slices/program.slice';
 
 interface CreateTriviaModalProps extends ModalProps {
   openModal?: boolean;
