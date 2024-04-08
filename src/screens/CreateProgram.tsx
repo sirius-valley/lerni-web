@@ -26,16 +26,15 @@ const CreateProgram = () => {
   const handleSave = () => {
     const allFieldsFilled = Object.values(program).every((value) => value !== '');
     if (allFieldsFilled) {
-      createProgram(transformedValues(program)).then((res: any) => dispatch(resetProgramSlice()));
+      createProgram(transformedValues(program)).then((res: any) => {
+        navigate('/');
+
+        dispatch(resetProgramSlice());
+        successToast('Programa creado exitosamente!');
+      });
     }
   };
 
-  useEffect(() => {
-    if (isSuccess) {
-      navigate('/');
-      successToast('Programa creado exitosamente!');
-    }
-  }, [isSuccess]);
   useEffect(() => {
     if (isError) {
       errorToast('Algo ha salido mal! ');
