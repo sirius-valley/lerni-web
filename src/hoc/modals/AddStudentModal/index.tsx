@@ -18,7 +18,7 @@ interface AddStudentModal extends ModalProps {
 const AddStudentModal = ({ handleOnClose }: AddStudentModal) => {
   const [
     verifyStudent,
-    { isLoading: studentLoading, data: studentData, isSuccess: studentSuccess },
+    { isLoading: studentLoading, error, data: studentData, isSuccess: studentSuccess },
   ] = useVerifyStudentsMutation();
 
   const [studentEmail, setStudentEmail] = useState<string>('');
@@ -49,6 +49,11 @@ const AddStudentModal = ({ handleOnClose }: AddStudentModal) => {
       }
     }
   }, [studentSuccess]);
+  useEffect(() => {
+    if (error) {
+      errorToast('El estudiante no forma parte de LERNI');
+    }
+  }, [error]);
 
   const cardHeader = () => (
     <StyledRow
