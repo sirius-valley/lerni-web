@@ -19,8 +19,6 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
     error: any;
   };
 
-  console.log(useGetProgramLikesQuery(programId), data?.likes, data?.dislikes);
-
   const cardHeader = (
     <StyledColumn css={{ padding: '0px 14px 7px' }}>
       <StyledText variant="h1" color="gray900">
