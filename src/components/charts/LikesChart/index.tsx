@@ -19,6 +19,8 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
     error: any;
   };
 
+  console.log(useGetProgramLikesQuery(programId), data?.likes, data?.dislikes);
+
   const cardHeader = (
     <StyledColumn css={{ padding: '0px 14px 7px' }}>
       <StyledText variant="h1" color="gray900">
@@ -34,7 +36,7 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
     return null;
   }
 
-  const totalVotes = !data.likes || !data.dislikes ? 0 : data.likes + data.dislikes;
+  const totalVotes = (data.likes || 0) + (data.dislikes || 0);
 
   //Chart styling and labeling.
   const options = {
