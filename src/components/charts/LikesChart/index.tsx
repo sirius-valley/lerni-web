@@ -120,7 +120,7 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
               <StyledText
                 variant="body1"
                 color="primary500"
-                css={{ fontsize: '22px', textAlign: 'center' }}
+                style={{ fontSize: '22px', textAlign: 'center' }}
               >
                 {totalVotes}
               </StyledText>
