@@ -12,3 +12,9 @@ export type LikesResponse =
       dislikes?: number;
     }
   | undefined;
+
+export type ProgramAttendanceResponse = {
+  inProgress?: number;
+  notStarted?: number;
+  completed?: number;
+};

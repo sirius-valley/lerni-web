@@ -3,6 +3,7 @@ import { LikesChart } from '../components/charts/LikesChart';
 import ProfessorList from '../components/home/ProfessorList';
 import ProgramsList from '../components/home/ProgramsList';
 import { RootContainer, StyledColumn, StyledRow } from '../components/styled/styles';
+import { AttendanceChart } from '../components/charts/AttendanceChart';
 
 const Home = () => {
   const [selectedValue, setSelectedValue] = useState<string>('');
@@ -33,7 +34,7 @@ const Home = () => {
       </StyledRow>
       <StyledRow css={{ gap: '16px', padding: '16px' }}>
         <LikesChart programId={'20f5a8dc-23d1-41bb-9d38-654b284f48eb'} />
-        <LikesChart programId={'20f5a8dc-23d1-41bb-9d38-654b284f48eb'} />
+        <AttendanceChart programId={'20f5a8dc-23d1-41bb-9d38-654b284f48eb'} />
         <LikesChart programId={'programId'} />
       </StyledRow>
     </RootContainer>
