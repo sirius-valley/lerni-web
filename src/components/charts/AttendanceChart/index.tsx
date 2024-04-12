@@ -19,8 +19,8 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
   };
 
   const cardHeader = (
-    <StyledColumn css={{ padding: '0px 14px 7px' }}>
-      <StyledText variant="h1" color="gray900">
+    <StyledColumn css={{ padding: '0px 14px 7px', gap: '4px' }}>
+      <StyledText variant="h1" color="gray900" css={{ fontFamily: 'Roboto' }}>
         {'Completitud'}
       </StyledText>
       <StyledText variant="body2" color="gray700">
@@ -43,14 +43,18 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
       show: true,
       fontFamily: 'Roboto',
       fontSize: '12px',
-      position: 'bottom',
-      horizontalAlign: 'center',
-      formatter: function (seriesName: string, opts: any) {
-        return [
-          `${Math.round(
-            (opts.w.globals.series[opts.seriesIndex] / totalStudents) * 100,
-          )}% ${seriesName}`,
-        ];
+      position: 'right',
+      horizontalAlign: 'left',
+      // formatter: function (seriesName: string, opts: any) {
+      //   return [
+      //     `${Math.round(
+      //       (opts.w.globals.series[opts.seriesIndex] / totalStudents) * 100,
+      //     )}% ${seriesName}`,
+      //   ];
+      // },
+      itemMargin: {
+        horizontal: -10,
+        vertical: 5,
       },
     },
     chart: {
@@ -83,10 +87,9 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
       },
     },
     tooltip: {
-      custom: function ({ series, seriesIndex, dataPointIndex, w }: any) {
-        return null;
-      },
+      enabled: true,
       followCursor: false,
+
       style: {
         fontFamily: 'Roboto',
         fontWeight: '400',
@@ -113,13 +116,13 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
                 alignItems: 'center',
                 position: 'absolute',
                 top: '45px',
-                left: '92px',
+                left: '48px',
               }}
             >
               <StyledText
                 variant="body1"
                 color="primary500"
-                css={{ fontsize: '22px', textAlign: 'center' }}
+                css={{ fontSize: '22px', textAlign: 'center' }}
               >
                 {totalStudents}
               </StyledText>

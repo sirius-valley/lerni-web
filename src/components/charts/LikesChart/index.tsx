@@ -113,7 +113,7 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 position: 'absolute',
-                top: '52px',
+                top: '51px',
                 left: '92px',
               }}
             >
