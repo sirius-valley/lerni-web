@@ -26,13 +26,10 @@ const AddStudentModal = ({ handleOnClose }: AddStudentModal) => {
   const dispatch = useLDispatch();
   const students = useLSelector((state) => state.program.students);
 
-  const ValidateEmail = (mail: string) => {
-    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
-      return true;
-    }
-    return false;
+  const isValidEmail = (email: string) => {
+    const regex = /^[a-zA-Z0–9._-]+@[a-zA-Z0–9.-]+\.[a-zA-Z]{2,4}$/;
+    return regex.test(email);
   };
-  const isValidEmail = ValidateEmail(studentEmail);
 
   const handleAddStudent = () => {
     verifyStudent({ emails: [studentEmail] });
@@ -41,9 +38,13 @@ const AddStudentModal = ({ handleOnClose }: AddStudentModal) => {
   useEffect(() => {
     if (studentSuccess) {
       if (studentData) {
-        dispatch(updatePillInfo({ students: [...students, { email: studentEmail }] }));
-        successToast('Estudiante cargado con exito!');
-        handleOnClose();
+        if (students.some((student) => student.email === studentEmail)) {
+          errorToast('El usuario ya se encuentra en la lista de Estudiantes');
+        } else {
+          dispatch(updatePillInfo({ students: [...students, { email: studentEmail }] }));
+          successToast('Estudiante cargado con exito!');
+          handleOnClose();
+        }
       } else {
         errorToast('El estudiante no forma parte de LERNI');
       }
@@ -118,7 +119,7 @@ const AddStudentModal = ({ handleOnClose }: AddStudentModal) => {
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={handleAddStudent}
-            disabled={studentLoading || !isValidEmail}
+            disabled={studentLoading || !isValidEmail(studentEmail)}
             css={{
               paddingLeft: '50px',
               paddingRight: '50px',
