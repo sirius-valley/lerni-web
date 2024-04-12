@@ -8,6 +8,7 @@ import CreateTriviaModal from './modals/CreateTriviaModal';
 import CreateStudentsModal from './modals/CreateStudentsModal';
 import CreateProfessorModal from './modals/CreateProfessorModal';
 import ReadPillModal from './modals/ReadPillModal';
+import AddStudentModal from './modals/AddStudentModal';
 
 export const withModal = (Component: FunctionComponent) => (props: any) => {
   const type = useLSelector((state) => state.utils.modalType);
@@ -32,6 +33,8 @@ export const withModal = (Component: FunctionComponent) => (props: any) => {
         return <CreateStudentsModal handleOnClose={handleOnClose} />;
       case 'PROFESSOR_CREATE':
         return <CreateProfessorModal handleOnClose={handleOnClose} />;
+      case 'ADD_STUDENT':
+        return <AddStudentModal handleOnClose={handleOnClose} />;
       default:
         <></>;
     }
