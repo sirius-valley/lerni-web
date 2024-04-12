@@ -20,8 +20,8 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
   };
 
   const cardHeader = (
-    <StyledColumn css={{ padding: '0px 14px 7px' }}>
-      <StyledText variant="h1" color="gray900">
+    <StyledColumn css={{ padding: '0px 14px 7px', gap: '4px' }}>
+      <StyledText variant="h1" color="gray900" css={{ fontFamily: 'Roboto' }}>
         {'Me gusta'}
       </StyledText>
       <StyledText variant="body2" color="gray700">
@@ -120,11 +120,11 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
               <StyledText
                 variant="body1"
                 color="primary500"
-                css={{ fontsize: '22px', textAlign: 'center' }}
+                style={{ fontSize: '22px', textAlign: 'center' }}
               >
                 {totalVotes}
               </StyledText>
-              <StyledText variant="body2" color="gray900">
+              <StyledText variant="body2" color="gray900" css={{ fontSize: '14px' }}>
                 {'Opiniones'}
               </StyledText>
             </StyledColumn>
