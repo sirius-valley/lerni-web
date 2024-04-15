@@ -7,7 +7,8 @@ export interface initialStateUtilsType {
     | 'QUESTIONNAIRE_CREATE'
     | 'TRIVIA_CREATE'
     | 'STUDENTS_CREATE'
-    | 'PROFESSOR_CREATE';
+    | 'PROFESSOR_CREATE'
+    | 'ADD_STUDENT';
   metadata?: any;
 }
 

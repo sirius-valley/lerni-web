@@ -1,45 +1,32 @@
 import React, { useEffect } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
-import { useTheme } from 'styled-components';
-import ProgramContent from '../components/program/ProgramContent';
-import ProgramDetails from '../components/program/ProgramDetails';
-import { ProgramQuestionnaire } from '../components/program/ProgramQuestionnaire';
-import { ProgramTrivia } from '../components/program/ProgramTrivia';
-import { ProgramStudents } from '../components/program/ProgramStudents';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
-import { useLDispatch, useLSelector } from '../redux/hooks';
-import { useNavigate } from 'react-router-dom';
-import { useCreateProgramMutation } from '../redux/service/program.service';
-import { errorToast, successToast } from '../components/Toasts';
-import { transformedValues } from '../utils/transformBody';
+import { useTheme } from 'styled-components';
+import ProgramDetailsComponent from '../components/program/ProgramDetails';
+import { useParams } from 'react-router-dom';
+import { useProgramDetailsQuery } from '../redux/service/program.service';
+import { ProgramStudents } from '../components/program/ProgramStudents';
+import ProgramContent from '../components/program/ProgramContent';
+import { ProgramQuestionnaire } from '../components/program/ProgramQuestionnaire';
+import { ProgramTrivia } from '../components/program/ProgramTrivia';
+import { useLDispatch } from '../redux/hooks';
 import { resetProgramSlice } from '../redux/slices/program.slice';
 
-const CreateProgram = () => {
+const ProgramDetails = () => {
   const theme = useTheme();
-  const program = useLSelector((state) => state.program);
-  const navigate = useNavigate();
+  const { id } = useParams();
   const dispatch = useLDispatch();
 
-  const [createProgram, { isError, error, data, isSuccess }] = useCreateProgramMutation();
-
+  const { data } = useProgramDetailsQuery(id as string);
   const handleSave = () => {
-    const allFieldsFilled = Object.values(program).every((value) => value !== '');
-    if (allFieldsFilled) {
-      createProgram(transformedValues(program)).then((res: any) => {
-        navigate('/');
-        dispatch(resetProgramSlice());
-        successToast('Programa creado exitosamente!');
-      });
-    }
+    console.log();
   };
-
   useEffect(() => {
-    if (isError) {
-      errorToast('Algo ha salido mal! ');
-    }
-  }, [isError]);
-
+    return () => {
+      dispatch(resetProgramSlice());
+    };
+  }, []);
   return (
     <StyledBox css={{ height: '100%' }}>
       <StyledRow
@@ -51,7 +38,7 @@ const CreateProgram = () => {
           alignItems: 'center',
         }}
       >
-        <StyledText variant="h2">Crear nuevo programa</StyledText>
+        <StyledText variant="h2">Detalles de programa</StyledText>
       </StyledRow>
 
       <StyledColumn
@@ -70,7 +57,7 @@ const CreateProgram = () => {
             paddingBottom: '32px',
           }}
         >
-          <ProgramDetails />
+          <ProgramDetailsComponent />
           <ProgramContent />
           <ProgramQuestionnaire />
           <ProgramTrivia />
@@ -96,4 +83,4 @@ const CreateProgram = () => {
   );
 };
 
-export default CreateProgram;
+export default ProgramDetails;

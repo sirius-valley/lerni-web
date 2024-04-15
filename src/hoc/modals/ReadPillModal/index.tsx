@@ -22,6 +22,7 @@ const ReadPillModal = ({ handleOnClose }: CreateQuestionnaireModalProps) => {
   const block = useLSelector((state) =>
     getBlockByType(state, { type: metadata.type, id: metadata?.id }),
   );
+
   return (
     <Card
       headerComponent={

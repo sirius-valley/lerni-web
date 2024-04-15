@@ -18,6 +18,7 @@ const ProgramContent = () => {
   const dispatch = useLDispatch();
   const pills = useLSelector((state) => state.program.pills);
   const emptyPills = pills.length === 0;
+  const edit = useLSelector((state) => state.program.edit);
 
   const handleShowModal = () => {
     dispatch(setModalOpen({ modalType: 'PILL_CREATE' }));
@@ -148,12 +149,14 @@ const ProgramContent = () => {
                 >
                   <ShowIcon size={20} color={theme.gray400} />
                 </StyledColumn>
-                <StyledColumn
-                  onClick={() => dispatch(removePill(id))}
-                  css={{ alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <TrashIcon size={20} color={theme.gray400} />
-                </StyledColumn>
+                {edit && (
+                  <StyledColumn
+                    onClick={() => dispatch(removePill(id))}
+                    css={{ alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    <TrashIcon size={20} color={theme.gray400} />
+                  </StyledColumn>
+                )}
               </StyledRow>
             </StyledRow>
           ))}
