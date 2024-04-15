@@ -45,16 +45,10 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
       fontSize: '12px',
       position: 'right',
       horizontalAlign: 'left',
-      // formatter: function (seriesName: string, opts: any) {
-      //   return [
-      //     `${Math.round(
-      //       (opts.w.globals.series[opts.seriesIndex] / totalStudents) * 100,
-      //     )}% ${seriesName}`,
-      //   ];
-      // },
+
       itemMargin: {
         horizontal: -10,
-        vertical: 5,
+        vertical: 4,
       },
     },
     chart: {
@@ -89,7 +83,13 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
     tooltip: {
       enabled: true,
       followCursor: false,
-
+      formatter: function (seriesName: string, opts: any) {
+        return [
+          `${Math.round(
+            (opts.w.globals.series[opts.seriesIndex] / totalStudents) * 100,
+          )}% ${seriesName}`,
+        ];
+      },
       style: {
         fontFamily: 'Roboto',
         fontWeight: '400',
@@ -115,8 +115,8 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 position: 'absolute',
-                top: '45px',
-                left: '48px',
+                top: '48px',
+                left: '52px',
               }}
             >
               <StyledText
@@ -127,7 +127,7 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
                 {totalStudents}
               </StyledText>
               <StyledText variant="body2" color="gray900">
-                {'Opiniones'}
+                {'Alumnos'}
               </StyledText>
             </StyledColumn>
             {/* it ignores type errors over apex charts legends position and horizontalAlign */}

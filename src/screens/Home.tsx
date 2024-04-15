@@ -33,9 +33,8 @@ const Home = () => {
         </StyledColumn>
       </StyledRow>
       <StyledRow css={{ gap: '16px', padding: '16px' }}>
-        <LikesChart programId={'20f5a8dc-23d1-41bb-9d38-654b284f48eb'} />
+        <AttendanceChart programId={'programId'} />
         <AttendanceChart programId={'20f5a8dc-23d1-41bb-9d38-654b284f48eb'} />
-        <LikesChart programId={'programId'} />
       </StyledRow>
     </RootContainer>
   );
