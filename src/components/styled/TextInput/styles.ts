@@ -54,9 +54,7 @@ export const StyledTextArea = styled.textarea<StyledInputProps>`
       return props.theme.white;
     }
   }};
-  overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
   resize: none;
   font-family: Roboto;
   font-size: 14px;
