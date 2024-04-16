@@ -4,9 +4,15 @@ import { useTheme } from 'styled-components';
 import { ComponentVariantType } from '../../../utils/constants';
 import Button from '../../styled/Button';
 import { ButtonLabelSize } from '../../styled/Button/styles';
+import { ProgramListItem } from '../../../redux/service/types/program.types';
+import { useNavigate, useRoutes } from 'react-router-dom';
 
-export const ProgramItem = () => {
+export const ProgramItem = ({ id, programVersionId, name, icon }: ProgramListItem) => {
   const theme = useTheme();
+  const route = useNavigate();
+  const redirectToDetails = () => {
+    route(`/details/program/${programVersionId}`);
+  };
   return (
     <StyledRow
       style={{
@@ -16,30 +22,29 @@ export const ProgramItem = () => {
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '100%',
+        cursor: 'pointer',
       }}
+      onClick={redirectToDetails}
     >
-      <StyledRow
-        style={{ gap: 8, alignItems: 'center', justifyContent: 'center' }}
-        onClick={() => alert('redireccionar a program details')}
-      >
+      <StyledRow style={{ gap: 8, alignItems: 'center', justifyContent: 'center' }}>
         <StyledImage
           width={40}
           height={40}
-          style={{ borderRadius: 4 }}
-          src="https://thumbs.dreamstime.com/b/bello-planeta-tierra-y-estrellas-brillantes-en-el-cosmos-infinito-nuevos-horizontes-la-exploraci%C3%B3n-del-espacio-elementos-de-esta-186771413.jpg"
+          style={{ borderRadius: 4, objectFit: 'cover' }}
+          src={icon}
         />
         <StyledColumn style={{ gap: 2 }}>
           <StyledText variant="body1" style={{ color: theme.primary950 }}>
-            {'Nombre del programa'}
+            {name}
           </StyledText>
           <StyledText variant="body3" style={{ color: theme.gray400 }}>
-            {'Detalles del programa'}
+            {programVersionId}
           </StyledText>
         </StyledColumn>
       </StyledRow>
       <StyledBox style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button
-          onClick={() => alert('redireccionar a program details')}
+          onClick={redirectToDetails}
           disabled={false}
           labelSize={ButtonLabelSize.BODY3}
           variant={ComponentVariantType.GHOST}

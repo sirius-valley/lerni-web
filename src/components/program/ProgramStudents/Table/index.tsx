@@ -10,7 +10,7 @@ import {
 import { StyledTable } from './styles';
 import { Tooltip } from 'react-tooltip';
 import React, { useEffect, useRef, useState } from 'react';
-import { useLDispatch } from '../../../../redux/hooks';
+import { useLDispatch, useLSelector } from '../../../../redux/hooks';
 import { removeStudent } from '../../../../redux/slices/program.slice';
 
 interface StudentsTableProps {
@@ -27,6 +27,7 @@ interface StudentsTableProps {
 export const StudentsTable = ({ students }: StudentsTableProps) => {
   const theme = useTheme();
   const dispatch = useLDispatch();
+  const edit = useLSelector((state) => state.program.edit);
 
   return (
     <StyledBox style={{ maxWidth: '100%', overflowX: 'auto' }}>
@@ -141,7 +142,12 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                     }}
                   >
                     <StyledBox
-                      style={{ cursor: 'pointer', width: 'auto' }}
+                      style={{
+                        cursor: 'pointer',
+                        width: 'auto',
+                        opacity: edit ? 1 : 0,
+                        pointerEvents: edit ? 'visible' : 'none',
+                      }}
                       onClick={() => dispatch(removeStudent({ email: student.email }))}
                     >
                       <RemoveIcon size={18} color={theme.gray400} />

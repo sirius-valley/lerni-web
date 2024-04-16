@@ -4,10 +4,12 @@ import Button from '../../styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import { ProgramItem } from '../../program/ProgramItem';
 import { useNavigate } from 'react-router-dom';
+import { useProgramListQuery } from '../../../redux/service/program.service';
 
 const ProgramsList = () => {
   const list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 9];
   const navigation = useNavigate();
+  const { data } = useProgramListQuery();
 
   const handleAddNewProgram = () => {
     navigation('/create/program');
@@ -35,9 +37,7 @@ const ProgramsList = () => {
         </Button>
       </StyledRow>
       <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
-        {list.map((item, key) => (
-          <ProgramItem key={key} />
-        ))}
+        {data?.results.map((item, key) => <ProgramItem key={key} {...item} />)}
       </StyledColumn>
     </StyledColumn>
   );

@@ -1,5 +1,11 @@
 import { api } from './api';
-import { ConvertPillBody, ConvertTypeResponse } from './types/program.types';
+import {
+  ConvertPillBody,
+  ConvertTypeResponse,
+  ProgramListItem,
+  ProgramListResponse,
+  LikesResponse,
+} from './types/program.types';
 
 // interface Pill {
 //   name: string;
@@ -57,6 +63,18 @@ export const programApi = api.injectEndpoints({
         body: body,
       }),
     }),
+    programList: builder.query<ProgramListResponse, void>({
+      query: () => ({
+        url: 'api/program/list',
+        method: 'GET',
+      }),
+    }),
+    programDetails: builder.query<any, string>({
+      query: (id) => ({
+        url: `/api/program/detail/${id}`,
+        method: 'GET',
+      }),
+    }),
     createProgram: builder.mutation<any, any>({
       query: (body) => ({
         url: 'api/program',
@@ -79,4 +97,6 @@ export const {
   useVerifyStudentsMutation,
   useCreateProgramMutation,
   useGetProgramLikesQuery,
+  useProgramListQuery,
+  useProgramDetailsQuery,
 } = programApi;

@@ -19,6 +19,8 @@ export const ProgramQuestionnaire = () => {
   const hasPills = useLSelector((state) => state.program.pills)?.length > 0;
   const questionnaire = useLSelector((state) => state.program.questionnaire);
   const hasQuestionnaire = questionnaire !== undefined;
+  const edit = useLSelector((state) => state.program.edit);
+
   const handleShowModal = () => {
     dispatch(setModalOpen({ modalType: 'QUESTIONNAIRE_CREATE' }));
   };
@@ -74,12 +76,14 @@ export const ProgramQuestionnaire = () => {
               <StyledBox onClick={handleShowQuestionnaire} css={{ cursor: 'pointer' }}>
                 <ShowIcon size={18} color={theme.gray400} />
               </StyledBox>
-              <StyledBox
-                onClick={() => dispatch(removeQuestionnaire())}
-                css={{ cursor: 'pointer' }}
-              >
-                <RemoveIcon size={18} color={theme.gray400} />
-              </StyledBox>
+              {edit && (
+                <StyledBox
+                  onClick={() => dispatch(removeQuestionnaire())}
+                  css={{ cursor: 'pointer' }}
+                >
+                  <RemoveIcon size={18} color={theme.gray400} />
+                </StyledBox>
+              )}
             </StyledRow>
           </StyledRow>
         </StyledColumn>

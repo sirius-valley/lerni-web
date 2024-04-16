@@ -40,6 +40,7 @@ export interface CreateProgramState {
   }[];
   hoursToComplete: number;
   pointsReward: number;
+  edit: boolean;
 }
 
 const initialState: CreateProgramState = {
@@ -480,6 +481,7 @@ const initialState: CreateProgramState = {
   students: [],
   hoursToComplete: 0,
   pointsReward: 0,
+  edit: true,
 };
 // just to have it mocked, then we can remove field values
 
@@ -513,9 +515,29 @@ export const programSlice = createSlice({
     },
   },
 
-  // extraReducers: (builder) => {
-  //
-  // }
+  extraReducers: (builder) => {
+    builder.addMatcher(programApi.endpoints.programDetails.matchFulfilled, (state, action) => {
+      state.edit = false;
+      state.title = action.payload.programName;
+      state.image = action.payload.icon;
+      state.professor = action.payload.teacher.id;
+      state.description = action.payload.programDescription;
+      state.students = action.payload.students ?? [];
+      state.pills = action.payload.pills.map((pill: any) => ({
+        ...pill,
+        lerniPill: JSON.parse(pill.block),
+        title: pill.name,
+      }));
+      state.questionnaire =
+        action.payload?.questionnaire[0]?.block !== undefined
+          ? JSON.parse(action.payload?.questionnaire[0]?.block)
+          : undefined;
+      state.trivia =
+        action.payload?.trivias?.[0]?.block !== undefined
+          ? JSON.parse(action.payload?.trivias?.[0].block)
+          : undefined;
+    });
+  },
 });
 
 const program: any = (state: RootState) => state.program;

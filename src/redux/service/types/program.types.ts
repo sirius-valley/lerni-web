@@ -12,3 +12,15 @@ export type LikesResponse =
       dislikes?: number;
     }
   | undefined;
+
+export type ProgramListItem = {
+  icon: string;
+  id: string;
+  name: string;
+  programVersionId: string;
+};
+
+export type ProgramListResponse = {
+  results: ProgramListItem[];
+  total: 3;
+};
