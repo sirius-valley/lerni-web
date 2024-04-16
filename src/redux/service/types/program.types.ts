@@ -6,6 +6,13 @@ export type ConvertTypeResponse = {
   pillBlock: any;
 };
 
+export type LikesResponse =
+  | {
+      likes?: number;
+      dislikes?: number;
+    }
+  | undefined;
+
 export type ProgramListItem = {
   icon: string;
   id: string;

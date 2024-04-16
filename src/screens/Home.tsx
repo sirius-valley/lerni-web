@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import Button from '../components/styled/Button';
-import { ComponentVariantType } from '../utils/constants';
-import { ButtonLabelSize } from '../components/styled/Button/styles';
-import SendIcon from '../assets/icons/SendIcon';
-import { ProgramItem } from '../components/program/ProgramItem';
-import { RootContainer, StyledColumn, StyledRow } from '../components/styled/styles';
-import ProgramsList from '../components/home/ProgramsList';
+import React, { useState } from 'react';
+import { LikesChart } from '../components/charts/LikesChart';
 import ProfessorList from '../components/home/ProfessorList';
-import { Dropdown } from '../components/Dropdown';
+import ProgramsList from '../components/home/ProgramsList';
+import { RootContainer, StyledColumn, StyledRow } from '../components/styled/styles';
 
 const Home = () => {
   const [selectedValue, setSelectedValue] = useState<string>('');
@@ -35,6 +30,11 @@ const Home = () => {
         <StyledColumn css={{ flex: 1, gap: '12px' }}>
           <ProfessorList />
         </StyledColumn>
+      </StyledRow>
+      <StyledRow css={{ gap: '16px', padding: '16px' }}>
+        <LikesChart programId={'20f5a8dc-23d1-41bb-9d38-654b284f48eb'} />
+        <LikesChart programId={'20f5a8dc-23d1-41bb-9d38-654b284f48eb'} />
+        <LikesChart programId={'programId'} />
       </StyledRow>
     </RootContainer>
   );
