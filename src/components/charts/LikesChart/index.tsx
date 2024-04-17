@@ -12,6 +12,7 @@ interface LikesChartProps {
 
 export const LikesChart = ({ programId }: LikesChartProps) => {
   const theme = useTheme();
+
   const { data, isLoading, isError, error } = useGetProgramLikesQuery(programId) as {
     data: LikesResponse;
     isLoading: boolean;
@@ -30,11 +31,7 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
     </StyledColumn>
   );
 
-  if (isError || isLoading || !data) {
-    return null;
-  }
-
-  const totalVotes = (data.likes || 0) + (data.dislikes || 0);
+  const totalVotes = (data?.likes || 0) + (data?.dislikes || 0);
 
   //Chart styling and labeling.
   const options = {
@@ -94,7 +91,7 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
       },
     },
   };
-  const series = [data.likes, data.dislikes];
+  const series = [data?.likes, data?.dislikes];
   const labels = ['Me gusta', 'No me gusta'];
 
   return (
@@ -102,7 +99,7 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
       <StyledBox
         css={{ justifyContent: 'center', width: '100%', height: '100%', alignContent: 'center' }}
       >
-        {!data.likes && !data.dislikes ? (
+        {(!data?.likes && !data?.dislikes) || isLoading || isError ? (
           <StyledText variant="body1" color="gray500" css={{ textAlign: 'center' }}>
             {'No hay datos'}
           </StyledText>
@@ -135,7 +132,7 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
               options={options}
               series={series}
               type="donut"
-              width="82%"
+              width="100%"
             />
           </StyledBox>
         )}

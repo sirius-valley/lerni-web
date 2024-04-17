@@ -3,7 +3,10 @@ import { StyledBox, StyledColumn, StyledText } from '../../styled/styles';
 import { useTheme } from 'styled-components';
 import { Card } from '../Card';
 import Chart from 'react-apexcharts';
-import { useGetProgramLikesQuery } from '../../../redux/service/program.service';
+import {
+  useGetProgramAttendanceQuery,
+  useGetProgramLikesQuery,
+} from '../../../redux/service/program.service';
 import { LikesResponse } from '../../../redux/service/types/program.types';
 
 interface AttendanceChartProps {
@@ -12,11 +15,9 @@ interface AttendanceChartProps {
 
 export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
   const theme = useTheme();
-  const data = {
-    finished: 9,
-    studying: 15,
-    notStarted: 2,
-  };
+  const { data, isLoading, isError } = useGetProgramAttendanceQuery(programId);
+
+  if (!data) return <></>;
 
   const cardHeader = (
     <StyledColumn css={{ padding: '0px 14px 7px', gap: '4px' }}>
@@ -29,11 +30,7 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
     </StyledColumn>
   );
 
-  // if (isError || isLoading || !data) {
-  //   return null;
-  // }
-
-  const totalStudents = (data.finished || 0) + (data.notStarted || 0) + (data.studying || 0);
+  const totalStudents = (data.completed || 0) + (data.notStarted || 0) + (data.inProgress || 0);
 
   //Chart styling and labeling.
   const options = {
@@ -45,10 +42,9 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
       fontSize: '12px',
       position: 'right',
       horizontalAlign: 'left',
-
       itemMargin: {
         horizontal: -10,
-        vertical: 4,
+        vertical: 2,
       },
     },
     chart: {
@@ -96,7 +92,7 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
       },
     },
   };
-  const series = [data.finished, data.studying, data.notStarted];
+  const series = [data.completed, data.inProgress, data.notStarted];
   const labels = ['Terminaron', 'En progreso', 'Sin empezar'];
 
   return (
@@ -104,7 +100,7 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
       <StyledBox
         css={{ justifyContent: 'center', width: '100%', height: '100%', alignContent: 'center' }}
       >
-        {!data.notStarted && !data.studying && !data.finished ? (
+        {(!data.notStarted && !data.inProgress && !data.completed) || isLoading || isError ? (
           <StyledText variant="body1" color="gray500" css={{ textAlign: 'center' }}>
             {'No hay datos'}
           </StyledText>
@@ -115,8 +111,8 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 position: 'absolute',
-                top: '48px',
-                left: '52px',
+                top: '35%',
+                left: '22%',
               }}
             >
               <StyledText
@@ -137,7 +133,7 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
               options={options}
               series={series}
               type="donut"
-              width="82%"
+              width="100%"
             />
           </StyledBox>
         )}

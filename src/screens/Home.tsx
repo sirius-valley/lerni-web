@@ -32,10 +32,6 @@ const Home = () => {
           <ProfessorList />
         </StyledColumn>
       </StyledRow>
-      <StyledRow css={{ gap: '16px', padding: '16px' }}>
-        <AttendanceChart programId={'programId'} />
-        <AttendanceChart programId={'20f5a8dc-23d1-41bb-9d38-654b284f48eb'} />
-      </StyledRow>
     </RootContainer>
   );
 };
