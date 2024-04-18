@@ -1,14 +1,13 @@
 import React from 'react';
 import { useTheme } from 'styled-components';
 import Card from '../../Card';
-import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
-import { useLSelector } from '../../../redux/hooks';
+import { StyledBox, StyledRow, StyledText } from '../../styled/styles';
 import { AttendanceChart } from '../../charts/AttendanceChart';
 import { LikesChart } from '../../charts/LikesChart';
 import { useParams } from 'react-router-dom';
+import { QuestionnaireAttemptsChart } from '../../charts/QuestionnaireAttemptsChart';
 export const ProgramStatistics = () => {
   const theme = useTheme();
-  const program = useLSelector((state) => state.program);
   const { id } = useParams();
 
   return (
@@ -40,7 +39,7 @@ export const ProgramStatistics = () => {
         }}
       >
         <AttendanceChart programId={id ?? ''} />
-        <AttendanceChart programId={id ?? ''} />
+        <QuestionnaireAttemptsChart programId={id ?? ''} />
         <LikesChart programId={id ?? ''} />
       </StyledRow>
     </Card>
