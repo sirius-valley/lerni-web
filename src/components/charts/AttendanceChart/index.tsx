@@ -41,6 +41,7 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
       fontFamily: 'Roboto',
       fontSize: '12px',
       position: 'right',
+      offsetY: 20,
       horizontalAlign: 'left',
       itemMargin: {
         horizontal: -10,
