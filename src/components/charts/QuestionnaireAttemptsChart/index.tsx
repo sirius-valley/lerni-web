@@ -14,24 +14,7 @@ export const QuestionnaireAttemptsChart = ({ programId }: ChartProps) => {
 
   const { data, isLoading, isError } = useGetQuestionnaireAttemptsQuery(programId);
 
-  const mockedData = [
-    {
-      attempts: 1,
-      studentsQty: 1,
-    },
-    {
-      attempts: 2,
-      studentsQty: 8,
-    },
-    {
-      attempts: 3,
-      studentsQty: 12,
-    },
-  ];
-
   if (!data) return <></>;
-
-  const totalStudents = data.reduce((total, item) => total + item.studentQty, 0);
 
   const cardHeader = (
     <StyledColumn css={{ padding: '0px 14px 7px', gap: '4px' }}>
@@ -51,6 +34,7 @@ export const QuestionnaireAttemptsChart = ({ programId }: ChartProps) => {
     theme.primary700,
     theme.gray300,
   ];
+
   const attempts = data.map((item) => item.attempts);
   const students = data.map((item) => item.studentQty);
   //Chart styling and labeling.
@@ -60,6 +44,9 @@ export const QuestionnaireAttemptsChart = ({ programId }: ChartProps) => {
       type: 'bar',
       toolbar: {
         show: false,
+      },
+      zoom: {
+        enabled: false,
       },
     },
     colors: colors,
@@ -105,7 +92,7 @@ export const QuestionnaireAttemptsChart = ({ programId }: ChartProps) => {
   const series = [
     {
       name: 'Cantidad de estudiantes',
-      data: data.map((item) => item.studentQty),
+      data: students,
     },
   ];
 
@@ -114,7 +101,7 @@ export const QuestionnaireAttemptsChart = ({ programId }: ChartProps) => {
       <StyledBox
         css={{ justifyContent: 'center', width: '100%', height: '100%', alignContent: 'center' }}
       >
-        {!data ? (
+        {!data.length || isLoading || isError ? (
           <StyledText variant="body1" color="gray500" css={{ textAlign: 'center' }}>
             {'No hay datos'}
           </StyledText>
