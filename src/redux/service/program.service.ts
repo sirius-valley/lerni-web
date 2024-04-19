@@ -82,9 +82,15 @@ export const programApi = api.injectEndpoints({
         body: body,
       }),
     }),
-    getProgramLikes: builder.query<any, string>({
+    getProgramLikes: builder.query<LikesResponse, string>({
       query: (id: string) => ({
         url: `api/program/likes/${id}`,
+        method: 'GET',
+      }),
+    }),
+    getProgramAttendance: builder.query<any, string>({
+      query: (id: string) => ({
+        url: `api/program/students/${id}`,
         method: 'GET',
       }),
     }),
@@ -97,6 +103,7 @@ export const {
   useVerifyStudentsMutation,
   useCreateProgramMutation,
   useGetProgramLikesQuery,
+  useGetProgramAttendanceQuery,
   useProgramListQuery,
   useProgramDetailsQuery,
 } = programApi;

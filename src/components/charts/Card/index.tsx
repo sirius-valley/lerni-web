@@ -14,11 +14,11 @@ export const Card = ({ header, children }: CardProps) => {
       css={{
         gap: '7px',
         padding: '21px 0px',
-        minWidth: '264px',
+        width: '264px',
+        height: '274px',
         borderRadius: '19px',
         elevation: 5,
-        shadowColor: 'rgba(0, 0, 0, 0.1)',
-        shadowOffset: { width: 0, height: 1.19 },
+        boxShadow: '0px 1.19px 10px rgba(0, 0, 0, 0.1)',
         backgroundColor: theme.white,
       }}
     >
@@ -37,7 +37,13 @@ export const Card = ({ header, children }: CardProps) => {
           {header}
         </StyledColumn>
         <StyledBox
-          css={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
+          css={{
+            width: '100%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            display: 'flex',
+          }}
         >
           {children}
         </StyledBox>

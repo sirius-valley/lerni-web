@@ -12,6 +12,7 @@ import { ProgramQuestionnaire } from '../components/program/ProgramQuestionnaire
 import { ProgramTrivia } from '../components/program/ProgramTrivia';
 import { useLDispatch } from '../redux/hooks';
 import { resetProgramSlice } from '../redux/slices/program.slice';
+import { ProgramStatistics } from '../components/program/ProgramStatistics';
 
 const ProgramDetails = () => {
   const theme = useTheme();
@@ -58,6 +59,7 @@ const ProgramDetails = () => {
           }}
         >
           <ProgramDetailsComponent />
+          <ProgramStatistics />
           <ProgramContent />
           <ProgramQuestionnaire />
           <ProgramTrivia />

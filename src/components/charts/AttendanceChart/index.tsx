@@ -3,52 +3,49 @@ import { StyledBox, StyledColumn, StyledText } from '../../styled/styles';
 import { useTheme } from 'styled-components';
 import { Card } from '../Card';
 import Chart from 'react-apexcharts';
-import { useGetProgramLikesQuery } from '../../../redux/service/program.service';
+import {
+  useGetProgramAttendanceQuery,
+  useGetProgramLikesQuery,
+} from '../../../redux/service/program.service';
 import { LikesResponse } from '../../../redux/service/types/program.types';
 
-interface LikesChartProps {
+interface AttendanceChartProps {
   programId: string;
 }
 
-export const LikesChart = ({ programId }: LikesChartProps) => {
+export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
   const theme = useTheme();
+  const { data, isLoading, isError } = useGetProgramAttendanceQuery(programId);
 
-  const { data, isLoading, isError, error } = useGetProgramLikesQuery(programId) as {
-    data: LikesResponse;
-    isLoading: boolean;
-    isError: boolean;
-    error: any;
-  };
+  if (!data) return <></>;
 
   const cardHeader = (
     <StyledColumn css={{ padding: '0px 14px 7px', gap: '4px' }}>
       <StyledText variant="h1" color="gray900" css={{ fontFamily: 'Roboto' }}>
-        {'Me gusta'}
+        {'Completitud'}
       </StyledText>
       <StyledText variant="body2" color="gray700">
-        {'Likes del programa'}
+        {'Alumnos cursando el programa'}
       </StyledText>
     </StyledColumn>
   );
 
-  const totalVotes = (data?.likes || 0) + (data?.dislikes || 0);
+  const totalStudents = (data.completed || 0) + (data.notStarted || 0) + (data.inProgress || 0);
 
   //Chart styling and labeling.
   const options = {
-    labels: ['Me gusta', 'No me gusta'],
-    colors: [theme.primary500, theme.primary600],
+    labels: ['Terminaron', 'En progreso', 'Sin empezar'],
+    colors: [theme.primary500, theme.primary600, theme.gray300],
     legend: {
       show: true,
       fontFamily: 'Roboto',
       fontSize: '12px',
-      position: 'bottom',
-      horizontalAlign: 'center',
-      formatter: function (seriesName: string, opts: any) {
-        return [
-          `${Math.round(
-            (opts.w.globals.series[opts.seriesIndex] / totalVotes) * 100,
-          )}% ${seriesName}`,
-        ];
+      position: 'right',
+      offsetY: 20,
+      horizontalAlign: 'left',
+      itemMargin: {
+        horizontal: -10,
+        vertical: 2,
       },
     },
     chart: {
@@ -81,25 +78,30 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
       },
     },
     tooltip: {
-      custom: function ({ series, seriesIndex, dataPointIndex, w }: any) {
-        return null;
-      },
+      enabled: true,
       followCursor: false,
+      formatter: function (seriesName: string, opts: any) {
+        return [
+          `${Math.round(
+            (opts.w.globals.series[opts.seriesIndex] / totalStudents) * 100,
+          )}% ${seriesName}`,
+        ];
+      },
       style: {
         fontFamily: 'Roboto',
         fontWeight: '400',
       },
     },
   };
-  const series = [data?.likes, data?.dislikes];
-  const labels = ['Me gusta', 'No me gusta'];
+  const series = [data.completed, data.inProgress, data.notStarted];
+  const labels = ['Terminaron', 'En progreso', 'Sin empezar'];
 
   return (
     <Card header={cardHeader}>
       <StyledBox
         css={{ justifyContent: 'center', width: '100%', height: '100%', alignContent: 'center' }}
       >
-        {(!data?.likes && !data?.dislikes) || isLoading || isError ? (
+        {(!data.notStarted && !data.inProgress && !data.completed) || isLoading || isError ? (
           <StyledText variant="body1" color="gray500" css={{ textAlign: 'center' }}>
             {'No hay datos'}
           </StyledText>
@@ -110,19 +112,19 @@ export const LikesChart = ({ programId }: LikesChartProps) => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 position: 'absolute',
-                top: '51px',
-                left: '92px',
+                top: '35%',
+                left: '22%',
               }}
             >
               <StyledText
                 variant="body1"
                 color="primary500"
-                style={{ fontSize: '22px', textAlign: 'center' }}
+                css={{ fontSize: '22px', textAlign: 'center' }}
               >
-                {totalVotes}
+                {totalStudents}
               </StyledText>
-              <StyledText variant="body2" color="gray900" css={{ fontSize: '14px' }}>
-                {'Opiniones'}
+              <StyledText variant="body2" color="gray900">
+                {'Alumnos'}
               </StyledText>
             </StyledColumn>
             {/* it ignores type errors over apex charts legends position and horizontalAlign */}

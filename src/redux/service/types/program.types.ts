@@ -13,6 +13,12 @@ export type LikesResponse =
     }
   | undefined;
 
+export type ProgramAttendanceResponse = {
+  inProgress?: number;
+  notStarted?: number;
+  completed?: number;
+};
+
 export type ProgramListItem = {
   icon: string;
   id: string;
