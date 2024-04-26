@@ -5,6 +5,8 @@ import {
   ProgramListItem,
   ProgramListResponse,
   LikesResponse,
+  ProgramAttendanceResponse,
+  QuestionnaireAttemptsResponse,
 } from './types/program.types';
 
 // interface Pill {
@@ -88,9 +90,15 @@ export const programApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
-    getProgramAttendance: builder.query<any, string>({
+    getProgramAttendance: builder.query<ProgramAttendanceResponse, string>({
       query: (id: string) => ({
         url: `api/program/students/${id}`,
+        method: 'GET',
+      }),
+    }),
+    getQuestionnaireAttempts: builder.query<QuestionnaireAttemptsResponse, string>({
+      query: (id: string) => ({
+        url: `/api/program/questionnaires/${id}`,
         method: 'GET',
       }),
     }),
@@ -104,6 +112,7 @@ export const {
   useCreateProgramMutation,
   useGetProgramLikesQuery,
   useGetProgramAttendanceQuery,
+  useGetQuestionnaireAttemptsQuery,
   useProgramListQuery,
   useProgramDetailsQuery,
 } = programApi;

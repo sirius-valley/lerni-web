@@ -14,10 +14,17 @@ export type LikesResponse =
   | undefined;
 
 export type ProgramAttendanceResponse = {
-  inProgress?: number;
-  notStarted?: number;
-  completed?: number;
+  programVersionId: string;
+  totalStudents: number;
+  notStarted: number;
+  inProgress: number;
+  completed: number;
 };
+
+export type QuestionnaireAttemptsResponse = {
+  attempts: number;
+  studentQty: number;
+}[];
 
 export type ProgramListItem = {
   icon: string;
