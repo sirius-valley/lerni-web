@@ -21,7 +21,7 @@ const ProgramDetails = () => {
 
   const { data } = useProgramDetailsQuery(id as string);
   const handleSave = () => {
-    console.log();
+    null;
   };
   useEffect(() => {
     return () => {

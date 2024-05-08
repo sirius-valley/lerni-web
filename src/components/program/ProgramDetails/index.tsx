@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '../../Card';
 import { StyledColumn, StyledRow } from '../../styled/styles';
 import { TextInput } from '../../styled/TextInput';
@@ -6,11 +6,13 @@ import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { updatePillInfo } from '../../../redux/slices/program.slice';
 import { useGetProfessorsQuery } from '../../../redux/service/professor.service';
 import { Dropdown } from '../../Dropdown';
+import { DateTimePicker } from './DateTimePicker';
+import dayjs from 'dayjs';
 
 const ProgramDetails = () => {
   const program = useLSelector((state) => state.program);
+  const { edit } = program;
   const dispatch = useLDispatch();
-  const edit = useLSelector((state) => state.program.edit);
 
   const { data: professors } = useGetProfessorsQuery(undefined, {
     selectFromResult: (res: any) => {
@@ -30,10 +32,17 @@ const ProgramDetails = () => {
   const handleChange = (name: string, value: string) => {
     dispatch(updatePillInfo({ ...program, [name]: value }));
   };
+
+  useEffect(() => {
+    if (program.endDate < program.startDate) {
+      handleChange('endDate', program.startDate);
+    }
+  }, [program.startDate, program.endDate]);
+
   const imageUrl = 'https://lerni-images-2024.s3.amazonaws.com/default_image_program.jpg';
 
   return (
-    <Card title={'Detalles del programa'} height={'490px'}>
+    <Card title={'Detalles del programa'} height={'100%'}>
       <StyledRow style={{ gap: '24px', marginTop: '12px' }}>
         <img
           src={program.image ? program.image : imageUrl}
@@ -84,6 +93,24 @@ const ProgramDetails = () => {
             multiline
             disabled={!edit}
           ></TextInput>
+          <StyledRow css={{ gap: '16px' }}>
+            <DateTimePicker
+              label="Comienzo"
+              value={dayjs(program.startDate)}
+              handleChange={(date) => handleChange('startDate', date.toISOString())}
+              disable={!program.edit}
+              defaultValue={dayjs(program.startDate)}
+              minDate={dayjs()}
+            />
+            <DateTimePicker
+              label="Finalización"
+              value={dayjs(program.endDate)}
+              handleChange={(date) => handleChange('endDate', date.toISOString())}
+              disable={!program.edit}
+              defaultValue={dayjs(program.endDate)}
+              minDate={dayjs(program.startDate)}
+            />
+          </StyledRow>
         </StyledColumn>
       </StyledRow>
     </Card>

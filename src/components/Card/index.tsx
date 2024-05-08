@@ -19,7 +19,7 @@ const Card = ({
   headerComponent,
   padding,
   width = '832px',
-  height = '412px',
+  height = '100%',
   css,
   onClick,
 }: CardProps) => {
