@@ -1,6 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { programApi } from '../service/program.service';
 import { RootState } from '../store';
+import dayjs from 'dayjs';
 
 type Pill = {
   id: string;
@@ -483,8 +484,8 @@ const initialState: CreateProgramState = {
   students: [],
   hoursToComplete: 0,
   pointsReward: 0,
-  startDate: '',
-  endDate: '',
+  startDate: dayjs().toISOString(),
+  endDate: dayjs().toISOString(),
   edit: true,
 };
 // just to have it mocked, then we can remove field values
@@ -500,6 +501,7 @@ export const programSlice = createSlice({
       state.pills = state.pills.filter((pill) => pill.id !== action.payload);
     },
     updatePillInfo: (state, action) => {
+      console.log('prevstate: ', state.startDate, 'action.payload: ', action.payload);
       return {
         ...state,
         ...action.payload,
