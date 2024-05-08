@@ -44,7 +44,11 @@ export const transformedValues = (values: CreateProgramState) => {
       completionTimeMinutes: amountOfQuestions * 0.5,
       order: 0,
     },
-    trivia: JSON.stringify(values.trivia),
+    trivia: {
+      block: JSON.stringify(values.trivia),
+      questionsCount: 12,
+      order: 0,
+    },
     students: values.students.map((student) => student.email),
     hoursToComplete: 3,
     pointsReward: amountOfQuestions * 5,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '../../Card';
 import { StyledColumn, StyledRow } from '../../styled/styles';
 import { TextInput } from '../../styled/TextInput';
@@ -6,11 +6,24 @@ import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { updatePillInfo } from '../../../redux/slices/program.slice';
 import { useGetProfessorsQuery } from '../../../redux/service/professor.service';
 import { Dropdown } from '../../Dropdown';
+import { DateTimePicker } from './DateTimePicker';
+import dayjs, { Dayjs } from 'dayjs';
 
 const ProgramDetails = () => {
   const program = useLSelector((state) => state.program);
+  const { edit } = program;
   const dispatch = useLDispatch();
-  const edit = useLSelector((state) => state.program.edit);
+  const [startDate, setStartDate] = useState<Dayjs>();
+  const [endDate, setEndDate] = useState<Dayjs>();
+
+  useEffect(() => {
+    if (program.startDate) {
+      setStartDate(dayjs(program.startDate));
+    }
+    if (program.endDate) {
+      setEndDate(dayjs(program.endDate));
+    }
+  }, [program]);
 
   const { data: professors } = useGetProfessorsQuery(undefined, {
     selectFromResult: (res: any) => {
@@ -28,12 +41,14 @@ const ProgramDetails = () => {
   });
 
   const handleChange = (name: string, value: string) => {
-    dispatch(updatePillInfo({ ...program, [name]: value }));
+    dispatch(updatePillInfo({ ...program, [name]: value, startDate: startDate, endDate: endDate }));
   };
   const imageUrl = 'https://lerni-images-2024.s3.amazonaws.com/default_image_program.jpg';
 
+  if (!program) return null;
+
   return (
-    <Card title={'Detalles del programa'} height={'490px'}>
+    <Card title={'Detalles del programa'} height={'100%'}>
       <StyledRow style={{ gap: '24px', marginTop: '12px' }}>
         <img
           src={program.image ? program.image : imageUrl}
@@ -84,6 +99,29 @@ const ProgramDetails = () => {
             multiline
             disabled={!edit}
           ></TextInput>
+          <StyledRow css={{ gap: '16px' }}>
+            <DateTimePicker
+              label="Comienzo"
+              value={startDate ?? dayjs()}
+              handleChange={(date: Dayjs) => {
+                setStartDate(date);
+                handleChange('startDate', date.toString());
+              }}
+              disable={!edit}
+              defaultValue={dayjs(program.startDate)}
+            />
+            <DateTimePicker
+              label="Finalización"
+              value={endDate ?? dayjs()}
+              handleChange={(date: Dayjs) => {
+                setEndDate(date);
+                handleChange('endDate', date.toString());
+              }}
+              minDate={startDate}
+              disable={!edit}
+              defaultValue={dayjs(program.endDate)}
+            />
+          </StyledRow>
         </StyledColumn>
       </StyledRow>
     </Card>

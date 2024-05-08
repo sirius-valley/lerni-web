@@ -40,6 +40,8 @@ export interface CreateProgramState {
   }[];
   hoursToComplete: number;
   pointsReward: number;
+  startDate: string;
+  endDate: string;
   edit: boolean;
 }
 
@@ -481,6 +483,8 @@ const initialState: CreateProgramState = {
   students: [],
   hoursToComplete: 0,
   pointsReward: 0,
+  startDate: '',
+  endDate: '',
   edit: true,
 };
 // just to have it mocked, then we can remove field values
@@ -522,6 +526,8 @@ export const programSlice = createSlice({
       state.image = action.payload.icon;
       state.professor = action.payload.teacher.id;
       state.description = action.payload.programDescription;
+      state.startDate = action.payload.startDate;
+      state.endDate = action.payload.endDate;
       state.students = action.payload.students ?? [];
       state.pills = action.payload.pills.map((pill: any) => ({
         ...pill,
