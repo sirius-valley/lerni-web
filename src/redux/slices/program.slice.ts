@@ -501,7 +501,6 @@ export const programSlice = createSlice({
       state.pills = state.pills.filter((pill) => pill.id !== action.payload);
     },
     updatePillInfo: (state, action) => {
-      console.log('prevstate: ', state.startDate, 'action.payload: ', action.payload);
       return {
         ...state,
         ...action.payload,

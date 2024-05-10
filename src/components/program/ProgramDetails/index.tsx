@@ -37,7 +37,7 @@ const ProgramDetails = () => {
     if (program.endDate < program.startDate) {
       handleChange('endDate', program.startDate);
     }
-  }, [program.startDate]);
+  }, [program.startDate, program.endDate]);
 
   const imageUrl = 'https://lerni-images-2024.s3.amazonaws.com/default_image_program.jpg';
 
