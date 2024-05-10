@@ -36,6 +36,7 @@ export const DateTimePicker = ({
           onChange={(date) => handleChange(date)}
           disabled={disable}
           minDate={minDate}
+          allowClear={false}
         />
       </StyledColumn>
     </StyledRow>
