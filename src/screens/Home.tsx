@@ -3,6 +3,7 @@ import ProfessorList from '../components/home/ProfessorList';
 import ProgramsList from '../components/home/ProgramsList';
 import { RootContainer, StyledColumn, StyledRow } from '../components/styled/styles';
 import AllProgramsChart from '../components/charts/AllProgramsChart';
+import { StudentsRegisteredChart } from '../components/charts/StudentsRegisteredChart';
 
 const Home = () => {
   const [selectedValue, setSelectedValue] = useState<string>('');
@@ -30,6 +31,7 @@ const Home = () => {
         <StyledColumn css={{ flex: 1, gap: '12px' }}>
           <StyledRow css={{ gap: '30px' }}>
             <AllProgramsChart />
+            <StudentsRegisteredChart />
           </StyledRow>
           <ProfessorList />
         </StyledColumn>
