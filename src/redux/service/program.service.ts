@@ -7,6 +7,7 @@ import {
   LikesResponse,
   ProgramAttendanceResponse,
   QuestionnaireAttemptsResponse,
+  AllProgramsChartResponse,
 } from './types/program.types';
 
 // interface Pill {
@@ -102,6 +103,12 @@ export const programApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    allProgramsChart: builder.query<AllProgramsChartResponse, void>({
+      query: () => ({
+        url: `api/program/totalProgram`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -115,4 +122,5 @@ export const {
   useGetQuestionnaireAttemptsQuery,
   useProgramListQuery,
   useProgramDetailsQuery,
+  useAllProgramsChartQuery,
 } = programApi;

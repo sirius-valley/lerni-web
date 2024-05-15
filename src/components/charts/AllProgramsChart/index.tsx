@@ -3,34 +3,28 @@ import { StyledBox, StyledColumn, StyledText } from '../../styled/styles';
 import { useTheme } from 'styled-components';
 import { Card } from '../Card';
 import Chart from 'react-apexcharts';
-import { useGetProgramAttendanceQuery } from '../../../redux/service/program.service';
+import { useAllProgramsChartQuery } from '../../../redux/service/program.service';
+import Spinner from '../../Spinner/Spinner';
 
-interface AttendanceChartProps {
-  programId: string;
-}
-
-export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
+const AllProgramsChart = () => {
+  const { data, isLoading } = useAllProgramsChartQuery();
   const theme = useTheme();
-  const { data, isLoading, isError } = useGetProgramAttendanceQuery(programId);
 
   if (!data) return <></>;
 
   const cardHeader = (
     <StyledColumn css={{ padding: '0px 14px 7px', gap: '4px' }}>
-      <StyledText variant="h1" color="gray900" css={{ fontFamily: 'Roboto' }}>
-        {'Completitud'}
-      </StyledText>
-      <StyledText variant="body2" color="gray700">
-        {'Alumnos cursando el programa'}
+      <StyledText variant="h2" color="gray900" css={{ fontFamily: 'Roboto' }}>
+        {'Estado de programas'}
       </StyledText>
     </StyledColumn>
   );
 
-  const totalStudents = (data.completed || 0) + (data.notStarted || 0) + (data.inProgress || 0);
+  const totalPrograms = data.total;
 
   //Chart styling and labeling.
   const options = {
-    labels: ['Terminaron', 'En progreso', 'Sin empezar'],
+    labels: ['Terminaron', 'En curso', 'Sin empezar'],
     colors: [theme.primary500, theme.primary600, theme.gray300],
     legend: {
       show: true,
@@ -79,7 +73,7 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
       formatter: function (seriesName: string, opts: any) {
         return [
           `${Math.round(
-            (opts.w.globals.series[opts.seriesIndex] / totalStudents) * 100,
+            (opts.w.globals.series[opts.seriesIndex] / totalPrograms) * 100,
           )}% ${seriesName}`,
         ];
       },
@@ -90,14 +84,18 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
     },
   };
   const series = [data.completed, data.inProgress, data.notStarted];
-  const labels = ['Terminaron', 'En progreso', 'Sin empezar'];
+  const labels = ['Terminaron', 'En curso', 'Sin empezar'];
 
   return (
     <Card header={cardHeader}>
       <StyledBox
         css={{ justifyContent: 'center', width: '100%', height: '100%', alignContent: 'center' }}
       >
-        {(!data.notStarted && !data.inProgress && !data.completed) || isLoading || isError ? (
+        {isLoading ? (
+          <StyledBox css={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Spinner />
+          </StyledBox>
+        ) : !data.total ? (
           <StyledText variant="body1" color="gray500" css={{ textAlign: 'center' }}>
             {'No hay datos'}
           </StyledText>
@@ -109,7 +107,7 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
                 alignItems: 'center',
                 position: 'absolute',
                 top: '35%',
-                left: '22%',
+                left: '20.5%',
               }}
             >
               <StyledText
@@ -117,10 +115,10 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
                 color="primary500"
                 css={{ fontSize: '22px', textAlign: 'center' }}
               >
-                {totalStudents}
+                {totalPrograms}
               </StyledText>
               <StyledText variant="body2" color="gray900">
-                {'Alumnos'}
+                {'Programas'}
               </StyledText>
             </StyledColumn>
             {/* it ignores type errors over apex charts legends position and horizontalAlign */}
@@ -138,3 +136,5 @@ export const AttendanceChart = ({ programId }: AttendanceChartProps) => {
     </Card>
   );
 };
+
+export default AllProgramsChart;

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { LikesChart } from '../components/charts/LikesChart';
 import ProfessorList from '../components/home/ProfessorList';
 import ProgramsList from '../components/home/ProgramsList';
 import { RootContainer, StyledColumn, StyledRow } from '../components/styled/styles';
-import { AttendanceChart } from '../components/charts/AttendanceChart';
+import AllProgramsChart from '../components/charts/AllProgramsChart';
 
 const Home = () => {
   const [selectedValue, setSelectedValue] = useState<string>('');
@@ -26,9 +25,12 @@ const Home = () => {
         minHeight: '100vh',
       }}
     >
-      <StyledRow css={{ width: '1100px', height: '870px', gap: '40px' }}>
+      <StyledRow css={{ width: '1100px', height: '870px', gap: '40px', padding: '65px' }}>
         <ProgramsList />
         <StyledColumn css={{ flex: 1, gap: '12px' }}>
+          <StyledRow css={{ gap: '30px' }}>
+            <AllProgramsChart />
+          </StyledRow>
           <ProfessorList />
         </StyledColumn>
       </StyledRow>
