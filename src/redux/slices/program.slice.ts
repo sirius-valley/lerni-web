@@ -485,7 +485,7 @@ const initialState: CreateProgramState = {
   hoursToComplete: 0,
   pointsReward: 0,
   startDate: dayjs().toISOString(),
-  endDate: dayjs().toISOString(),
+  endDate: dayjs(new Date(new Date().setFullYear(new Date().getFullYear() + 1))).toISOString(),
   edit: true,
 };
 // just to have it mocked, then we can remove field values
