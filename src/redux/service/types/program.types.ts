@@ -26,6 +26,13 @@ export type QuestionnaireAttemptsResponse = {
   studentQty: number;
 }[];
 
+export type AllProgramsChartResponse = {
+  total: number;
+  completed: number;
+  inProgress: number;
+  notStarted: number;
+};
+
 export type ProgramListItem = {
   icon: string;
   id: string;
