@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import { useTheme } from 'styled-components';
-import { StyledBox } from '../../styled/styles';
+import React from 'react';
 import { IconInterface } from '../../../utils/utils';
 import { StyledNavbarContainer } from './styles';
 
@@ -13,7 +11,7 @@ interface NavbarItemProps {
 
 export const NavbarItem = ({ name, icon: Icon, onClick, isSelected }: NavbarItemProps) => {
   return (
-    <StyledNavbarContainer isSelected={!!isSelected} onClick={onClick}>
+    <StyledNavbarContainer selected={!!isSelected} onClick={onClick}>
       <Icon size={20} />
     </StyledNavbarContainer>
   );

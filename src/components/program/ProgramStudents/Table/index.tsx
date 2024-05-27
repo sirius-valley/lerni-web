@@ -1,17 +1,12 @@
 import { useTheme } from 'styled-components';
 import { RemoveIcon } from '../../../../assets/icons/RemoveIcon';
-import {
-  StyledAvatar,
-  StyledBox,
-  StyledColumn,
-  StyledRow,
-  StyledText,
-} from '../../../styled/styles';
+import { StyledAvatar, StyledBox, StyledRow, StyledText } from '../../../styled/styles';
 import { StyledTable } from './styles';
 import { Tooltip } from 'react-tooltip';
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { useLDispatch, useLSelector } from '../../../../redux/hooks';
 import { removeStudent } from '../../../../redux/slices/program.slice';
+import { setModalOpen } from '../../../../redux/slices/utils.slice';
 
 interface StudentsTableProps {
   students: {
@@ -21,6 +16,7 @@ interface StudentsTableProps {
     lastname?: string;
     status?: boolean;
     profilePicture?: string;
+    id: string;
   }[];
 }
 
@@ -38,8 +34,9 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
               {'Email'}
             </th>
             <th style={{ padding: '14px 10px 14px 10px', width: '25%' }}>{'Nombre'}</th>
-            <th style={{ padding: '14px 10px 14px 10px', width: '20%' }}>{'Status'}</th>
-            <th style={{ textAlign: 'right', padding: '14px 0px 14px 10px', width: '15%' }}></th>
+            <th style={{ padding: '14px 10px 14px 10px', width: '15%' }}>{'Status'}</th>
+            <th style={{ padding: '14px 10px 14px 10px', width: '15%' }}>{'Progreso'}</th>
+            <th style={{ textAlign: 'right', padding: '14px 0px 14px 10px', width: '10%' }}></th>
           </tr>
         </thead>
         <tbody>
@@ -48,7 +45,18 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
             const isRegistered = student.name !== undefined;
 
             return (
-              <tr key={idx} style={{ borderBottom: `1px solid ${theme.gray200}` }}>
+              <tr
+                key={idx}
+                style={{ borderBottom: `1px solid ${theme.gray200}` }}
+                onClick={() =>
+                  dispatch(
+                    setModalOpen({
+                      modalType: 'STUDENTS_STATUS',
+                      metadata: { studentId: student.id },
+                    }),
+                  )
+                }
+              >
                 <td style={{ padding: '12px 10px 12px 0px' }}>
                   <StyledRow
                     style={{ justifyContent: 'flex-start', alignItems: 'center', gap: 12 }}
@@ -127,6 +135,11 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                 >
                   {isRegistered ? 'Registrado' : 'Sin registrar'}
                 </td>
+                <td style={{ padding: '12px 10px 12px 10px' }}>
+                  <StyledText variant="body2" color="gray900">
+                    {'0%'}
+                  </StyledText>
+                </td>
                 <td
                   style={{
                     fontSize: 14,
@@ -145,7 +158,7 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                       style={{
                         cursor: 'pointer',
                         width: 'auto',
-                        opacity: edit ? 1 : 0,
+                        // opacity: edit ? 1 : 0,
                         pointerEvents: edit ? 'visible' : 'none',
                       }}
                       onClick={() => dispatch(removeStudent({ email: student.email }))}

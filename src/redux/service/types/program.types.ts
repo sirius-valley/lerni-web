@@ -44,3 +44,24 @@ export type ProgramListResponse = {
   results: ProgramListItem[];
   total: 3;
 };
+
+export type StudentsStatusResponse = {
+  id: string;
+  name: string;
+  lastname: string;
+  image: string;
+  email: string;
+  pills: {
+    id: string;
+    name: string;
+    pillOrder: number;
+    completionTimeMinutes: number;
+    progress: number;
+  }[];
+  questionnaires: {
+    questionnaireState: 'InProgress' | 'Completed' | 'NotStarted';
+    progress: number;
+    pointsAwarded: number;
+    unlockTime: string;
+  }[];
+}[];

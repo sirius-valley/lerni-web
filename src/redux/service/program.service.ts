@@ -8,6 +8,7 @@ import {
   ProgramAttendanceResponse,
   QuestionnaireAttemptsResponse,
   AllProgramsChartResponse,
+  StudentsStatusResponse,
 } from './types/program.types';
 
 // interface Pill {
@@ -109,6 +110,12 @@ export const programApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    studentsProgress: builder.query<StudentsStatusResponse, string>({
+      query: (id: string) => ({
+        url: `api/program/studentStatus/${id}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -123,4 +130,5 @@ export const {
   useProgramListQuery,
   useProgramDetailsQuery,
   useAllProgramsChartQuery,
+  useStudentsProgressQuery,
 } = programApi;

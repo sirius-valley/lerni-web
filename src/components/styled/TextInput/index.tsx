@@ -28,8 +28,8 @@ export interface InputBoxProps {
   disabled?: boolean;
   required?: boolean;
   type?: PasswordType;
-  error?: boolean;
-  focused?: boolean;
+  error?: string;
+  focused?: string;
   css?: { [key in string]: string | number | boolean };
 }
 export const TextInput = ({
@@ -83,12 +83,12 @@ export const TextInput = ({
       </StyledRow>
       <StyledTextInputBox
         disabled={disabled}
-        error={error}
+        error={error.toString()}
         css={css}
         placeholder={placeholder}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        focused={focused}
+        focused={focused.toString()}
       >
         {multiline ? (
           <StyledTextArea
