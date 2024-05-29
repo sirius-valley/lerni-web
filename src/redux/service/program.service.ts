@@ -74,6 +74,7 @@ export const programApi = api.injectEndpoints({
       }),
     }),
     programDetails: builder.query<any, string>({
+      providesTags: ['ProgramDetails'],
       query: (id) => ({
         url: `/api/program/detail/${id}`,
         method: 'GET',
@@ -110,9 +111,12 @@ export const programApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
-    studentsProgress: builder.query<StudentsStatusResponse, string>({
-      query: (id: string) => ({
-        url: `api/program/studentStatus/${id}`,
+    studentsProgress: builder.query<
+      StudentsStatusResponse,
+      { programVersionId: string; studentId: string }
+    >({
+      query: ({ programVersionId, studentId }) => ({
+        url: `api/program/${programVersionId}/progress/${studentId}`,
         method: 'GET',
       }),
     }),

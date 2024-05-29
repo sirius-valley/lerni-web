@@ -7,6 +7,7 @@ import React from 'react';
 import { useLDispatch, useLSelector } from '../../../../redux/hooks';
 import { removeStudent } from '../../../../redux/slices/program.slice';
 import { setModalOpen } from '../../../../redux/slices/utils.slice';
+import { transformFirstLetterToLowerCase } from '../../../../utils/utils';
 
 interface StudentsTableProps {
   students: {
@@ -15,12 +16,13 @@ interface StudentsTableProps {
     name?: string;
     lastname?: string;
     status?: boolean;
-    profilePicture?: string;
+    image?: string;
     id: string;
   }[];
+  programVersionId: string;
 }
 
-export const StudentsTable = ({ students }: StudentsTableProps) => {
+export const StudentsTable = ({ students, programVersionId }: StudentsTableProps) => {
   const theme = useTheme();
   const dispatch = useLDispatch();
   const edit = useLSelector((state) => state.program.edit);
@@ -47,12 +49,12 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
             return (
               <tr
                 key={idx}
-                style={{ borderBottom: `1px solid ${theme.gray200}` }}
+                style={{ borderBottom: `1px solid ${theme.gray200}`, cursor: 'pointer' }}
                 onClick={() =>
                   dispatch(
                     setModalOpen({
                       modalType: 'STUDENTS_STATUS',
-                      metadata: { studentId: student.id },
+                      metadata: { studentId: student.id, programVersionId },
                     }),
                   )
                 }
@@ -61,7 +63,7 @@ export const StudentsTable = ({ students }: StudentsTableProps) => {
                   <StyledRow
                     style={{ justifyContent: 'flex-start', alignItems: 'center', gap: 12 }}
                   >
-                    <StyledAvatar src={student.profilePicture} />
+                    <StyledAvatar src={transformFirstLetterToLowerCase(student.image ?? '')} />
                     <StyledText
                       variant="body1"
                       style={{

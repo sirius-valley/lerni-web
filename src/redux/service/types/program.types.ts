@@ -1,3 +1,5 @@
+import { TriviaStatus } from '../../../utils/constants';
+
 export type ConvertPillBody = {
   thread: any;
 };
@@ -35,7 +37,6 @@ export type AllProgramsChartResponse = {
 
 export type ProgramListItem = {
   icon: string;
-  id: string;
   name: string;
   programVersionId: string;
 };
@@ -45,23 +46,47 @@ export type ProgramListResponse = {
   total: 3;
 };
 
-export type StudentsStatusResponse = {
+interface Student {
   id: string;
   name: string;
   lastname: string;
   image: string;
-  email: string;
-  pills: {
-    id: string;
-    name: string;
-    pillOrder: number;
-    completionTimeMinutes: number;
-    progress: number;
-  }[];
-  questionnaires: {
-    questionnaireState: 'InProgress' | 'Completed' | 'NotStarted';
-    progress: number;
-    pointsAwarded: number;
-    unlockTime: string;
-  }[];
-}[];
+  pointCount: number;
+  authId: string;
+}
+
+interface Program {
+  id: string;
+  name: string;
+  icon: string;
+  programVersionId: string;
+}
+
+interface Pill {
+  id: string;
+  pillName: string;
+  completionTimeMinutes: number;
+  pillProgress: number;
+  isLocked: boolean;
+}
+
+interface Questionnaire {
+  name: string;
+  progress: number;
+  attempts: number;
+  questionCount: number;
+  correctAnswers: number;
+}
+
+interface Trivia {
+  status: TriviaStatus;
+  correctAnswers: number;
+  totalQuestions: number;
+}
+export type StudentsStatusResponse = {
+  student: Student;
+  program: Program;
+  pills: Pill[];
+  questionnaire: Questionnaire;
+  trivia: Trivia;
+};

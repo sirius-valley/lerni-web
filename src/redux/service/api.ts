@@ -40,6 +40,6 @@ export const api = createApi({
   reducerPath: 'generalApi',
   // @ts-ignore
   baseQuery: baseQueryInterceptor,
-  tagTypes: ['Pokemon'],
+  tagTypes: ['Pokemon', 'ProgramDetails'],
   endpoints: () => ({}),
 });

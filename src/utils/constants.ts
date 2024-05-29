@@ -4,3 +4,12 @@ export enum ComponentVariantType {
   RED = 'red',
   GHOST = 'ghost',
 }
+
+export type TriviaStatus =
+  | 'Won'
+  | 'Lost'
+  | 'Tied'
+  | 'In Progress'
+  | 'Challenged'
+  | 'Waiting'
+  | 'Not Started';

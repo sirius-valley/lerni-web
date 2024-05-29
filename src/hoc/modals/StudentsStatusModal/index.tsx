@@ -3,41 +3,50 @@ import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../compone
 import CloseIcon from '../../../assets/icons/CloseIcon';
 import { ModalProps } from '../interfaces';
 import Card from '../../../components/Card';
-import { ShowIcon } from '../../../assets/icons/ShowIcon';
-import { useLDispatch, useLSelector } from '../../../redux/hooks';
+import { useLSelector } from '../../../redux/hooks';
 import { useTheme } from 'styled-components';
 import { CircularProgressbar } from 'react-circular-progressbar';
-import TrashIcon from '../../../assets/icons/TrashIcon';
-import EllipseIcon from '../../../assets/icons/EllipseIcon';
 import { QuestionnaireIcon } from '../../../assets/icons/QuestionnaireIcon';
 import { useStudentsProgressQuery } from '../../../redux/service/program.service';
-import { useParams } from 'react-router-dom';
+import Spinner from '../../../components/Spinner/Spinner';
+import { TriviaIcon } from '../../../assets/icons/TriviaIcon';
 
 type StudentsStatusModalProps = ModalProps;
 
 const StudentsStatusModal = ({ handleOnClose }: StudentsStatusModalProps) => {
-  const dispatch = useLDispatch();
   const theme = useTheme();
-  const { id } = useParams();
   const studentId = useLSelector((state) => state.utils.metadata.studentId);
-  const { data: program, isLoading } = useStudentsProgressQuery(id ?? '');
+  const programVersionId = useLSelector((state) => state.utils.metadata.programVersionId);
+  const {
+    data: studentProgress,
+    isLoading: studentProgressLoading,
+    isFetching: studentProgressFetching,
+  } = useStudentsProgressQuery({ programVersionId, studentId });
 
-  const resultsToShow = program?.find((student) => student.id === studentId);
-  console.log(resultsToShow);
+  const { student, pills, questionnaire, trivia, program } = studentProgress || {};
 
-  if (!studentId || !program || !resultsToShow) return null;
+  const renderTriviaStatusLabel = () => {
+    if (trivia?.status === 'Won') return 'Ganó';
+    if (trivia?.status === 'Lost') return 'Perdió';
+    if (trivia?.status === 'Tied') return 'Empató';
+    if (['Challenged', 'Not Started', 'Waiting'].includes(trivia?.status ?? ''))
+      return 'Sin empezar';
+    return 'En progreso';
+  };
+
+  if (!studentId || !studentProgress || studentProgressFetching || studentProgressLoading)
+    return <Spinner />;
 
   const cardHeader = () => (
     <StyledRow
       css={{
         justifyContent: 'space-between',
         width: '100%',
-        marginBottom: '12px',
       }}
     >
       <StyledColumn css={{ marginTop: '8px', gap: '12px' }}>
         <StyledText variant="h1" css={{ fontFamily: 'Roboto-Bold' }}>
-          {`${resultsToShow.name} ${resultsToShow.lastname}`}
+          {`${student?.name} ${student?.lastname}`}
         </StyledText>
         <StyledText variant="body2">{`Participando en ${'Programa 1'}`}</StyledText>
       </StyledColumn>
@@ -60,7 +69,8 @@ const StudentsStatusModal = ({ handleOnClose }: StudentsStatusModalProps) => {
       }}
     >
       <StyledColumn css={{ gap: '6px', marginTop: '12px', overflowY: 'scroll', maxHeight: '422' }}>
-        {resultsToShow.pills.map(({ name, progress }, index) => (
+        {/* Pills */}
+        {pills?.map(({ pillName, pillProgress }, index) => (
           <StyledRow
             key={index}
             css={{
@@ -80,6 +90,7 @@ const StudentsStatusModal = ({ handleOnClose }: StudentsStatusModalProps) => {
                 css={{
                   height: '24px',
                   width: '24px',
+                  display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
@@ -90,7 +101,7 @@ const StudentsStatusModal = ({ handleOnClose }: StudentsStatusModalProps) => {
                       display: 'flex',
                     },
                     path: {
-                      stroke: '#18BAC8',
+                      stroke: theme.primary500,
                       strokeLinecap: 'butt',
                       transition: 'none',
                     },
@@ -107,7 +118,7 @@ const StudentsStatusModal = ({ handleOnClose }: StudentsStatusModalProps) => {
                   }}
                   maxValue={1}
                   strokeWidth={12}
-                  value={progress}
+                  value={pillProgress}
                   text={String(index + 1)}
                 />
               </StyledBox>
@@ -115,7 +126,7 @@ const StudentsStatusModal = ({ handleOnClose }: StudentsStatusModalProps) => {
                 variant="h4"
                 css={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
               >
-                {name}
+                {pillName}
               </StyledText>
             </StyledRow>
             <StyledRow
@@ -123,38 +134,116 @@ const StudentsStatusModal = ({ handleOnClose }: StudentsStatusModalProps) => {
                 padding: '8px',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
+                width: '10%',
               }}
             >
-              <StyledColumn css={{ alignItems: 'center', justifyContent: 'center' }}>
-                <StyledText variant="body2" color="gray900">{`${progress}%`}</StyledText>
-              </StyledColumn>
+              <StyledText variant="body2" color="gray900">{`${pillProgress}%`}</StyledText>
             </StyledRow>
           </StyledRow>
         ))}
+
+        {/* Cuestionario */}
+        <StyledRow style={{ justifyContent: 'space-between', padding: '6px 0px 6px 6px' }}>
+          <StyledRow style={{ gap: '6px', alignItems: 'center', flex: 1 }}>
+            <StyledBox
+              css={{
+                height: '24px',
+                width: '24px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <QuestionnaireIcon
+                size={18}
+                color={questionnaire?.progress === 100 ? theme.primary500 : theme.gray300}
+              />
+            </StyledBox>
+            <StyledRow css={{ flex: 1, gap: '4px' }}>
+              <StyledText variant="h4" color="primary950" style={{ fontSize: 14, flex: 1 }}>
+                Cuestionario {program?.name}
+              </StyledText>
+
+              <StyledRow
+                css={{
+                  flexWrap: 'nowrap',
+                  alignItems: 'center',
+                  width: '20%',
+                  justifyContent: 'center',
+                  gap: '4px',
+                }}
+              >
+                <StyledText
+                  color={questionnaire?.progress === 100 ? 'primary900' : 'gray300'}
+                  variant="body2"
+                  style={{ fontSize: '8px', display: 'flex' }}
+                >
+                  ●
+                </StyledText>
+                <StyledText
+                  variant="body2"
+                  color={questionnaire?.progress === 100 ? 'primary900' : 'gray300'}
+                >
+                  {questionnaire?.attempts} {questionnaire?.attempts === 1 ? 'Intento' : 'Intentos'}
+                </StyledText>
+              </StyledRow>
+            </StyledRow>
+          </StyledRow>
+          <StyledRow
+            css={{
+              padding: '8px',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '10%',
+            }}
+          >
+            <StyledText variant="body2" color="gray900">
+              {questionnaire?.correctAnswers}/{questionnaire?.questionCount}
+            </StyledText>
+          </StyledRow>
+        </StyledRow>
+
+        {/* Trivia */}
         <StyledRow style={{ justifyContent: 'space-between', padding: '6px 0px 6px 6px' }}>
           <StyledRow style={{ gap: '6px', alignItems: 'center' }}>
-            <QuestionnaireIcon size={18} color={theme.gray300} />
+            <StyledBox
+              css={{
+                height: '24px',
+                width: '24px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <TriviaIcon
+                size={18}
+                color={trivia?.status === 'Won' ? theme.primary500 : theme.gray300}
+              />
+            </StyledBox>
             <StyledText variant="h4" style={{ fontSize: 14, color: theme.primary950 }}>
-              Cuestionario
+              Trivia
             </StyledText>
             <StyledRow css={{ alignItems: 'center', gap: '6px' }}>
               <StyledText color="gray300" variant="body2" css={{ fontSize: '8px' }}>
                 ●
               </StyledText>
-              <StyledText variant="body2" color="gray300">{`${0} Intentos`}</StyledText>
+              <StyledText variant="body2" color="gray300">
+                {renderTriviaStatusLabel()}
+              </StyledText>
             </StyledRow>
           </StyledRow>
-          <StyledBox
+          <StyledRow
             css={{
               padding: '8px',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '8px',
+              width: '10%',
             }}
           >
-            <StyledText variant="body2" color="gray900">{`${0}/${10}`}</StyledText>
-          </StyledBox>
+            <StyledText variant="body2" color="gray900">
+              {trivia?.correctAnswers}/{trivia?.totalQuestions}
+            </StyledText>
+          </StyledRow>
         </StyledRow>
       </StyledColumn>
     </Card>
