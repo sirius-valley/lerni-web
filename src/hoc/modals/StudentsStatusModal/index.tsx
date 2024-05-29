@@ -225,7 +225,11 @@ const StudentsStatusModal = ({ handleOnClose }: StudentsStatusModalProps) => {
             >
               <TriviaIcon
                 size={18}
-                color={trivia?.status === 'Won' ? theme.primary500 : theme.gray300}
+                color={
+                  ['Won', 'Lost', 'Tied'].includes(trivia?.status ?? '')
+                    ? theme.primary500
+                    : theme.gray300
+                }
               />
             </StyledBox>
             <StyledText variant="h4" style={{ fontSize: 14, color: theme.primary950 }}>
