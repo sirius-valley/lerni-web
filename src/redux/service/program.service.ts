@@ -115,6 +115,7 @@ export const programApi = api.injectEndpoints({
       StudentsStatusResponse,
       { programVersionId: string; studentId: string }
     >({
+      providesTags: ['StudentsProgress'],
       query: ({ programVersionId, studentId }) => ({
         url: `api/program/${programVersionId}/progress/${studentId}`,
         method: 'GET',

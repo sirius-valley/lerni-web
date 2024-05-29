@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../components/styled/styles';
 import CloseIcon from '../../../assets/icons/CloseIcon';
 import { ModalProps } from '../interfaces';
 import Card from '../../../components/Card';
-import { useLSelector } from '../../../redux/hooks';
+import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { useTheme } from 'styled-components';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { QuestionnaireIcon } from '../../../assets/icons/QuestionnaireIcon';
 import { useStudentsProgressQuery } from '../../../redux/service/program.service';
 import Spinner from '../../../components/Spinner/Spinner';
 import { TriviaIcon } from '../../../assets/icons/TriviaIcon';
+import { api } from '../../../redux/service/api';
 
 type StudentsStatusModalProps = ModalProps;
 
 const StudentsStatusModal = ({ handleOnClose }: StudentsStatusModalProps) => {
+  const dispatch = useLDispatch();
   const theme = useTheme();
   const studentId = useLSelector((state) => state.utils.metadata.studentId);
   const programVersionId = useLSelector((state) => state.utils.metadata.programVersionId);
@@ -29,10 +31,16 @@ const StudentsStatusModal = ({ handleOnClose }: StudentsStatusModalProps) => {
     if (trivia?.status === 'Won') return 'Ganó';
     if (trivia?.status === 'Lost') return 'Perdió';
     if (trivia?.status === 'Tied') return 'Empató';
-    if (['Challenged', 'Not Started', 'Waiting'].includes(trivia?.status ?? ''))
-      return 'Sin empezar';
+    if (trivia?.status === 'Waiting') return 'Esperando';
+    if (['Challenged', 'Not Started'].includes(trivia?.status ?? '')) return 'Sin empezar';
     return 'En progreso';
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(api.util.invalidateTags(['StudentsProgress']));
+    };
+  }, []);
 
   if (!studentId || !studentProgress || studentProgressFetching || studentProgressLoading)
     return <Spinner />;
