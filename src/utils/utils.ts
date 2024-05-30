@@ -23,6 +23,11 @@ export const jsToCss = (styles: CSSProperties): string => {
     .join('\n');
 };
 
+export const transformFirstLetterToLowerCase = (text?: string) => {
+  if (!text) return text;
+  return text.charAt(0).toLowerCase() + text.slice(1);
+};
+
 export const getStyleColorByVariant = (componentVariant: ComponentVariantType) => {
   switch (componentVariant) {
     case ComponentVariantType.PRIMARY:

@@ -4,7 +4,7 @@ import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
 import { useTheme } from 'styled-components';
 import ProgramDetailsComponent from '../components/program/ProgramDetails';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useProgramDetailsQuery } from '../redux/service/program.service';
 import { ProgramStudents } from '../components/program/ProgramStudents';
 import ProgramContent from '../components/program/ProgramContent';
@@ -13,11 +13,13 @@ import { ProgramTrivia } from '../components/program/ProgramTrivia';
 import { useLDispatch } from '../redux/hooks';
 import { resetProgramSlice } from '../redux/slices/program.slice';
 import { ProgramStatistics } from '../components/program/ProgramStatistics';
+import { api } from '../redux/service/api';
 
 const ProgramDetails = () => {
   const theme = useTheme();
   const { id } = useParams();
   const dispatch = useLDispatch();
+  const location = useLocation();
 
   const { data } = useProgramDetailsQuery(id as string);
   const handleSave = () => {
@@ -25,6 +27,7 @@ const ProgramDetails = () => {
   };
   useEffect(() => {
     return () => {
+      dispatch(api.util.invalidateTags(['ProgramDetails']));
       dispatch(resetProgramSlice());
     };
   }, []);
@@ -63,7 +66,7 @@ const ProgramDetails = () => {
           <ProgramContent />
           <ProgramQuestionnaire />
           <ProgramTrivia />
-          <ProgramStudents />
+          <ProgramStudents programVersionId={location.state.programVersionId} />
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={handleSave}

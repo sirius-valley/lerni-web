@@ -34,7 +34,11 @@ const mockedStudents = [
   },
 ];
 
-export const ProgramStudents = () => {
+interface ProgramStudents {
+  programVersionId?: string;
+}
+
+export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
   const theme = useTheme();
   const dispatch = useLDispatch();
 
@@ -80,7 +84,7 @@ export const ProgramStudents = () => {
       }
     >
       {students.length ? (
-        <StudentsTable students={students} />
+        <StudentsTable students={students} programVersionId={programVersionId ?? ''} />
       ) : (
         <StyledBox
           css={{

@@ -5,14 +5,16 @@ import { ComponentVariantType } from '../../../utils/constants';
 import Button from '../../styled/Button';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { ProgramListItem } from '../../../redux/service/types/program.types';
-import { useNavigate, useRoutes } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-export const ProgramItem = ({ id, programVersionId, name, icon }: ProgramListItem) => {
+export const ProgramItem = ({ programVersionId, name, icon }: ProgramListItem) => {
   const theme = useTheme();
   const route = useNavigate();
+
   const redirectToDetails = () => {
-    route(`/details/program/${programVersionId}`);
+    route(`/details/program/${programVersionId}`, { state: { programVersionId } });
   };
+
   return (
     <StyledRow
       style={{

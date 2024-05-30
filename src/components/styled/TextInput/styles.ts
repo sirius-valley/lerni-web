@@ -71,7 +71,8 @@ export const StyledTextInputBox = styled(StyledRow)<InputBoxProps>`
   border-radius: 8px;
   gap: 10px;
   width: 100%;
-  border: 1px solid ${(props) => (props.error ? props.theme.red500 : props.theme.gray200)};
+  border: 1px solid
+    ${(props) => (props.error === 'true' ? props.theme.red500 : props.theme.gray200)};
   background-color: ${(props) => (props.disabled ? props.theme.gray200 : props.theme.white)};
   color: ${(props) => props.theme.primary950};
   transition: all 0.2s ease-in-out;
@@ -79,16 +80,16 @@ export const StyledTextInputBox = styled(StyledRow)<InputBoxProps>`
   &:hover {
     outline: 1px solid
       ${(props) =>
-        props.error
+        props.error === 'true'
           ? props.theme.red500
-          : props.focused
+          : props.focused === 'true'
             ? props.theme.primary500
             : props.theme.gray200};
   }
 
   &:focus-within {
     border-color: ${(props) =>
-      props.error
+      props.error === 'true'
         ? props.theme.red500
         : props.disabled
           ? props.theme.gray200

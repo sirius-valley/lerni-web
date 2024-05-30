@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { StyledBox } from '../../styled/styles';
 
 interface StyledNavbarContainerProps {
-  isSelected: boolean;
+  selected: boolean;
 }
 
 export const StyledNavbarContainer = styled(StyledBox)<StyledNavbarContainerProps>`
@@ -13,11 +13,11 @@ export const StyledNavbarContainer = styled(StyledBox)<StyledNavbarContainerProp
   padding: 12px;
   height: 44px;
   width: 44px;
-  background-color: ${(props) => (props.isSelected ? props.theme.primary200 : 'transparent')};
+  background-color: ${(props) => (props.selected ? props.theme.primary200 : 'transparent')};
   cursor: pointer;
   svg {
     path {
-      fill: ${(props) => (props.isSelected ? props.theme.primary500 : props.theme.gray400)};
+      fill: ${(props) => (props.selected ? props.theme.primary500 : props.theme.gray400)};
     }
   }
   &:hover {
