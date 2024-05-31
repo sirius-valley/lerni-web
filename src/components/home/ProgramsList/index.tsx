@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
+import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import Button from '../../styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import { ProgramItem } from '../../program/ProgramItem';
@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { useProgramListQuery } from '../../../redux/service/program.service';
 
 const ProgramsList = () => {
-  const list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 9];
   const navigation = useNavigate();
   const { data } = useProgramListQuery();
 
@@ -17,7 +16,7 @@ const ProgramsList = () => {
   return (
     <StyledColumn
       css={{
-        maxWidth: '600px',
+        maxHeight: '850px',
         width: '100%',
         backgroundColor: 'white',
         borderRadius: '20px',

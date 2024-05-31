@@ -32,13 +32,12 @@ export const StudentsTable = ({ students, programVersionId }: StudentsTableProps
       <StyledTable>
         <thead>
           <tr>
-            <th style={{ textAlign: 'left', padding: '14px 10px 14px 0px', width: '40%' }}>
+            <th style={{ textAlign: 'left', padding: '14px 10px 14px 0px', width: '35%' }}>
               {'Email'}
             </th>
-            <th style={{ padding: '14px 10px 14px 10px', width: '25%' }}>{'Nombre'}</th>
-            <th style={{ padding: '14px 10px 14px 10px', width: '15%' }}>{'Status'}</th>
-            <th style={{ padding: '14px 10px 14px 10px', width: '15%' }}>{'Progreso'}</th>
-            <th style={{ textAlign: 'right', padding: '14px 0px 14px 10px', width: '10%' }}></th>
+            <th style={{ padding: '14px 10px 14px 10px', width: '35%' }}>{'Nombre'}</th>
+            <th style={{ padding: '14px 10px 14px 10px', width: '20%' }}>{'Status'}</th>
+            <th style={{ textAlign: 'right', padding: '14px 0px 14px 10px', width: '15%' }}></th>
           </tr>
         </thead>
         <tbody>
@@ -136,11 +135,6 @@ export const StudentsTable = ({ students, programVersionId }: StudentsTableProps
                   }}
                 >
                   {isRegistered ? 'Registrado' : 'Sin registrar'}
-                </td>
-                <td style={{ padding: '12px 10px 12px 10px' }}>
-                  <StyledText variant="body2" color="gray900">
-                    {'0%'}
-                  </StyledText>
                 </td>
                 <td
                   style={{
