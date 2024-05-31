@@ -20,7 +20,7 @@ const Home = () => {
         css={{ height: '870px', gap: '40px', padding: '65px', justifyContent: 'space-between' }}
       >
         <ProgramsList />
-        <StyledColumn css={{ flex: 1, gap: '12px' }}>
+        <StyledColumn css={{ flex: 1, gap: '12px', justifyContent: 'center' }}>
           <StyledRow css={{ gap: '30px' }}>
             <AllProgramsChart />
             <StudentsRegisteredChart />

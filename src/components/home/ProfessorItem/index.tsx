@@ -40,9 +40,6 @@ const ProfessorItem = ({ name, surname, imgURL }: ProfessorItemProps) => {
           {name} {surname}
         </StyledText>
       </StyledRow>
-      <StyledBox css={{ cursor: 'pointer' }}>
-        <ShowIcon color={theme.gray400} size={18} />
-      </StyledBox>
     </StyledRow>
   );
 };

@@ -71,6 +71,7 @@ export const programApi = api.injectEndpoints({
       query: () => ({
         url: 'api/program/list',
         method: 'GET',
+        params: { limit: 50 },
       }),
     }),
     programDetails: builder.query<any, string>({
