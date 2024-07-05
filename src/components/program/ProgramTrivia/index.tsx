@@ -74,9 +74,6 @@ export const ProgramTrivia = () => {
               <StyledBox onClick={handleShowPreview} css={{ cursor: 'pointer' }}>
                 <ShowIcon size={18} color={theme.gray400} />
               </StyledBox>
-              <StyledBox onClick={() => dispatch(removeTrivia())} css={{ cursor: 'pointer' }}>
-                <RemoveIcon size={18} color={theme.gray400} />
-              </StyledBox>
             </StyledRow>
           </StyledRow>
         </StyledColumn>

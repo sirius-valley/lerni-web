@@ -45,10 +45,10 @@ export const NavBar = () => {
           }}
         >
           <StyledBox
-            onClick={() => alert('ir a home')}
+            onClick={() => navigate('/')}
             style={{
               display: 'flex',
-              alignItems: 'center',
+              alignItems: 'start',
               width: 40,
               height: 40,
               padding: '7px 9px',
@@ -59,8 +59,8 @@ export const NavBar = () => {
           >
             <LogoIcon size={22} />
           </StyledBox>
-          <StyledBox
-            onClick={() => alert('volver para atras')}
+          {/* <StyledBox
+            onClick={() => navigate(-1)}
             style={{
               display: 'flex',
               justifyContent: 'center',
@@ -69,7 +69,7 @@ export const NavBar = () => {
             }}
           >
             <RightArrowIcon color={theme.gray300} size={13} />
-          </StyledBox>
+          </StyledBox> */}
         </StyledColumn>
         <StyledColumn style={{ padding: '28px 12px 0px 12px', gap: 6 }}>
           {NavBarItems.map((item, idx) => (
