@@ -48,11 +48,11 @@ const CreateTriviaModal = ({ handleOnClose }: CreateTriviaModalProps) => {
 
   const handleSavePill = async () => {
     const JSON = await fileToJSONText(inputValues.file);
-    const response = (await convertTrivia({ thread: JSON })) as { data: ConvertTypeResponse };
-    if (response?.data !== undefined) {
-      dispatch(updatePillInfo({ trivia: response.data?.pillBlock }));
-      handleOnClose();
-    }
+    // const response = (await convertTrivia({ thread: JSON })) as { data: ConvertTypeResponse };
+    // if (response?.data !== undefined) {
+    dispatch(updatePillInfo({ trivia: JSON }));
+    handleOnClose();
+    // }
   };
 
   const cardHeader = () => (

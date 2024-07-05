@@ -32,7 +32,7 @@ const ProfessorList = () => {
       css={{
         maxWidth: '600px',
         width: '100%',
-        maxHeight: '242px',
+        maxHeight: '452px',
         backgroundColor: 'white',
         borderRadius: '20px',
         padding: '24px 16px',

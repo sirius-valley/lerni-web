@@ -11,6 +11,7 @@ type Pill = {
   version: number;
   completionTimeMinutes: number;
   lerniPill: any;
+  teacherId?: string;
 };
 interface Questionnaire {
   id: string;

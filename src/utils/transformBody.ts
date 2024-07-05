@@ -23,6 +23,7 @@ export const transformedValues = (values: CreateProgramState) => {
       version: 0,
       completionTimeMinutes: 15,
       block: JSON.stringify(pill.lerniPill),
+      teacherId: pill.teacherId,
     })),
     /*
         "name": "string",

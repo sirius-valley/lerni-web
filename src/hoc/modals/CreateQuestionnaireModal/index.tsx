@@ -49,15 +49,15 @@ const CreateQuestionnaireModal = ({ handleOnClose }: CreateQuestionnaireModalPro
 
   const handleSavePill = async () => {
     const JSON = await fileToJSONText(inputValues.file);
-    const response = (await convertQuery({ thread: JSON })) as { data: ConvertTypeResponse };
-    if (response?.data !== undefined) {
-      dispatch(
-        updatePillInfo({
-          questionnaire: response.data?.pillBlock,
-        }),
-      );
-      handleOnClose();
-    }
+    // const response = (await convertQuery({ thread: JSON })) as { data: ConvertTypeResponse };
+    // if (response?.data !== undefined) {
+    dispatch(
+      updatePillInfo({
+        questionnaire: JSON,
+      }),
+    );
+    handleOnClose();
+    // }
   };
 
   const cardHeader = () => (

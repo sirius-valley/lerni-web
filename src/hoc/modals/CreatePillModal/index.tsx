@@ -9,11 +9,13 @@ import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
 import { fileToJSONText } from '../../../utils/utils';
 import { useConvertToLerniPillMutation } from '../../../redux/service/program.service';
-import { useLDispatch } from '../../../redux/hooks';
+import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { addNewPill } from '../../../redux/slices/program.slice';
 import { ConvertTypeResponse } from '../../../redux/service/types/program.types';
 import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
+import { Dropdown } from '../../../components/Dropdown';
+import { useGetProfessorsQuery } from '../../../redux/service/professor.service';
 
 interface CreatePillModalProps extends ModalProps {
   openModal?: boolean;
@@ -22,6 +24,7 @@ interface CreatePillModalProps extends ModalProps {
 const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
   const [convertQuery, { data, isLoading, error: convertError, isSuccess }] =
     useConvertToLerniPillMutation();
+  const [professor, setProfessor] = useState<string>('');
   const [inputValues, setInputValues] = useState<{
     name: string;
     description: string;
@@ -35,6 +38,20 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     name: false,
     description: false,
     file: false,
+  });
+  const { data: professors } = useGetProfessorsQuery(undefined, {
+    selectFromResult: (res: any) => {
+      return {
+        ...res,
+        data: {
+          ...res.data,
+          result: res?.data?.result.map((prof: any) => ({
+            id: prof.id,
+            text: `${prof.name} ${prof.lastname}`,
+          })),
+        },
+      };
+    },
   });
   const dispatch = useLDispatch();
   useEffect(() => {
@@ -72,18 +89,19 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
 
   const handleSavePill = async () => {
     const JSON = await fileToJSONText(inputValues.file);
-    const response = (await convertQuery({ thread: JSON })) as { data: ConvertTypeResponse };
-    if (response?.data !== undefined) {
-      dispatch(
-        addNewPill({
-          id: nanoid(),
-          title: inputValues.name,
-          description: inputValues.description,
-          lerniPill: response.data?.pillBlock,
-        }),
-      );
-      handleOnClose();
-    }
+    // const response = (await convertQuery({ thread: JSON })) as { data: ConvertTypeResponse };
+    // if (response?.data !== undefined) {
+    dispatch(
+      addNewPill({
+        id: nanoid(),
+        title: inputValues.name,
+        description: inputValues.description,
+        teacherId: professor,
+        lerniPill: JSON,
+      }),
+    );
+    handleOnClose();
+    // }
   };
 
   const cardHeader = () => (
@@ -139,6 +157,16 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
             disabled={isLoading}
           />
         </StyledRow>
+        <Dropdown
+          label={'Profesor'}
+          value={professor}
+          placeholder={'Profesor del programa'}
+          content={professors.result ?? []}
+          onChange={(val) => {
+            setProfessor(val);
+          }}
+          css={{ fontSize: 14 }}
+        />
         <TextInput
           placeholder="Descripción de la píldora"
           title="Descripción"

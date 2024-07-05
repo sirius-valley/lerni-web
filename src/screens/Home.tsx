@@ -14,11 +14,10 @@ const Home = () => {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
+        paddingLeft: '72px',
       }}
     >
-      <StyledRow
-        css={{ height: '870px', gap: '40px', padding: '65px', justifyContent: 'space-between' }}
-      >
+      <StyledRow css={{ width: '1280px', height: '870px', gap: '40px', padding: '65px' }}>
         <ProgramsList />
         <StyledColumn css={{ flex: 1, gap: '12px' }}>
           <StyledRow css={{ gap: '30px' }}>
