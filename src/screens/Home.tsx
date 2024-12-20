@@ -1,25 +1,34 @@
 import React from 'react';
-import Counter from '../components/Counter/Counter';
-import { RootContainer } from '../styledComponents';
-import { useGetPokemonQuery } from '../redux/api/pokemon.service';
+import ProfessorList from '../components/home/ProfessorList';
+import ProgramsList from '../components/home/ProgramsList';
+import { RootContainer, StyledColumn, StyledRow } from '../components/styled/styles';
+import AllProgramsChart from '../components/charts/AllProgramsChart';
+import { StudentsRegisteredChart } from '../components/charts/StudentsRegisteredChart';
 
 const Home = () => {
-  const pokemon = useGetPokemonQuery('');
-
   return (
-    <RootContainer style={Styles.rootContainer}>
-      <h1>Hello world</h1>
-      <Counter />
+    <RootContainer
+      css={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        paddingLeft: '72px',
+      }}
+    >
+      <StyledRow css={{ width: '1280px', height: '870px', gap: '40px', padding: '65px' }}>
+        <ProgramsList />
+        <StyledColumn css={{ flex: 1, gap: '12px', justifyContent: 'center' }}>
+          <StyledRow css={{ gap: '30px' }}>
+            <AllProgramsChart />
+            <StudentsRegisteredChart />
+          </StyledRow>
+          <ProfessorList />
+        </StyledColumn>
+      </StyledRow>
     </RootContainer>
   );
 };
 
 export default Home;
-
-const Styles = {
-  rootContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-};
