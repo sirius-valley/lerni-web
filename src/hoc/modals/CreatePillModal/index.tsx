@@ -15,10 +15,20 @@ import { ConvertTypeResponse } from '../../../redux/service/types/program.types'
 import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
 import { Dropdown } from '../../../components/Dropdown';
-import { useGetProfessorsQuery } from '../../../redux/service/professor.service';
+import {
+  useGetProfessorsQuery,
+  useLazyGetProfessorsQuery,
+} from '../../../redux/service/professor.service';
 
 interface CreatePillModalProps extends ModalProps {
   openModal?: boolean;
+}
+interface Professor {
+  name: string;
+  lastname: string;
+  profession: string;
+  description: string;
+  image: string;
 }
 
 const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
@@ -29,30 +39,62 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     name: string;
     description: string;
     file: any;
+    completionTimeMinutes: string;
   }>({
     name: '',
     description: '',
     file: null,
+    completionTimeMinutes: '5',
   });
   const [errors, setErrors] = useState({
     name: false,
     description: false,
     file: false,
+    completionTimeMinutes: false,
   });
-  const { data: professors } = useGetProfessorsQuery(undefined, {
-    selectFromResult: (res: any) => {
-      return {
-        ...res,
-        data: {
-          ...res.data,
-          result: res?.data?.result.map((prof: any) => ({
-            id: prof.id,
-            text: `${prof.name} ${prof.lastname}`,
-          })),
-        },
-      };
+
+  const [refetch, { data: profData, isLoading: isLoadingProf }] = useLazyGetProfessorsQuery();
+  const [professorsList, setProfessorsList] = useState<{ id: string; text: string }[]>([]);
+
+  useEffect(() => {
+    refetch({ page: 1 });
+  }, []);
+
+  useEffect(() => {
+    if (profData?.total) {
+      [...Array(profData.total - 1)].forEach((_, index) => {
+        refetch({ page: index + 1 }).then((res) => {
+          if (res.data?.result) {
+            setProfessorsList((prev) => [
+              ...prev,
+              ...res.data.result.map((prof: any) => ({
+                id: prof.id,
+                text: `${prof.name} ${prof.lastname}`,
+              })),
+            ]);
+          }
+        });
+      });
+    }
+  }, [profData?.total]);
+
+  const { data: professors } = useGetProfessorsQuery(
+    { page: 1 },
+    {
+      selectFromResult: (res: any) => {
+        return {
+          ...res,
+          data: {
+            ...res.data,
+            result: res?.data?.result.map((prof: any) => ({
+              id: prof.id,
+              text: `${prof.name} ${prof.lastname}`,
+            })),
+          },
+        };
+      },
     },
-  });
+  );
   const dispatch = useLDispatch();
   useEffect(() => {
     if (convertError) errorToast('Algo salió mal, revisa el formato del csv/xlsx');
@@ -98,6 +140,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
         description: inputValues.description,
         teacherId: professor,
         lerniPill: JSON,
+        completionTimeMinutes: Number(inputValues.completionTimeMinutes),
       }),
     );
     handleOnClose();
@@ -139,7 +182,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
         zIndex: 30,
       }}
     >
-      <StyledColumn css={{ height: '400px', width: '100%', gap: '16px' }}>
+      <StyledColumn css={{ height: '580px', width: '100%', gap: '16px' }}>
         <StyledRow
           css={{
             width: '100%',
@@ -161,7 +204,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           label={'Profesor'}
           value={professor}
           placeholder={'Profesor del programa'}
-          content={professors.result ?? []}
+          content={professorsList ?? []}
           onChange={(val) => {
             setProfessor(val);
           }}
@@ -175,6 +218,15 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           error={errors.description}
           css={{ height: '100px' }}
           multiline
+          disabled={isLoading}
+          required
+        />
+        <TextInput
+          placeholder="Duración en minutos"
+          title="Duración de la píldora"
+          value={inputValues.completionTimeMinutes}
+          onChange={(value) => handleChange('completionTimeMinutes', value)}
+          error={errors.completionTimeMinutes}
           disabled={isLoading}
           required
         />

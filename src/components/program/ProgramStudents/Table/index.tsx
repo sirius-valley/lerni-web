@@ -72,10 +72,10 @@ export const StudentsTable = ({ students, programVersionId }: StudentsTableProps
                         overflow: 'hidden',
                         whiteSpace: 'nowrap',
                       }}
-                      data-tooltip-content={student.email}
-                      data-tooltip-id={student.email.length > 30 ? 'email' : undefined}
+                      data-tooltip-content={student?.email}
+                      data-tooltip-id={student?.email?.length > 30 ? 'email' : undefined}
                     >
-                      {student.email}
+                      {student?.email}
                     </StyledText>
                     <Tooltip
                       style={{

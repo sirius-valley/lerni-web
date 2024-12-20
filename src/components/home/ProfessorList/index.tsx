@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import Button from '../../styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import ProfessorItem from '../ProfessorItem';
 import Spinner from '../../Spinner/Spinner';
-import { useGetProfessorsQuery } from '../../../redux/service/professor.service';
+import {
+  useGetProfessorsQuery,
+  useLazyGetProfessorsQuery,
+} from '../../../redux/service/professor.service';
 import { useLDispatch } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
 
@@ -17,8 +20,9 @@ interface Professor {
 }
 
 const ProfessorList = () => {
-  const { data, isLoading } = useGetProfessorsQuery();
+  const [refetch, { data, isLoading }] = useLazyGetProfessorsQuery();
   const dispatch = useLDispatch();
+  const [professorsList, setProfessorsList] = useState<Professor[]>([]);
 
   const handleAddNewProfessor = () => {
     dispatch(setModalOpen({ modalType: 'PROFESSOR_CREATE' }));
@@ -26,6 +30,22 @@ const ProfessorList = () => {
 
   const professors = data?.result;
   const noProfessors = professors?.length == 0;
+
+  useEffect(() => {
+    refetch({ page: 1 });
+  }, []);
+
+  useEffect(() => {
+    if (data?.total) {
+      [...Array(data.total - 1)].forEach((_, index) => {
+        refetch({ page: index + 1 }).then((res) => {
+          if (res.data?.result) {
+            setProfessorsList((prev) => [...prev, ...res.data.result]);
+          }
+        });
+      });
+    }
+  }, [data?.total]);
 
   return (
     <StyledColumn
@@ -60,7 +80,7 @@ const ProfessorList = () => {
         </StyledRow>
       ) : (
         <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
-          {professors?.map(({ name, lastname, image }: Professor, index: number) => (
+          {professorsList?.map(({ name, lastname, image }: Professor, index: number) => (
             <ProfessorItem
               key={'professor-' + index}
               id={''}

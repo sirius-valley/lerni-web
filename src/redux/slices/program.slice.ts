@@ -27,7 +27,12 @@ export interface CreateProgramState {
   description: string;
   professor: string;
   pills: Pill[];
-  questionnaire?: Questionnaire;
+  questionnaire?: {
+    passsingScore: string;
+    cooldownInMinutes: string;
+    completionTimeMinutes: string;
+    questionnaire: Questionnaire;
+  };
   trivia?: any;
   students: {
     authId: string;

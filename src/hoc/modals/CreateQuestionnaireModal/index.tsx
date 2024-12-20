@@ -15,6 +15,7 @@ import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
 import { updatePillInfo } from '../../../redux/slices/program.slice';
+import { TextInput } from '../../../components/styled/TextInput';
 
 interface CreateQuestionnaireModalProps extends ModalProps {
   openModal?: boolean;
@@ -25,8 +26,14 @@ const CreateQuestionnaireModal = ({ handleOnClose }: CreateQuestionnaireModalPro
     useConvertToLerniPillMutation();
   const [inputValues, setInputValues] = useState<{
     file: any;
+    passsingScore: string;
+    cooldownInMinutes: string;
+    completionTimeMinutes: string;
   }>({
     file: null,
+    passsingScore: '25',
+    cooldownInMinutes: '10',
+    completionTimeMinutes: '8',
   });
   const [errors, setErrors] = useState(false);
   const dispatch = useLDispatch();
@@ -42,9 +49,17 @@ const CreateQuestionnaireModal = ({ handleOnClose }: CreateQuestionnaireModalPro
   const handleInputFileChange = (value: any) => {
     if (value?.type !== 'application/json') setErrors(true);
     else setErrors(false);
-    setInputValues({
+    setInputValues((prev) => ({
+      ...prev,
       file: value,
-    });
+    }));
+  };
+
+  const handleChange = (att: keyof typeof inputValues, value: string) => {
+    setInputValues((prev) => ({
+      ...prev,
+      [att]: value,
+    }));
   };
 
   const handleSavePill = async () => {
@@ -53,9 +68,15 @@ const CreateQuestionnaireModal = ({ handleOnClose }: CreateQuestionnaireModalPro
     // if (response?.data !== undefined) {
     dispatch(
       updatePillInfo({
-        questionnaire: JSON,
+        questionnaire: {
+          questionnaire: JSON,
+          passsingScore: inputValues.passsingScore,
+          cooldownInMinutes: inputValues.cooldownInMinutes,
+          completionTimeMinutes: inputValues.completionTimeMinutes,
+        },
       }),
     );
+
     handleOnClose();
     // }
   };
@@ -95,19 +116,35 @@ const CreateQuestionnaireModal = ({ handleOnClose }: CreateQuestionnaireModalPro
       }}
     >
       <StyledColumn css={{ width: '100%' }}>
-        <StyledText
-          variant="body2"
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-            color: theme.gray600,
-            fontFamily: 'Roboto-Bold',
-          }}
-        >
-          Subir Json
-        </StyledText>
+        <TextInput
+          placeholder="Cantidad de puntos (5 por pregunta)"
+          title="Puntos para aprobar"
+          value={inputValues.passsingScore}
+          onChange={(value) => handleChange('passsingScore', value)}
+          // error={errors.passsingScore}
+          disabled={isLoading}
+          required
+        />
+        <TextInput
+          placeholder="Tiempo de penalizacion"
+          title="Tiempo de penalizacion (minutos)"
+          value={inputValues.cooldownInMinutes}
+          onChange={(value) => handleChange('cooldownInMinutes', value)}
+          // error={errors.completionTimeMinutes}
+          disabled={isLoading}
+          required
+        />
+        <TextInput
+          placeholder="Duración en minutos"
+          title="Duración del cuestionario (minutos)"
+          value={inputValues.completionTimeMinutes}
+          onChange={(value) => handleChange('completionTimeMinutes', value)}
+          // error={errors.completionTimeMinutes}
+          disabled={isLoading}
+          required
+        />
         <FileUpload
+          title="Cargar JSON"
           value={inputValues.file}
           onChange={(value) => handleInputFileChange(value)}
           error={errors}

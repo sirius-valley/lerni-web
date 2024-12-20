@@ -1,11 +1,14 @@
 import { CreateProgramState } from '../redux/slices/program.slice';
 
 export const transformedValues = (values: CreateProgramState) => {
-  const amountOfQuestions = values?.questionnaire?.elements.reduce(
+  const amountOfQuestions = values?.questionnaire?.questionnaire.elements.reduce(
     (acc, block) =>
       ['SINGLECHOICE', 'MULTIPLECHOICE'].includes(block.question_type) ? acc + 1 : acc,
     0,
   );
+  const minutosTotales =
+    values.pills.reduce((acc, pill) => acc + pill.completionTimeMinutes, 0) +
+    (Number(values?.questionnaire?.completionTimeMinutes) ?? 0);
   return {
     ...values,
     pill: values.pills.map((pill) => ({
@@ -21,7 +24,7 @@ export const transformedValues = (values: CreateProgramState) => {
       description: pill.description,
       teacherComment: '',
       version: 0,
-      completionTimeMinutes: 15,
+      completionTimeMinutes: pill.completionTimeMinutes,
       block: JSON.stringify(pill.lerniPill),
       teacherId: pill.teacherId,
     })),
@@ -38,11 +41,11 @@ export const transformedValues = (values: CreateProgramState) => {
     questionnaire: {
       name: 'Cuestionario',
       description: '',
-      passsingScore: 50,
-      cooldownInMinutes: 2880,
-      block: JSON.stringify(values.questionnaire),
+      passsingScore: Number(values.questionnaire?.passsingScore),
+      cooldownInMinutes: Number(values.questionnaire?.cooldownInMinutes),
+      block: JSON.stringify(values.questionnaire?.questionnaire),
       questionCount: amountOfQuestions,
-      completionTimeMinutes: amountOfQuestions * 0.5,
+      completionTimeMinutes: Number(values.questionnaire?.completionTimeMinutes),
       order: 0,
     },
     trivia: {
@@ -51,7 +54,7 @@ export const transformedValues = (values: CreateProgramState) => {
       order: 0,
     },
     students: values.students.map((student) => student.email),
-    hoursToComplete: 3,
+    hoursToComplete: minutosTotales,
     pointsReward: amountOfQuestions * 5,
   };
 };

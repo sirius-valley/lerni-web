@@ -2,9 +2,9 @@ import { api } from './api';
 
 export const professorApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getProfessors: builder.query<any, void>({
-      query: () => ({
-        url: 'api/professor',
+    getProfessors: builder.query<any, { page: number }>({
+      query: (params) => ({
+        url: `api/professor?page=${params?.page}`,
         method: 'GET',
       }),
     }),
@@ -22,4 +22,5 @@ export const professorApi = api.injectEndpoints({
   }),
 });
 
-export const { useCreateProfessorMutation, useGetProfessorsQuery } = professorApi;
+export const { useCreateProfessorMutation, useGetProfessorsQuery, useLazyGetProfessorsQuery } =
+  professorApi;

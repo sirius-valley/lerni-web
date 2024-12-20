@@ -4,7 +4,10 @@ import { StyledColumn, StyledRow } from '../../styled/styles';
 import { TextInput } from '../../styled/TextInput';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { updatePillInfo } from '../../../redux/slices/program.slice';
-import { useGetProfessorsQuery } from '../../../redux/service/professor.service';
+import {
+  useGetProfessorsQuery,
+  useLazyGetProfessorsQuery,
+} from '../../../redux/service/professor.service';
 import { Dropdown } from '../../Dropdown';
 import { DateTimePicker } from './DateTimePicker';
 import dayjs from 'dayjs';
@@ -14,20 +17,30 @@ const ProgramDetails = () => {
   const { edit } = program;
   const dispatch = useLDispatch();
 
-  const { data: professors } = useGetProfessorsQuery(undefined, {
-    selectFromResult: (res: any) => {
-      return {
-        ...res,
-        data: {
-          ...res.data,
-          result: res?.data?.result.map((prof: any) => ({
-            id: prof.id,
-            text: `${prof.name} ${prof.lastname}`,
-          })),
-        },
-      };
-    },
-  });
+  const [refetch, { data: profData, isLoading: isLoadingProf }] = useLazyGetProfessorsQuery();
+  const [professors, setProfessorsList] = useState<{ id: string; text: string }[]>([]);
+
+  useEffect(() => {
+    refetch({ page: 1 });
+  }, []);
+
+  useEffect(() => {
+    if (profData?.total) {
+      [...Array(profData.total - 1)].forEach((_, index) => {
+        refetch({ page: index + 1 }).then((res) => {
+          if (res.data?.result) {
+            setProfessorsList((prev) => [
+              ...prev,
+              ...res.data.result.map((prof: any) => ({
+                id: prof.id,
+                text: `${prof.name} ${prof.lastname}`,
+              })),
+            ]);
+          }
+        });
+      });
+    }
+  }, [profData?.total]);
 
   const handleChange = (name: string, value: string) => {
     dispatch(updatePillInfo({ ...program, [name]: value }));
@@ -77,7 +90,7 @@ const ProgramDetails = () => {
             label={'Profesor'}
             value={program.professor}
             placeholder={'Profesor del programa'}
-            content={professors.result ?? []}
+            content={professors ?? []}
             onChange={(val) => {
               handleChange('professor', val);
             }}
@@ -91,6 +104,7 @@ const ProgramDetails = () => {
             value={program.description}
             onChange={(value) => handleChange('description', value)}
             multiline
+            maxLength={2000}
             disabled={!edit}
           ></TextInput>
           <StyledRow css={{ gap: '16px' }}>
