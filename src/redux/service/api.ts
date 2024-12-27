@@ -32,6 +32,8 @@ const baseQueryInterceptor: BaseQueryFn<string | FetchArgs, unknown, CustomError
   const result = await baseQuery(args, api, extraOptions);
   if (result?.error?.status === 401) {
     api.dispatch({ type: 'login/logout', payload: result.data });
+    localStorage.removeItem('token');
+    window.location.href = '/login';
   }
   return result;
 };
