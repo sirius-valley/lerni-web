@@ -55,7 +55,7 @@ export const Autocomplete = ({
   }, [inputValue, content]);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter 23') {
+    if (event.key === 'Enter') {
       event.preventDefault();
       if (filteredContent.length > 0) {
         const firstOption = filteredContent[0];
