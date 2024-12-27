@@ -19,6 +19,7 @@ import {
   useGetProfessorsQuery,
   useLazyGetProfessorsQuery,
 } from '../../../redux/service/professor.service';
+import { Autocomplete } from '../../../components/Autocomplete';
 
 interface CreatePillModalProps extends ModalProps {
   openModal?: boolean;
@@ -200,7 +201,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
             disabled={isLoading}
           />
         </StyledRow>
-        <Dropdown
+        <Autocomplete
           label={'Profesor'}
           value={professor}
           placeholder={'Profesor del programa'}

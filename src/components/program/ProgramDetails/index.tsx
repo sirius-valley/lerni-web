@@ -11,6 +11,7 @@ import {
 import { Dropdown } from '../../Dropdown';
 import { DateTimePicker } from './DateTimePicker';
 import dayjs from 'dayjs';
+import { Autocomplete } from '../../Autocomplete';
 
 const ProgramDetails = () => {
   const program = useLSelector((state) => state.program);
@@ -86,7 +87,7 @@ const ProgramDetails = () => {
             onChange={(value) => handleChange('image', value)}
             disabled={!edit}
           ></TextInput>
-          <Dropdown
+          <Autocomplete
             label={'Profesor'}
             value={program.professor}
             placeholder={'Profesor del programa'}
