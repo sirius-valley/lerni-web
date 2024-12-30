@@ -1,9 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FormControl, MenuItem, Select, TextField } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { FormControl, MenuItem } from '@mui/material';
 import { useTheme } from 'styled-components';
-import { DownArrowIcon } from '../../assets/icons/DownArrowIcon';
-import { UpArrowIcon } from '../../assets/icons/UpArrowIcon';
-import { StyledColumn, StyledRow, StyledText } from '../styled/styles';
+import { StyledColumn } from '../styled/styles';
 import { TextInput } from '../styled/TextInput';
 
 export interface AutocompleteProps {
