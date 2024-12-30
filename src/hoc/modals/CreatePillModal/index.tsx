@@ -109,9 +109,12 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
   const isConfirmButtonDisabled =
     errors.name ||
     errors.description ||
+    errors.completionTimeMinutes ||
     errors.file ||
+    professor === '' ||
     !inputValues.name ||
     !inputValues.description ||
+    !inputValues.completionTimeMinutes ||
     !inputValues.file;
 
   const handleChange = (att: keyof typeof inputValues, value: string) => {

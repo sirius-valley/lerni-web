@@ -37,10 +37,13 @@ export const Autocomplete = ({
   };
 
   const checkIfValidValue = (value: string) => {
-    if (!content.map((option) => option.text).includes(value)) {
+    const matchingOption = content.find((option) => option.text === value);
+    if (matchingOption) {
+      handleSelect(matchingOption);
+    } else {
       setIsError(true);
       onChange('');
-    } else setIsError(false);
+    }
   };
 
   const getMenuBackground = (index: number): string => {
@@ -60,13 +63,17 @@ export const Autocomplete = ({
       event.preventDefault();
       if (filteredContent.length > 0) {
         const firstOption = filteredContent[0];
-        setInputValue(firstOption.text);
-        onChange(firstOption.id);
-        setIsOpen(false);
-        setIsSelected(true);
-        checkIfValidValue(firstOption.text);
+        handleSelect(firstOption);
       }
     }
+  };
+
+  const handleSelect = (option: { id: string; text: string }) => {
+    setInputValue(option.text);
+    onChange(option.id);
+    setIsOpen(false);
+    setIsSelected(true);
+    setIsError(false);
   };
 
   return (
@@ -114,10 +121,7 @@ export const Autocomplete = ({
                   ...css,
                 }}
                 onClick={() => {
-                  setIsSelected(true);
-                  setInputValue(option.text);
-                  onChange(option.id);
-                  setIsOpen(false);
+                  handleSelect(option);
                 }}
               >
                 {option.text}
