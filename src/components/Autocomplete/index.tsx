@@ -26,21 +26,24 @@ export const Autocomplete = ({
   content,
 }: AutocompleteProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(value || '');
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [filteredContent, setFilteredContent] = useState(content);
   const theme = useTheme();
 
-  const handleDropdownStatus = () => {
-    setIsOpen(!isOpen);
-  };
-
   const handleChange = (value: string) => {
     setIsSelected(false);
     setInputValue(value);
+    checkIfValidValue(value);
   };
 
-  const handleIcon = () => (isOpen ? <UpArrowIcon size={20} /> : <DownArrowIcon size={20} />);
+  const checkIfValidValue = (value: string) => {
+    if (!content.map((option) => option.text).includes(value)) {
+      setIsError(true);
+      onChange('');
+    } else setIsError(false);
+  };
 
   const getMenuBackground = (index: number): string => {
     return index % 2 === 0 ? theme.gray100 : theme.white;
@@ -63,6 +66,7 @@ export const Autocomplete = ({
         onChange(firstOption.id);
         setIsOpen(false);
         setIsSelected(true);
+        checkIfValidValue(firstOption.text);
       }
     }
   };
@@ -84,6 +88,7 @@ export const Autocomplete = ({
           placeholder={placeholder}
           value={inputValue}
           onChange={(value) => handleChange(value)}
+          error={isError}
         />
         {isOpen && filteredContent.length > 0 && (
           <StyledColumn
