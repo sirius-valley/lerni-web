@@ -209,6 +209,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           value={professor}
           placeholder={'Profesor del programa'}
           content={professorsList ?? []}
+          multiple={false}
           onChange={(val) => {
             setProfessor(val);
           }}

@@ -92,6 +92,7 @@ const ProgramDetails = () => {
             value={program.professor}
             placeholder={'Profesor del programa'}
             content={professors ?? []}
+            multiple={false}
             onChange={(val) => {
               handleChange('professor', val);
             }}
