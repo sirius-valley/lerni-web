@@ -22,7 +22,7 @@ export const BlurView = styled(StyledBox)`
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  padding: 2%;
   overflow-x: hidden;
   background: rgba(0, 42, 55, 0.7);
   backdrop-filter: blur(10px);
