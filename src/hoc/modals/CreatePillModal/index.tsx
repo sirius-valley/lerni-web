@@ -19,7 +19,7 @@ import {
   useGetProfessorsQuery,
   useLazyGetProfessorsQuery,
 } from '../../../redux/service/professor.service';
-import { Autocomplete } from '../../../components/Autocomplete';
+import { AutocompleteComponent } from '../../../components/Autocomplete';
 
 interface CreatePillModalProps extends ModalProps {
   openModal?: boolean;
@@ -204,13 +204,13 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
             disabled={isLoading}
           />
         </StyledRow>
-        <Autocomplete
+        <AutocompleteComponent
           label={'Profesor'}
-          value={professor}
+          value={professorsList?.find((prof) => prof.id === professor)}
           placeholder={'Profesor del programa'}
           content={professorsList ?? []}
           multiple={false}
-          onChange={(val) => {
+          onChange={(val: string) => {
             setProfessor(val);
           }}
           css={{ fontSize: 14 }}

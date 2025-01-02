@@ -1,24 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Chip, FormControl, MenuItem, Tooltip } from '@mui/material';
-import { useTheme } from 'styled-components';
-import { StyledBox, StyledColumn, StyledRow } from '../styled/styles';
-import { TextInput } from '../styled/TextInput';
+import React, { useState } from 'react';
+import { FormControl, Autocomplete } from '@mui/material';
+import { StyledColumn, StyledRow, StyledText } from '../styled/styles';
 import { DownArrowIcon } from '../../assets/icons/DownArrowIcon';
 import { UpArrowIcon } from '../../assets/icons/UpArrowIcon';
+import { StyledTextField } from './style';
+
+type Option = { id: string; text: string };
 
 export interface AutocompleteProps {
   css?: any;
-  content: { id: string; text: string }[];
+  content: Option[];
   label?: string;
   required?: boolean;
   placeholder?: string;
-  value: string;
+  value: Option | Option[] | null | undefined;
   multiple?: boolean;
   onChange: (value: string) => void;
   setMultipleValues?: (values: string[]) => void;
 }
 
-export const Autocomplete = ({
+export const AutocompleteComponent = ({
   css,
   label,
   required = true,
@@ -29,82 +30,33 @@ export const Autocomplete = ({
   multiple = false,
   setMultipleValues,
 }: AutocompleteProps) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
-  const [isSelected, setIsSelected] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<string>(value || '');
-  const [filteredContent, setFilteredContent] = useState(content);
-  const [selectedValues, setSelectedValues] = useState<{ id: string; text: string }[]>([]);
-  const theme = useTheme();
+  const [isOpen, setIsOpen] = useState(false); // Estado para controlar si el menú está abierto
 
-  const maxVisibleChips = 2;
-  const visibleChips = selectedValues.slice(0, maxVisibleChips);
-  const hiddenChips = selectedValues.slice(maxVisibleChips);
-
-  const handleChange = (value: string) => {
-    setIsSelected(false);
-    setInputValue(value);
-    checkIfValidValue(value);
-  };
-
-  const checkIfValidValue = (value: string) => {
-    const matchingOption = content.find((option) => option.text === value);
-    if (matchingOption) {
-      handleSelect(matchingOption);
-    } else {
-      setIsError(true);
-      onChange('');
+  const handleSelect = (value: Option | Option[] | null) => {
+    if (multiple && Array.isArray(value)) {
+      setMultipleValues && setMultipleValues(value.map((v) => v.text));
+      onChange(value[value.length - 1]?.id);
+    } else if (!Array.isArray(value)) {
+      onChange(value ? value.id : '');
     }
-  };
-
-  const getMenuBackground = (index: number): string => {
-    return index % 2 === 0 ? theme.gray100 : theme.white;
-  };
-
-  const handleSelect = (option: { id: string; text: string }) => {
-    if (multiple) {
-      if (!selectedValues.some((item) => item.id === option.id)) {
-        const updatedValues = [...selectedValues, option];
-        setSelectedValues(updatedValues);
-        setMultipleValues?.(updatedValues.map((item) => item.id));
-      }
-      setInputValue('');
-    } else {
-      setInputValue(option.text);
-    }
-    onChange(option.id);
-    setIsOpen(false);
-    setIsSelected(true);
-    setIsError(false);
   };
 
   const handleIcon = () => (isOpen ? <UpArrowIcon size={20} /> : <DownArrowIcon size={20} />);
 
-  useEffect(() => {
-    setFilteredContent(
-      content.filter((option) => option.text.toLowerCase().includes(inputValue.toLowerCase())),
-    );
-    if (inputValue !== '' && (!isSelected || multiple)) setIsOpen(true);
-    else setIsOpen(false);
-  }, [inputValue, content]);
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      if (filteredContent.length > 0) {
-        const firstOption = filteredContent[0];
-        handleSelect(firstOption);
-      }
-    }
-  };
-
-  const handleDelete = (option: { id: string; text: string }) => {
-    const newValues = selectedValues.filter((item) => item.id !== option.id);
-    setSelectedValues(newValues);
-  };
-
   return (
     <StyledColumn css={{ minWidth: '120px', gap: '8px' }}>
+      {label && (
+        <StyledRow css={{ gap: '4px' }}>
+          <StyledText variant="body2" color="gray950">
+            {label}
+          </StyledText>
+          {required && (
+            <StyledText variant="body2" color="error500">
+              {' *'}
+            </StyledText>
+          )}
+        </StyledRow>
+      )}
       <FormControl
         style={{
           width: '100%',
@@ -112,84 +64,22 @@ export const Autocomplete = ({
           alignItems: 'center',
           position: 'relative',
         }}
-        onKeyDown={handleKeyDown}
       >
-        <TextInput
-          title={label}
-          required={required}
-          placeholder={placeholder}
-          value={inputValue}
-          onChange={(value) => handleChange(value)}
-          error={isError}
-          onFocus={() => setIsOpen(true)}
-          css={{
-            border: isError ? `1px solid ${theme.error500}` : `1px solid ${theme.gray200}`,
-            borderRadius: '8px',
-          }}
-          preText={
-            multiple &&
-            selectedValues.length > 0 && (
-              <StyledRow css={{ gap: '8px', flexWrap: 'nowrap', overflow: 'hidden' }}>
-                {visibleChips.map((option) => (
-                  <Chip
-                    key={option.id}
-                    label={option.text}
-                    onDelete={() => handleDelete(option)}
-                    style={{ backgroundColor: theme.gray200 }}
-                  />
-                ))}
-                {hiddenChips.length > 0 && (
-                  <Tooltip title={hiddenChips.map((chip) => chip.text).join(', ')} arrow>
-                    <Chip
-                      label={`+${hiddenChips.length}`}
-                      style={{ backgroundColor: theme.gray300, cursor: 'pointer' }}
-                    />
-                  </Tooltip>
-                )}
-              </StyledRow>
-            )
-          }
-          postText={
-            <StyledBox
-              onClick={() => setIsOpen(!isOpen)}
-              css={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-            >
-              {handleIcon()}
-            </StyledBox>
-          }
+        <Autocomplete
+          multiple={multiple}
+          limitTags={2}
+          id="multiple-limit-tags"
+          options={content}
+          value={value}
+          getOptionLabel={(option: Option) => option.text}
+          fullWidth
+          onClick={() => setIsOpen(!isOpen)}
+          popupIcon={handleIcon()}
+          renderInput={(params) => (
+            <StyledTextField {...params} placeholder={placeholder} variant="outlined" />
+          )}
+          onChange={(event, value) => handleSelect(value)}
         />
-        {isOpen && filteredContent.length > 0 && (
-          <StyledColumn
-            css={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              right: 0,
-              backgroundColor: theme.white,
-              border: `1px solid ${theme.gray200}`,
-              borderRadius: '8px',
-              zIndex: 10,
-              maxHeight: '200px',
-              overflowY: 'auto',
-            }}
-          >
-            {filteredContent.map((option, idx) => (
-              <MenuItem
-                key={idx}
-                value={option.id}
-                style={{
-                  backgroundColor: getMenuBackground(idx),
-                  gap: '8px',
-                  padding: '12px 16px',
-                  ...css,
-                }}
-                onClick={() => handleSelect(option)}
-              >
-                {option.text}
-              </MenuItem>
-            ))}
-          </StyledColumn>
-        )}
       </FormControl>
     </StyledColumn>
   );
