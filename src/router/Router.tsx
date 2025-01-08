@@ -12,6 +12,7 @@ import { useLDispatch } from '../redux/hooks';
 import { setToken } from '../redux/slices/auth.slice';
 import { getTokenFromLocalStorage } from '../utils/utils';
 import ProgramDetails from '../screens/ProgramDetails';
+import CreateCollection from '../screens/CreateCollection';
 
 const Router = () => {
   const dispatch = useLDispatch();
@@ -27,6 +28,7 @@ const Router = () => {
         <Route element={<NavigationLayout />}>
           <Route index element={<Home />} />
           <Route path="/create/program" element={<CreateProgram />} />
+          <Route path="/create/collection" element={<CreateCollection />} />
           <Route path="/details/program/:id" element={<ProgramDetails />} />
         </Route>
       </Route>

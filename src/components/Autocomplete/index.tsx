@@ -79,6 +79,15 @@ export const AutocompleteComponent = ({
             <StyledTextField {...params} placeholder={placeholder} variant="outlined" />
           )}
           onChange={(event, value) => handleSelect(value)}
+          componentsProps={{
+            popper: {
+              sx: {
+                '& .MuiAutocomplete-listbox': {
+                  fontSize: '14px',
+                },
+              },
+            },
+          }}
         />
       </FormControl>
     </StyledColumn>

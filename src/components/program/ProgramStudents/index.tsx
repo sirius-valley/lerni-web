@@ -77,7 +77,7 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
                 cursor: 'pointer',
               }}
             >
-              {'Agregar estudiantes'}
+              {'Cargar estudiantes'}
             </Button>
           </StyledBox>
         </StyledRow>
