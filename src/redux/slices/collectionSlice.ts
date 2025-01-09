@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { CreateProgramState } from './program.slice';
+import { ProgramListItem } from '../service/types/program.types';
 
 export interface CreateCollectionState {
   title: string;
-  programs: CreateProgramState[];
+  programs: ProgramListItem[];
   students: {
     authId: string;
     career: string;

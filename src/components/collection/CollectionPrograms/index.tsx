@@ -2,14 +2,16 @@ import React from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import Card from '../../Card';
 import { useTheme } from 'styled-components';
-import { useLDispatch } from '../../../redux/hooks';
+import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { AutocompleteComponent } from '../../Autocomplete';
 import { useProgramListQuery } from '../../../redux/service/program.service';
 import ProgramRow from './ProgramRow';
 import { ProgramListItem } from '../../../redux/service/types/program.types';
+import { updateCollectionInfo } from '../../../redux/slices/collectionSlice';
 
 const CollectionPrograms = () => {
   const theme = useTheme();
+  const collection = useLSelector((state) => state.collection);
   const dispatch = useLDispatch();
 
   const { data } = useProgramListQuery();
@@ -23,10 +25,21 @@ const CollectionPrograms = () => {
   const addProgram = (programId: string) => {
     const program: ProgramListItem | null =
       data?.results.find((program) => program.programVersionId === programId) || null;
-    // si program no es null, y si programs no contiene a program, agrego program a programs
     if (program && !programs.includes(program)) {
-      setPrograms([...programs, program]);
+      const newPrograms = [...programs, program];
+      setPrograms(newPrograms);
+      handleChange('programs', newPrograms);
     }
+  };
+
+  const deleteProgram = (programId: string) => {
+    const newPrograms = programs.filter((program) => program.programVersionId !== programId);
+    setPrograms(newPrograms);
+    handleChange('programs', newPrograms);
+  };
+
+  const handleChange = (name: string, value: ProgramListItem[]) => {
+    dispatch(updateCollectionInfo({ ...collection, [name]: value }));
   };
 
   return (
@@ -69,14 +82,7 @@ const CollectionPrograms = () => {
             >
               <ProgramRow
                 program={program}
-                onDelete={() =>
-                  setPrograms(
-                    programs.filter(
-                      (deletedProgram) =>
-                        deletedProgram.programVersionId !== program.programVersionId,
-                    ),
-                  )
-                }
+                onDelete={() => deleteProgram(program.programVersionId)}
               />
             </StyledColumn>
           ))}
