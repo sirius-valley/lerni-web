@@ -100,8 +100,8 @@ const ProgramDetails = () => {
           />
           <TextInput
             css={{ height: '120px' }}
-            placeholder="Descripcion del programa..."
-            title="Descripcion"
+            placeholder="Descripción del programa..."
+            title="Descripción"
             required
             value={program.description}
             onChange={(value) => handleChange('description', value)}

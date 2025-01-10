@@ -24,78 +24,44 @@ import { AutocompleteComponent } from '../../../components/Autocomplete';
 interface CreatePillModalProps extends ModalProps {
   openModal?: boolean;
 }
-interface Professor {
-  name: string;
-  lastname: string;
-  profession: string;
-  description: string;
-  image: string;
-}
+
+const mockedGroups = [
+  { id: 'g1', text: 'Frontend Masters' },
+  { id: 'g2', text: 'Backend Gurus' },
+  { id: 'g3', text: 'UI Designers' },
+  { id: 'g4', text: 'Chess Club' },
+  { id: 'g5', text: 'Science Club' },
+  { id: 'g6', text: 'Robotics Team' },
+  { id: 'g7', text: 'Art Enthusiasts' },
+  { id: 'g8', text: 'Sports Club' },
+  { id: 'g9', text: 'Music Band' },
+  { id: 'g10', text: 'Debate Team' },
+  { id: 'g11', text: 'Literature Club' },
+  { id: 'g12', text: 'Gaming Club' },
+];
 
 const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
   const [convertQuery, { data, isLoading, error: convertError, isSuccess }] =
     useConvertToLerniPillMutation();
-  const [professor, setProfessor] = useState<string>('');
+  const [selectedGroups, setSelectedGroups] = useState<{ id: string; text: string }[]>([]);
   const [inputValues, setInputValues] = useState<{
     name: string;
-    description: string;
     file: any;
-    completionTimeMinutes: string;
   }>({
     name: '',
-    description: '',
     file: null,
-    completionTimeMinutes: '5',
   });
   const [errors, setErrors] = useState({
     name: false,
-    description: false,
     file: false,
-    completionTimeMinutes: false,
   });
 
   const [refetch, { data: profData, isLoading: isLoadingProf }] = useLazyGetProfessorsQuery();
-  const [professorsList, setProfessorsList] = useState<{ id: string; text: string }[]>([]);
 
   useEffect(() => {
     refetch({ page: 1 });
   }, []);
 
-  useEffect(() => {
-    if (profData?.total) {
-      [...Array(profData.total - 1)].forEach((_, index) => {
-        refetch({ page: index + 1 }).then((res) => {
-          if (res.data?.result) {
-            setProfessorsList((prev) => [
-              ...prev,
-              ...res.data.result.map((prof: any) => ({
-                id: prof.id,
-                text: `${prof.name} ${prof.lastname}`,
-              })),
-            ]);
-          }
-        });
-      });
-    }
-  }, [profData?.total]);
-
-  const { data: professors } = useGetProfessorsQuery(
-    { page: 1 },
-    {
-      selectFromResult: (res: any) => {
-        return {
-          ...res,
-          data: {
-            ...res.data,
-            result: res?.data?.result.map((prof: any) => ({
-              id: prof.id,
-              text: `${prof.name} ${prof.lastname}`,
-            })),
-          },
-        };
-      },
-    },
-  );
   const dispatch = useLDispatch();
   useEffect(() => {
     if (convertError) errorToast('Algo salió mal, revisa el formato del csv/xlsx');
@@ -108,13 +74,9 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
 
   const isConfirmButtonDisabled =
     errors.name ||
-    errors.description ||
-    errors.completionTimeMinutes ||
     errors.file ||
-    professor === '' ||
+    selectedGroups.length === 0 ||
     !inputValues.name ||
-    !inputValues.description ||
-    !inputValues.completionTimeMinutes ||
     !inputValues.file;
 
   const handleChange = (att: keyof typeof inputValues, value: string) => {
@@ -141,10 +103,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
       addNewPill({
         id: nanoid(),
         title: inputValues.name,
-        description: inputValues.description,
-        teacherId: professor,
         lerniPill: JSON,
-        completionTimeMinutes: Number(inputValues.completionTimeMinutes),
       }),
     );
     handleOnClose();
@@ -186,7 +145,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
         zIndex: 30,
       }}
     >
-      <StyledColumn css={{ height: '580px', width: '100%', gap: '16px' }}>
+      <StyledColumn css={{ height: 'fit-content', width: '100%', gap: '16px' }}>
         <StyledRow
           css={{
             width: '100%',
@@ -205,36 +164,16 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           />
         </StyledRow>
         <AutocompleteComponent
-          label={'Profesor'}
-          value={professorsList?.find((prof) => prof.id === professor)}
-          placeholder={'Profesor del programa'}
-          content={professorsList ?? []}
-          multiple={false}
-          onChange={(val: string) => {
-            setProfessor(val);
-          }}
+          label={'Grupos'}
+          value={selectedGroups}
+          placeholder={'Seleccione grupo objetivo'}
+          content={mockedGroups}
+          multiple
+          allowNewOptions
+          setMultipleValues={(values) => setSelectedGroups(values)}
           css={{ fontSize: 14 }}
         />
-        <TextInput
-          placeholder="Descripción de la píldora"
-          title="Descripción"
-          value={inputValues.description}
-          onChange={(value) => handleChange('description', value)}
-          error={errors.description}
-          css={{ height: '100px' }}
-          multiline
-          disabled={isLoading}
-          required
-        />
-        <TextInput
-          placeholder="Duración en minutos"
-          title="Duración de la píldora"
-          value={inputValues.completionTimeMinutes}
-          onChange={(value) => handleChange('completionTimeMinutes', value)}
-          error={errors.completionTimeMinutes}
-          disabled={isLoading}
-          required
-        />
+
         <FileUpload
           title="Cargar JSON"
           value={inputValues.file}
