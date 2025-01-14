@@ -9,17 +9,14 @@ import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
 import { fileToJSONText } from '../../../utils/utils';
 import { useConvertToLerniPillMutation } from '../../../redux/service/program.service';
-import { useLDispatch, useLSelector } from '../../../redux/hooks';
+import { useLDispatch } from '../../../redux/hooks';
 import { addNewPill } from '../../../redux/slices/program.slice';
-import { ConvertTypeResponse } from '../../../redux/service/types/program.types';
 import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
-import { Dropdown } from '../../../components/Dropdown';
-import {
-  useGetProfessorsQuery,
-  useLazyGetProfessorsQuery,
-} from '../../../redux/service/professor.service';
+import { useLazyGetProfessorsQuery } from '../../../redux/service/professor.service';
 import { AutocompleteComponent } from '../../../components/Autocomplete';
+import { useGetGroupsQuery } from '../../../redux/service/groups.service';
+import { Group } from '../../../redux/service/types/groups.types';
 
 interface CreatePillModalProps extends ModalProps {
   openModal?: boolean;
@@ -43,6 +40,11 @@ const mockedGroups = [
 const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
   const [convertQuery, { data, isLoading, error: convertError, isSuccess }] =
     useConvertToLerniPillMutation();
+  const { data: groups } = useGetGroupsQuery();
+  const groupsOptions =
+    groups?.map((group) => {
+      return { id: group.id, text: group.name };
+    }) || [];
   const [selectedGroups, setSelectedGroups] = useState<{ id: string; text: string }[]>([]);
   const [inputValues, setInputValues] = useState<{
     name: string;
@@ -95,6 +97,14 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     }));
   };
 
+  const matchGroups = (selectedGroups: { id: string; text: string }[]): Group[] => {
+    return selectedGroups.map((group) => {
+      const groupMatch = groups?.find((g) => g.id === group.id);
+      if (groupMatch) return groupMatch;
+      return { id: '', name: group.text, institutionId: null };
+    });
+  };
+
   const handleSavePill = async () => {
     const JSON = await fileToJSONText(inputValues.file);
     // const response = (await convertQuery({ thread: JSON })) as { data: ConvertTypeResponse };
@@ -104,6 +114,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
         id: nanoid(),
         title: inputValues.name,
         lerniPill: JSON,
+        groups: matchGroups(selectedGroups),
       }),
     );
     handleOnClose();
@@ -167,7 +178,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           label={'Grupos'}
           value={selectedGroups}
           placeholder={'Seleccione grupo objetivo'}
-          content={mockedGroups}
+          content={groupsOptions}
           multiple
           allowNewOptions
           setMultipleValues={(values) => setSelectedGroups(values)}

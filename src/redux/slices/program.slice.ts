@@ -2,6 +2,7 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { programApi } from '../service/program.service';
 import { RootState } from '../store';
 import dayjs from 'dayjs';
+import { Group } from '../service/types/groups.types';
 
 type Pill = {
   id: string;
@@ -12,6 +13,7 @@ type Pill = {
   completionTimeMinutes: number;
   lerniPill: any;
   teacherId?: string;
+  groups: Group[];
 };
 interface Questionnaire {
   id: string;
