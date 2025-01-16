@@ -12,6 +12,7 @@ import { useLDispatch } from '../redux/hooks';
 import { setToken } from '../redux/slices/auth.slice';
 import { getTokenFromLocalStorage } from '../utils/utils';
 import ProgramDetails from '../screens/ProgramDetails';
+import ProfileDetails from '../screens/ProfileDetails';
 
 const Router = () => {
   const dispatch = useLDispatch();
@@ -28,6 +29,7 @@ const Router = () => {
           <Route index element={<Home />} />
           <Route path="/create/program" element={<CreateProgram />} />
           <Route path="/details/program/:id" element={<ProgramDetails />} />
+          <Route path="/profile/:id" element={<ProfileDetails />} />
         </Route>
       </Route>
       <Route element={<PublicRoute />}>
