@@ -101,7 +101,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     return selectedGroups.map((group) => {
       const groupMatch = groups?.find((g) => g.id === group.id);
       if (groupMatch) return groupMatch;
-      return { id: '', name: group.text, institutionId: null };
+      return { id: '', name: group.text, institutionId: null, createdAt: '' };
     });
   };
 

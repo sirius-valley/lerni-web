@@ -5,13 +5,13 @@ export const groupsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getGroups: builder.query<Group[], void>({
       query: () => ({
-        url: `api/groups`,
+        url: `group`,
         method: 'GET',
       }),
     }),
     getGroup: builder.query<Group, string>({
       query: (id) => ({
-        url: `api/group/${id}`,
+        url: `group/${id}`,
         method: 'GET',
       }),
     }),
