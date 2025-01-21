@@ -1,43 +1,33 @@
 import React, { useEffect } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
 import Button from '../components/styled/Button';
+import CollectionDetailsComponent from '../components/collection/CollectionDetails';
 import { ComponentVariantType } from '../utils/constants';
 import { useTheme } from 'styled-components';
-import { useLDispatch, useLSelector } from '../redux/hooks';
-import { useNavigate } from 'react-router-dom';
-import CollectionDetails from '../components/collection/CollectionDetails';
-import CollectionPrograms from '../components/collection/CollectionPrograms';
-import { transformedCollectionValues } from '../utils/transformBody';
-import { errorToast, successToast } from '../components/Toasts';
-import { CollectionStudents } from '../components/collection/CollectionStudents';
-import { useCreateCollectionMutation } from '../redux/service/collection.service';
+import { useLocation, useParams } from 'react-router-dom';
+import { useLDispatch } from '../redux/hooks';
+import { api } from '../redux/service/api';
+import { useCollectionDetailsQuery } from '../redux/service/collection.service';
 import { resetCollectionSlice } from '../redux/slices/collectionSlice';
+import CollectionPrograms from '../components/collection/CollectionPrograms';
+import { CollectionStudents } from '../components/collection/CollectionStudents';
 
-const CreateCollection = () => {
+const CollectionDetails = () => {
   const theme = useTheme();
-  const collection = useLSelector((state) => state.collection);
-  const navigate = useNavigate();
+  const { id } = useParams();
   const dispatch = useLDispatch();
+  const location = useLocation();
 
-  const [createCollection, { isError, error, data, isSuccess }] = useCreateCollectionMutation();
-
+  const { data } = useCollectionDetailsQuery(id as string);
   const handleSave = () => {
-    const allFieldsFilled = Object.values(collection).every((value) => value !== '');
-    if (allFieldsFilled) {
-      createCollection(transformedCollectionValues(collection)).then((res: any) => {
-        navigate('/');
-        dispatch(resetCollectionSlice());
-        successToast('Programa creado exitosamente!');
-      });
-    }
+    null;
   };
-
   useEffect(() => {
-    if (isError) {
-      errorToast('Algo ha salido mal! ');
-    }
-  }, [isError]);
-
+    return () => {
+      dispatch(api.util.invalidateTags(['CollectionDetails']));
+      dispatch(resetCollectionSlice());
+    };
+  }, []);
   return (
     <StyledBox css={{ height: '100%' }}>
       <StyledRow
@@ -49,7 +39,7 @@ const CreateCollection = () => {
           alignItems: 'center',
         }}
       >
-        <StyledText variant="h2">Crear nueva colección</StyledText>
+        <StyledText variant="h2">Detalles de la colección</StyledText>
       </StyledRow>
 
       <StyledColumn
@@ -68,7 +58,7 @@ const CreateCollection = () => {
             paddingBottom: '32px',
           }}
         >
-          <CollectionDetails />
+          <CollectionDetailsComponent />
           <CollectionPrograms />
           <CollectionStudents />
           <Button
@@ -92,4 +82,4 @@ const CreateCollection = () => {
   );
 };
 
-export default CreateCollection;
+export default CollectionDetails;

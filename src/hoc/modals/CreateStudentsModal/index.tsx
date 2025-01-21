@@ -11,9 +11,11 @@ import { updatePillInfo } from '../../../redux/slices/program.slice';
 import { useVerifyStudentsMutation } from '../../../redux/service/program.service';
 import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
+import { updateCollectionInfo } from '../../../redux/slices/collectionSlice';
 
 interface CreateStudentsModal extends ModalProps {
   openModal?: boolean;
+  entityType?: 'PROGRAM' | 'COLLECTION';
 }
 interface EmailObject {
   email: string;
@@ -31,7 +33,7 @@ interface Student {
   points: number;
 }
 
-const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
+const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal) => {
   const [
     verifyStudents,
     { isLoading: studentsLoading, error, data: studentsData, isSuccess: studentsSuccess },
@@ -91,7 +93,11 @@ const CreateStudentsModal = ({ handleOnClose }: CreateStudentsModal) => {
   const handleSavePill = () => {
     if (studentsSuccess) {
       if (studentsData) {
-        dispatch(updatePillInfo({ students: studentsData }));
+        if (entityType === 'COLLECTION') {
+          dispatch(updateCollectionInfo({ students: studentsData }));
+        } else {
+          dispatch(updatePillInfo({ students: studentsData }));
+        }
         successToast('Estudiantes cargados con exito!');
         handleOnClose();
       } else {

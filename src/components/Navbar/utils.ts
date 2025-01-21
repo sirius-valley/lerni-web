@@ -20,7 +20,7 @@ export const NavBarItems = [
     screen: 'library',
     icon: LibraryIcon,
     redirect: '/create/program',
-    activeRoutes: ['/create/program'],
+    activeRoutes: ['/create/program', '/create/collection'],
   },
   // {
   //   id: 'Pill',

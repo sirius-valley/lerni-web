@@ -6,7 +6,8 @@ export interface initialStateUtilsType {
     | 'PILL_READ'
     | 'QUESTIONNAIRE_CREATE'
     | 'TRIVIA_CREATE'
-    | 'STUDENTS_CREATE'
+    | 'PROGRAM_STUDENTS_CREATE'
+    | 'COLLECTION_STUDENTS_CREATE'
     | 'PROFESSOR_CREATE'
     | 'ADD_STUDENT'
     | 'STUDENTS_STATUS';

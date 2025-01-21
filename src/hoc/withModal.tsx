@@ -30,8 +30,10 @@ export const withModal = (Component: FunctionComponent) => (props: any) => {
         return <CreateQuestionnaireModal handleOnClose={handleOnClose} />;
       case 'TRIVIA_CREATE':
         return <CreateTriviaModal handleOnClose={handleOnClose} />;
-      case 'STUDENTS_CREATE':
-        return <CreateStudentsModal handleOnClose={handleOnClose} />;
+      case 'PROGRAM_STUDENTS_CREATE':
+        return <CreateStudentsModal handleOnClose={handleOnClose} entityType="PROGRAM" />;
+      case 'COLLECTION_STUDENTS_CREATE':
+        return <CreateStudentsModal handleOnClose={handleOnClose} entityType="COLLECTION" />;
       case 'PROFESSOR_CREATE':
         return <CreateProfessorModal handleOnClose={handleOnClose} />;
       case 'ADD_STUDENT':

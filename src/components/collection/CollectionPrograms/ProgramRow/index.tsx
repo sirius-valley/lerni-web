@@ -13,10 +13,11 @@ import { useTheme } from 'styled-components';
 
 interface ProgramRowProps {
   program: ProgramListItem;
-  onDelete: (programId: string) => void;
+  onDelete?: (programId: string) => void;
+  deletable?: boolean;
 }
 
-const ProgramRow = ({ program, onDelete }: ProgramRowProps) => {
+const ProgramRow = ({ program, onDelete, deletable }: ProgramRowProps) => {
   const theme = useTheme();
 
   return (
@@ -62,16 +63,18 @@ const ProgramRow = ({ program, onDelete }: ProgramRowProps) => {
           </StyledText>
         </StyledColumn>
       </StyledRow>
-      <StyledBox
-        style={{
-          cursor: 'pointer',
-          width: 'auto',
-          marginRight: '16px',
-        }}
-        onClick={() => onDelete(program.programVersionId)}
-      >
-        <RemoveIcon size={18} color={theme.gray400} />
-      </StyledBox>
+      {deletable && (
+        <StyledBox
+          style={{
+            cursor: 'pointer',
+            width: 'auto',
+            marginRight: '16px',
+          }}
+          onClick={() => onDelete && onDelete(program.programVersionId)}
+        >
+          <RemoveIcon size={18} color={theme.gray400} />
+        </StyledBox>
+      )}
     </StyledRow>
   );
 };

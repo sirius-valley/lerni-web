@@ -10,6 +10,7 @@ import {
 } from '../../../redux/service/professor.service';
 import { useLDispatch } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
+import { useTheme } from 'styled-components';
 
 interface Professor {
   name: string;
@@ -22,6 +23,7 @@ interface Professor {
 const ProfessorList = () => {
   const [refetch, { data, isLoading }] = useLazyGetProfessorsQuery();
   const dispatch = useLDispatch();
+  const theme = useTheme();
   const [professorsList, setProfessorsList] = useState<Professor[]>([]);
 
   const handleAddNewProfessor = () => {
@@ -50,10 +52,10 @@ const ProfessorList = () => {
   return (
     <StyledColumn
       css={{
-        maxWidth: '600px',
-        width: '100%',
-        maxHeight: '452px',
-        backgroundColor: 'white',
+        display: 'flex',
+        overflow: 'hidden',
+        height: '100%',
+        backgroundColor: theme.white,
         borderRadius: '20px',
         padding: '24px 16px',
         gap: '16px',

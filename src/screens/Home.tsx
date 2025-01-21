@@ -4,6 +4,7 @@ import ProgramsList from '../components/home/ProgramsList';
 import { RootContainer, StyledColumn, StyledRow } from '../components/styled/styles';
 import AllProgramsChart from '../components/charts/AllProgramsChart';
 import { StudentsRegisteredChart } from '../components/charts/StudentsRegisteredChart';
+import CollectionsList from '../components/home/CollectionsList';
 
 const Home = () => {
   return (
@@ -16,9 +17,28 @@ const Home = () => {
         paddingLeft: '72px',
       }}
     >
-      <StyledRow css={{ width: '1280px', height: '870px', gap: '40px', padding: '65px' }}>
-        <ProgramsList />
-        <StyledColumn css={{ flex: 1, gap: '12px', justifyContent: 'center' }}>
+      <StyledRow css={{ width: '1280px', height: '100vh', gap: '40px', padding: '30px 65px' }}>
+        <StyledColumn
+          css={{
+            overflow: 'hidden',
+            height: '100%',
+            width: '100%',
+            justifyContent: 'space-between',
+            gap: '12px',
+          }}
+        >
+          <ProgramsList />
+          <CollectionsList />
+        </StyledColumn>
+        <StyledColumn
+          css={{
+            overflow: 'hidden',
+            height: '100%',
+            width: '100%',
+            justifyContent: 'space-between',
+            gap: '12px',
+          }}
+        >
           <StyledRow css={{ gap: '30px' }}>
             <AllProgramsChart />
             <StudentsRegisteredChart />

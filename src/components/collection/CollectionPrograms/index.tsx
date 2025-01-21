@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import Card from '../../Card';
 import { useTheme } from 'styled-components';
@@ -12,6 +12,8 @@ import { updateCollectionInfo } from '../../../redux/slices/collectionSlice';
 const CollectionPrograms = () => {
   const theme = useTheme();
   const collection = useLSelector((state) => state.collection);
+  const { edit } = collection;
+
   const dispatch = useLDispatch();
 
   const { data } = useProgramListQuery();
@@ -20,8 +22,7 @@ const CollectionPrograms = () => {
     data?.results.map((program) => {
       return { id: program.programVersionId, text: program.name };
     }) || [];
-  const [programs, setPrograms] = React.useState<ProgramListItem[]>([]);
-
+  const [programs, setPrograms] = React.useState<ProgramListItem[]>(collection.programs);
   const addProgram = (programId: string) => {
     const program: ProgramListItem | null =
       data?.results.find((program) => program.programVersionId === programId) || null;
@@ -31,6 +32,10 @@ const CollectionPrograms = () => {
       handleChange('programs', newPrograms);
     }
   };
+
+  useEffect(() => {
+    setPrograms(collection.programs);
+  }, [collection.programs]);
 
   const deleteProgram = (programId: string) => {
     const newPrograms = programs.filter((program) => program.programVersionId !== programId);
@@ -58,15 +63,17 @@ const CollectionPrograms = () => {
           <StyledText variant="h2" style={{ marginBottom: '6px' }}>
             {'Programas'}
           </StyledText>
-          <StyledBox style={{ marginBottom: '6px', width: '250px' }}>
-            <AutocompleteComponent
-              multiple
-              placeholder={'Buscar programas...'}
-              content={availablePrograms}
-              value={[]}
-              onChange={(value: string) => addProgram(value)}
-            />
-          </StyledBox>
+          {edit && (
+            <StyledBox style={{ marginBottom: '6px', width: '250px' }}>
+              <AutocompleteComponent
+                multiple
+                placeholder={'Buscar programas...'}
+                content={availablePrograms}
+                value={[]}
+                onChange={(value: string) => addProgram(value)}
+              />
+            </StyledBox>
+          )}
         </StyledRow>
       }
     >
@@ -81,6 +88,7 @@ const CollectionPrograms = () => {
               }}
             >
               <ProgramRow
+                deletable={edit}
                 program={program}
                 onDelete={() => deleteProgram(program.programVersionId)}
               />

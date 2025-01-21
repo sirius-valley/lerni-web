@@ -6,6 +6,7 @@ import { updateCollectionInfo } from '../../../redux/slices/collectionSlice';
 
 const CollectionDetails = () => {
   const collection = useLSelector((state) => state.collection);
+  const { edit } = collection;
   const dispatch = useLDispatch();
 
   const handleChange = (name: string, value: string) => {
@@ -16,11 +17,11 @@ const CollectionDetails = () => {
     <Card title={'Detalles de la colección'} height={'100%'}>
       <TextInput
         placeholder="Introducción a la Historia Argentina..."
-        title="Nombre del programa"
+        title="Nombre de la colección"
         required
         value={collection.title}
         onChange={(value) => handleChange('title', value)}
-        disabled={false}
+        disabled={!edit}
       ></TextInput>
     </Card>
   );

@@ -2,18 +2,18 @@ import React from 'react';
 import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import Button from '../../styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
-import { ProgramItem } from '../../program/ProgramItem';
 import { useNavigate } from 'react-router-dom';
-import { useProgramListQuery } from '../../../redux/service/program.service';
 import { useTheme } from 'styled-components';
+import { useCollectionListQuery } from '../../../redux/service/collection.service';
+import { CollectionItem } from '../../collection/CollectionItem';
 
-const ProgramsList = () => {
+const CollectionsList = () => {
   const navigation = useNavigate();
   const theme = useTheme();
-  const { data } = useProgramListQuery();
+  const { data } = useCollectionListQuery();
 
-  const handleAddNewProgram = () => {
-    navigation('/create/program');
+  const handleAddNewCollection = () => {
+    navigation('/create/collection');
   };
   return (
     <StyledColumn
@@ -28,9 +28,9 @@ const ProgramsList = () => {
       }}
     >
       <StyledRow css={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <StyledText variant={'h2'}>Programas</StyledText>
+        <StyledText variant={'h2'}>Colecciones</StyledText>
         <Button
-          onClick={handleAddNewProgram}
+          onClick={handleAddNewCollection}
           variant={ComponentVariantType.PRIMARY}
           labelSize={'body3'}
           css={{ padding: '16px 8px', height: '30px' }}
@@ -39,10 +39,10 @@ const ProgramsList = () => {
         </Button>
       </StyledRow>
       <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
-        {data?.results.map((item, key) => <ProgramItem key={key} {...item} />)}
+        {data?.map((item, key) => <CollectionItem key={key} {...item} />)}
       </StyledColumn>
     </StyledColumn>
   );
 };
 
-export default ProgramsList;
+export default CollectionsList;

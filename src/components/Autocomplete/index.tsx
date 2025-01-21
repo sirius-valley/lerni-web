@@ -5,7 +5,7 @@ import { DownArrowIcon } from '../../assets/icons/DownArrowIcon';
 import { UpArrowIcon } from '../../assets/icons/UpArrowIcon';
 import { StyledTextField } from './style';
 
-type Option = { id: string; text: string };
+export type Option = { id: string; text: string };
 
 export interface AutocompleteProps {
   css?: any;
@@ -15,8 +15,9 @@ export interface AutocompleteProps {
   placeholder?: string;
   value: Option | Option[] | null | undefined;
   multiple?: boolean;
-  onChange: (value: string) => void;
-  setMultipleValues?: (values: string[]) => void;
+  onChange?: (value: string) => void;
+  setMultipleValues?: (values: Option[]) => void;
+  allowNewOptions?: boolean;
 }
 
 export const AutocompleteComponent = ({
@@ -29,16 +30,40 @@ export const AutocompleteComponent = ({
   content,
   multiple = false,
   setMultipleValues,
+  allowNewOptions = false,
 }: AutocompleteProps) => {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar si el menú está abierto
 
-  const handleSelect = (value: Option | Option[] | null) => {
-    if (multiple && Array.isArray(value)) {
-      setMultipleValues && setMultipleValues(value.map((v) => v.text));
-      onChange(value[value.length - 1]?.id);
-    } else if (!Array.isArray(value)) {
-      onChange(value ? value.id : '');
+  const handleSelect = (value: string | Option | (string | Option)[] | null) => {
+    console.log(value);
+    if (!value) {
+      onChange && onChange('');
+      setMultipleValues && setMultipleValues([]);
+      return;
     }
+
+    if (multiple && Array.isArray(value)) {
+      const options = value.map((val) => handleValue(val));
+      setMultipleValues && setMultipleValues(options);
+      onChange && onChange(options[options.length - 1]?.id);
+    } else if (!Array.isArray(value)) {
+      const option = handleValue(value);
+      onChange && onChange(option ? option.id : '');
+    }
+  };
+
+  const handleGetOption = (value: string | Option) => {
+    const option = handleValue(value);
+    return option.text;
+  };
+
+  const handleValue = (value: string | Option) => {
+    if (typeof value === 'string') {
+      const option = content.find((opt) => opt.text === value);
+      if (option) return option;
+      return { id: '', text: value };
+    }
+    return value;
   };
 
   const handleIcon = () => (isOpen ? <UpArrowIcon size={20} /> : <DownArrowIcon size={20} />);
@@ -66,12 +91,14 @@ export const AutocompleteComponent = ({
         }}
       >
         <Autocomplete
+          autoComplete
           multiple={multiple}
+          freeSolo={allowNewOptions}
           limitTags={2}
           id="multiple-limit-tags"
           options={content}
           value={value}
-          getOptionLabel={(option: Option) => option.text}
+          getOptionLabel={handleGetOption}
           fullWidth
           onClick={() => setIsOpen(!isOpen)}
           popupIcon={handleIcon()}

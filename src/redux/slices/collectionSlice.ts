@@ -1,6 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { ProgramListItem } from '../service/types/program.types';
+import { collectionApi } from '../service/collection.service';
 
 export interface CreateCollectionState {
   title: string;
@@ -15,13 +16,16 @@ export interface CreateCollectionState {
     lastname: string;
     name: string;
     profession?: string;
+    group: string[];
   }[];
+  edit: boolean;
 }
 
 const initialState: CreateCollectionState = {
   title: '',
   programs: [],
   students: [],
+  edit: true,
 };
 
 export const collectionSlice = createSlice({
@@ -34,11 +38,31 @@ export const collectionSlice = createSlice({
         ...action.payload,
       };
     },
+    resetCollectionSlice: (state, action: PayloadAction<void>) => {
+      return initialState;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      collectionApi.endpoints.collectionDetails.matchFulfilled,
+      (state, action) => {
+        state.edit = false;
+        state.title = action.payload.name;
+        state.programs = action.payload.programs.map((program) => {
+          return {
+            icon: program.program.icon,
+            name: program.program.name,
+            programVersionId: program.program.id,
+          } as ProgramListItem;
+        });
+        state.students = [];
+      },
+    );
   },
 });
 
 const collection: any = (state: RootState) => state.collection;
 
-export const { updateCollectionInfo } = collectionSlice.actions;
+export const { updateCollectionInfo, resetCollectionSlice } = collectionSlice.actions;
 
 export default collectionSlice.reducer;

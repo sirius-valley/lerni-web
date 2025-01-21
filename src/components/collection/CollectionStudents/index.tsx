@@ -5,47 +5,22 @@ import Button from '../../styled/Button';
 import React from 'react';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { ComponentVariantType } from '../../../utils/constants';
-import { StudentsTable } from './Table';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
+import { StudentsTable } from '../../program/ProgramStudents/Table';
 
-const mockedStudents = [
-  {
-    email: 'hola@email.com',
-    name: 'holaholaholaholaholaholaholaholaholaholahola',
-    lastname: 'email',
-    status: true,
-    profilePicture:
-      'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light',
-  },
-  {
-    email: 'chatchatchatchatchat@gmail.com',
-    name: 'chau',
-    lastname: 'gmail',
-    status: true,
-    profilePicture:
-      'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Dark',
-  },
-  {
-    email: 'test@gmail.com',
-    status: false,
-    profilePicture:
-      'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Dark',
-  },
-];
-
-interface ProgramStudents {
-  programVersionId?: string;
+interface CollectionStudents {
+  collectionId?: string;
 }
 
-export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
+export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
   const theme = useTheme();
   const dispatch = useLDispatch();
 
-  const students = useLSelector((state) => state.program.students);
+  const students = useLSelector((state) => state.collection.students);
 
   const handleShowModal = () => {
-    dispatch(setModalOpen({ modalType: 'PROGRAM_STUDENTS_CREATE' }));
+    dispatch(setModalOpen({ modalType: 'COLLECTION_STUDENTS_CREATE' }));
   };
 
   return (
@@ -83,8 +58,8 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
         </StyledRow>
       }
     >
-      {students.length ? (
-        <StudentsTable students={students} programVersionId={programVersionId ?? ''} />
+      {students?.length ? (
+        <StudentsTable students={students} programVersionId={collectionId ?? ''} />
       ) : (
         <StyledBox
           css={{
