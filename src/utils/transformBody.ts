@@ -27,6 +27,10 @@ export const transformedValues = (values: CreateProgramState) => {
       completionTimeMinutes: pill.completionTimeMinutes,
       block: JSON.stringify(pill.lerniPill),
       teacherId: pill.teacherId,
+      group: pill.groups.map((group) => ({
+        name: group.name,
+        institutionId: group.institutionId,
+      })),
     })),
     /*
         "name": "string",

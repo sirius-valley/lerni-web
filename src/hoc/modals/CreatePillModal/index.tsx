@@ -13,7 +13,10 @@ import { useLDispatch } from '../../../redux/hooks';
 import { addNewPill } from '../../../redux/slices/program.slice';
 import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
-import { useLazyGetProfessorsQuery } from '../../../redux/service/professor.service';
+import {
+  useGetProfessorsQuery,
+  useLazyGetProfessorsQuery,
+} from '../../../redux/service/professor.service';
 import { AutocompleteComponent } from '../../../components/Autocomplete';
 import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { Group } from '../../../redux/service/types/groups.types';
@@ -46,24 +49,67 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
       return { id: group.id, text: group.name };
     }) || [];
   const [selectedGroups, setSelectedGroups] = useState<{ id: string; text: string }[]>([]);
+  const [professor, setProfessor] = useState<string>('');
   const [inputValues, setInputValues] = useState<{
     name: string;
+    description: string;
     file: any;
+    completionTimeMinutes: string;
   }>({
     name: '',
+    description: '',
     file: null,
+    completionTimeMinutes: '5',
   });
   const [errors, setErrors] = useState({
     name: false,
+    description: false,
     file: false,
+    completionTimeMinutes: false,
   });
 
   const [refetch, { data: profData, isLoading: isLoadingProf }] = useLazyGetProfessorsQuery();
+  const [professorsList, setProfessorsList] = useState<{ id: string; text: string }[]>([]);
 
   useEffect(() => {
     refetch({ page: 1 });
   }, []);
 
+  useEffect(() => {
+    if (profData?.total) {
+      [...Array(profData.total - 1)].forEach((_, index) => {
+        refetch({ page: index + 1 }).then((res) => {
+          if (res.data?.result) {
+            setProfessorsList((prev) => [
+              ...prev,
+              ...res.data.result.map((prof: any) => ({
+                id: prof.id,
+                text: `${prof.name} ${prof.lastname}`,
+              })),
+            ]);
+          }
+        });
+      });
+    }
+  }, [profData?.total]);
+
+  const { data: professors } = useGetProfessorsQuery(
+    { page: 1 },
+    {
+      selectFromResult: (res: any) => {
+        return {
+          ...res,
+          data: {
+            ...res.data,
+            result: res?.data?.result.map((prof: any) => ({
+              id: prof.id,
+              text: `${prof.name} ${prof.lastname}`,
+            })),
+          },
+        };
+      },
+    },
+  );
   const dispatch = useLDispatch();
   useEffect(() => {
     if (convertError) errorToast('Algo salió mal, revisa el formato del csv/xlsx');
@@ -76,9 +122,14 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
 
   const isConfirmButtonDisabled =
     errors.name ||
+    errors.description ||
+    errors.completionTimeMinutes ||
     errors.file ||
+    professor === '' ||
     selectedGroups.length === 0 ||
     !inputValues.name ||
+    !inputValues.description ||
+    !inputValues.completionTimeMinutes ||
     !inputValues.file;
 
   const handleChange = (att: keyof typeof inputValues, value: string) => {
@@ -113,7 +164,10 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
       addNewPill({
         id: nanoid(),
         title: inputValues.name,
+        description: inputValues.description,
+        teacherId: professor,
         lerniPill: JSON,
+        completionTimeMinutes: Number(inputValues.completionTimeMinutes),
         groups: matchGroups(selectedGroups),
       }),
     );
@@ -174,6 +228,37 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
             disabled={isLoading}
           />
         </StyledRow>
+        <AutocompleteComponent
+          label={'Profesor'}
+          value={professorsList?.find((prof) => prof.id === professor)}
+          placeholder={'Profesor del programa'}
+          content={professorsList ?? []}
+          multiple={false}
+          onChange={(val: string) => {
+            setProfessor(val);
+          }}
+          css={{ fontSize: 14 }}
+        />
+        <TextInput
+          placeholder="Descripción de la píldora"
+          title="Descripción"
+          value={inputValues.description}
+          onChange={(value) => handleChange('description', value)}
+          error={errors.description}
+          css={{ height: '100px' }}
+          multiline
+          disabled={isLoading}
+          required
+        />
+        <TextInput
+          placeholder="Duración en minutos"
+          title="Duración de la píldora"
+          value={inputValues.completionTimeMinutes}
+          onChange={(value) => handleChange('completionTimeMinutes', value)}
+          error={errors.completionTimeMinutes}
+          disabled={isLoading}
+          required
+        />
         <AutocompleteComponent
           label={'Grupos'}
           value={selectedGroups}
