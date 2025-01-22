@@ -9,7 +9,14 @@ export const studentsApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    studentsList: builder.query<StudentsRegisteredResponse, number>({
+      query: (page: number) => ({
+        url: `api/student/list`,
+        method: 'GET',
+        params: { page },
+      }),
+    }),
   }),
 });
 
-export const { useStudentsRegisteredQuery } = studentsApi;
+export const { useStudentsRegisteredQuery, useStudentsListQuery } = studentsApi;

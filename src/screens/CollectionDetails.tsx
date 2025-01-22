@@ -8,7 +8,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { useLDispatch } from '../redux/hooks';
 import { api } from '../redux/service/api';
 import { useCollectionDetailsQuery } from '../redux/service/collection.service';
-import { resetCollectionSlice } from '../redux/slices/collectionSlice';
+import { resetCollectionSlice } from '../redux/slices/collection.slice';
 import CollectionPrograms from '../components/collection/CollectionPrograms';
 import { CollectionStudents } from '../components/collection/CollectionStudents';
 

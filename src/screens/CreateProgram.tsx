@@ -40,6 +40,12 @@ const CreateProgram = () => {
     }
   }, [isError]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetProgramSlice());
+    };
+  }, []);
+
   return (
     <StyledBox css={{ height: '100%' }}>
       <StyledRow

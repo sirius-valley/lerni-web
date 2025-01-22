@@ -11,7 +11,7 @@ import { updatePillInfo } from '../../../redux/slices/program.slice';
 import { useVerifyStudentsMutation } from '../../../redux/service/program.service';
 import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
-import { updateCollectionInfo } from '../../../redux/slices/collectionSlice';
+import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
 
 interface CreateStudentsModal extends ModalProps {
   openModal?: boolean;

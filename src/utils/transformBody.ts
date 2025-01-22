@@ -1,5 +1,5 @@
 import { CreateProgramState } from '../redux/slices/program.slice';
-import { CreateCollectionState } from '../redux/slices/collectionSlice';
+import { CreateCollectionState } from '../redux/slices/collection.slice';
 import { CreateCollectionRequestDto } from '../redux/service/types/collection.types';
 
 export const transformedValues = (values: CreateProgramState) => {
@@ -29,6 +29,10 @@ export const transformedValues = (values: CreateProgramState) => {
       completionTimeMinutes: pill.completionTimeMinutes,
       block: JSON.stringify(pill.lerniPill),
       teacherId: pill.teacherId,
+      group: pill.groups.map((group) => ({
+        name: group.name,
+        institutionId: group.institutionId,
+      })),
     })),
     /*
         "name": "string",
@@ -69,7 +73,7 @@ export const transformedCollectionValues = (
     programs: values.programs.map((program) => program.programVersionId),
     students: values.students.map((student) => ({
       email: student.email,
-      group: student.group,
+      group: ['nuevos', 'enfermeros'],
     })),
   };
 };

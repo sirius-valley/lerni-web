@@ -10,7 +10,8 @@ export interface initialStateUtilsType {
     | 'COLLECTION_STUDENTS_CREATE'
     | 'PROFESSOR_CREATE'
     | 'ADD_STUDENT'
-    | 'STUDENTS_STATUS';
+    | 'STUDENTS_STATUS'
+    | 'STUDENTS_GROUPS';
   metadata?: any;
 }
 

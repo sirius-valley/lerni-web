@@ -1,173 +1,397 @@
+import React, { useEffect, useState } from 'react';
+import {
+  Column,
+  ColumnDef,
+  ColumnFiltersState,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+  getFilteredRowModel,
+} from '@tanstack/react-table';
 import { useTheme } from 'styled-components';
-import { RemoveIcon } from '../../../../assets/icons/RemoveIcon';
-import { StyledAvatar, StyledBox, StyledRow, StyledText } from '../../../styled/styles';
-import { StyledTable } from './styles';
-import { Tooltip } from 'react-tooltip';
-import React from 'react';
-import { useLDispatch, useLSelector } from '../../../../redux/hooks';
+import { StyledBox, StyledColumn, StyledRow } from '../../../styled/styles';
+import { useLDispatch } from '../../../../redux/hooks';
 import { removeStudent } from '../../../../redux/slices/program.slice';
 import { setModalOpen } from '../../../../redux/slices/utils.slice';
-import { transformFirstLetterToLowerCase } from '../../../../utils/utils';
+import { TextInput } from '../../../styled/TextInput';
+import { UpArrowIcon } from '../../../../assets/icons/UpArrowIcon';
+import { DownArrowIcon } from '../../../../assets/icons/DownArrowIcon';
+import { Chip, IconButton } from '@mui/material';
+import FilterGroups from './FilterGroups';
+import Email from './columns/Email';
+import Fullname from './columns/Fullname';
+import Status from './columns/Status';
+import Progress from './columns/Progress';
+import Groups from './columns/Groups';
+import Actions from './columns/Actions';
+import { Dropdown } from '../../../Dropdown';
+import FilterIcon from '../../../../assets/icons/FilterIcon';
+
+interface Student {
+  authId: string;
+  email: string;
+  name?: string;
+  lastname?: string;
+  status?: boolean;
+  image?: string;
+  id: string;
+  progress?: number;
+  groups: {
+    id: string;
+    name: string;
+  }[];
+}
 
 interface StudentsTableProps {
-  students: {
-    authId: string;
-    email: string;
-    name?: string;
-    lastname?: string;
-    status?: boolean;
-    image?: string;
+  students: Student[];
+  groups: {
     id: string;
+    name: string;
   }[];
   programVersionId: string;
 }
 
-export const StudentsTable = ({ students, programVersionId }: StudentsTableProps) => {
+interface Filters {
+  progress: ProgressStatus;
+  status: StateStatus;
+  groups: string[];
+}
+
+type StateStatus = 'Registrado' | 'No registrado';
+type ProgressStatus = 'Finalizado' | 'En progreso' | 'No iniciado';
+
+export const StudentsTable = ({ students, groups, programVersionId }: StudentsTableProps) => {
   const theme = useTheme();
   const dispatch = useLDispatch();
-  const edit = useLSelector((state) => state.program.edit);
+  const [value, setValue] = React.useState('');
+  const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({});
+  const [filteredGroups, setFilteredGroups] = useState<{ id: string; name: string }[]>([]);
+
+  const [showFilters, setShowFilters] = useState(false);
+
+  const filtersMap: Record<string, any[]> = {
+    progress: ['Finalizado', 'En progreso', 'No iniciado'],
+    status: ['Registrado', 'No registrado'],
+    groups: groups.map((group) => group.name), // Dinámico basado en los grupos disponibles
+  };
+
+  const [appliedFilters, setAppliedFilters] = useState<Filters>({
+    progress: 'No iniciado',
+    status: 'No registrado',
+    groups: [],
+  });
+
+  const filterableColumns = ['status', 'progress', 'groups'];
+
+  const handleFilters = (columnId: string, value: string) => {
+    const updatedFilters = {
+      ...appliedFilters,
+      [columnId]: value,
+    };
+    setAppliedFilters(updatedFilters);
+  };
+
+  const getFilterValue = (columnId: string) => {
+    switch (columnId) {
+      case 'status':
+        return appliedFilters.status;
+      case 'progress':
+        return appliedFilters.progress;
+      case 'groups':
+        return appliedFilters.groups;
+      default:
+        return '';
+    }
+  };
+
+  useEffect(() => {
+    table.setGlobalFilter(value);
+  }, [value]);
+
+  useEffect(() => {
+    table.getColumn('groups')?.setFilterValue(filteredGroups);
+  }, [filteredGroups]);
+
+  const handleIcon = (isOpen: boolean) =>
+    isOpen ? <UpArrowIcon size={20} /> : <DownArrowIcon size={20} />;
+
+  const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: Student) => {
+    if (action === 'view') {
+      dispatch(
+        setModalOpen({
+          modalType: 'STUDENTS_STATUS',
+          metadata: { studentId: student.id, programVersionId },
+        }),
+      );
+    } else if (action === 'delete') {
+      dispatch(removeStudent({ email: student.email }));
+    } else if (action === 'edit') {
+      console.log('Edit student:', student);
+    }
+  };
+
+  const handleExpandGroups = (studentId: string) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [studentId]: !prev[studentId],
+    }));
+  };
+
+  const columns = React.useMemo<ColumnDef<Student, any>[]>(
+    () => [
+      {
+        accessorKey: 'email',
+        header: 'Email',
+        cell: (info) => {
+          const email = info.getValue();
+          const image = info.row.original.image;
+          return <Email email={email} image={image} />;
+        },
+      },
+      {
+        accessorFn: (row) => `${row.name ?? ''} ${row.lastname ?? '...'}`,
+        id: 'fullname',
+        header: 'Nombre',
+        cell: (info) => {
+          const fullname = info.getValue();
+          return <Fullname fullname={fullname} />;
+        },
+      },
+      {
+        accessorKey: 'status',
+        header: 'Estado',
+        cell: (info) => {
+          const status = info.row.original.status;
+          return <Status status={status} />;
+        },
+        meta: {
+          filterVariant: 'select',
+        },
+        filterFn: (row, columnId, value) => {
+          const status = row.getValue(columnId);
+          if (value === 'true') {
+            return status === true;
+          }
+          if (value === 'false') {
+            return status === false;
+          }
+          return true; // Para que no se filtre si no se selecciona ningún valor
+        },
+      },
+      {
+        accessorKey: 'progress',
+        header: 'Progreso',
+        cell: (info) => {
+          const progress = info.row.original.progress ?? 0;
+          return <Progress progress={progress} />;
+        },
+      },
+      {
+        accessorKey: 'groups',
+        header: 'Grupos',
+        cell: (info) => {
+          const groups = info.getValue() ?? [];
+          const maxGroups = 1;
+          const visibleGroups = groups.slice(0, maxGroups);
+          const extraGroups = groups.length - maxGroups;
+          const studentId = info.row.original.id;
+
+          return (
+            <Groups
+              studentId={studentId}
+              groups={groups}
+              maxGroups={maxGroups}
+              visibleGroups={visibleGroups}
+              extraGroups={extraGroups}
+              expandedGroups={expandedGroups}
+              onExpand={handleExpandGroups}
+            />
+          );
+        },
+        meta: {
+          filterVariant: 'select',
+        },
+        filterFn: 'arrIncludesAll',
+      },
+      {
+        id: 'actions',
+        cell: (info) => {
+          const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+          const open = Boolean(anchorEl);
+          const student = info.row.original;
+
+          const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+            setAnchorEl(event.currentTarget);
+          };
+
+          const handleClose = () => {
+            setAnchorEl(null);
+          };
+
+          return (
+            <Actions
+              open={open}
+              anchorEl={anchorEl}
+              programVersionId={programVersionId}
+              expandedGroups={expandedGroups}
+              onExpand={handleExpandGroups}
+              onClick={handleClick}
+              onClose={handleClose}
+              onMenuClick={handleMenuClick}
+              student={student}
+            />
+          );
+        },
+      },
+    ],
+    [],
+  );
+
+  const table = useReactTable({
+    data: students,
+    columns,
+    filterFns: {},
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  });
+
+  const [openFilters, setOpenFilters] = useState<Record<string, boolean>>({}); // Estado de mapa para filtros abiertos
+
+  const handleToggle = (filterId: string) => {
+    setOpenFilters((prev) => {
+      const newState = { ...prev, [filterId]: !prev[filterId] };
+      // Asegúrate de que solo uno esté abierto a la vez
+      Object.keys(newState).forEach((key) => {
+        if (key !== filterId) newState[key] = false;
+      });
+      return newState;
+    });
+  };
+
+  const handleClickFilters = () => {
+    setShowFilters(!showFilters);
+    setOpenFilters((prev) => {
+      const newState = { ...prev };
+      Object.keys(newState).forEach((key) => {
+        newState[key] = false;
+      });
+      return newState;
+    });
+  };
 
   return (
-    <StyledBox style={{ maxWidth: '100%', overflowX: 'auto' }}>
-      <StyledTable>
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'left', padding: '14px 10px 14px 0px', width: '35%' }}>
-              {'Email'}
-            </th>
-            <th style={{ padding: '14px 10px 14px 10px', width: '35%' }}>{'Nombre'}</th>
-            <th style={{ padding: '14px 10px 14px 10px', width: '20%' }}>{'Status'}</th>
-            <th style={{ textAlign: 'right', padding: '14px 0px 14px 10px', width: '15%' }}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((student, idx) => {
-            const fullname = `${student.name} ${student.lastname}`;
-            const isRegistered = student.name !== undefined;
+    <StyledColumn style={{ padding: '2px' }}>
+      <StyledRow style={{ alignItems: 'center', gap: '20px' }}>
+        <TextInput
+          type="text"
+          placeholder="Search..."
+          onChange={(value) => setValue(value)}
+          value={value}
+        />
+        {/*<FilterGroups*/}
+        {/*  groups={groups}*/}
+        {/*  filterGroup={(group) => {*/}
+        {/*    if (!filteredGroups.some((filteredGroup) => filteredGroup.id === group.id)) {*/}
+        {/*      setFilteredGroups([...filteredGroups, group]);*/}
+        {/*    }*/}
+        {/*  }}*/}
+        {/*/>*/}
+        {/*<IconButton*/}
+        {/*  aria-label="filter"*/}
+        {/*  style={{ overflow: 'visible' }}*/}
+        {/*  onClick={handleClickFilters}*/}
+        {/*>*/}
+        {/*  <FilterIcon color={theme.primary500} selected={showFilters} />*/}
+        {/*</IconButton>*/}
+      </StyledRow>
 
-            return (
+      <StyledRow style={{ gap: '8px', width: '100%', overflowX: 'auto' }}>
+        {filteredGroups.map((group) => (
+          <Chip
+            key={group.id}
+            label={group.name}
+            style={{ borderColor: theme.primary500 }}
+            variant="outlined"
+            onDelete={() => setFilteredGroups(filteredGroups.filter((g) => g.id !== group.id))}
+          />
+        ))}
+      </StyledRow>
+      <StyledBox style={{ maxWidth: '100%', overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', maxWidth: '100%' }}>
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    style={{
+                      textAlign: 'left',
+                      padding: '14px 10px',
+                      borderBottom: `2px solid ${theme.gray200}`,
+                      fontFamily: 'Roboto, sans-serif',
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      color: theme.gray900,
+                    }}
+                  >
+                    <StyledRow>
+                      <StyledRow
+                        onClick={header.column.getToggleSortingHandler()}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          cursor: header.column.getCanSort() ? 'pointer' : 'default',
+                        }}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.column.getIsSorted() &&
+                          handleIcon(header.column.getIsSorted() === 'asc')}
+                      </StyledRow>
+                      {header.column.getCanFilter() &&
+                        filterableColumns.includes(header.id) &&
+                        showFilters && (
+                          <FilterGroups
+                            id={header.id}
+                            options={filtersMap[header.id]}
+                            selected={getFilterValue(header.id)}
+                            onSelect={(option) => handleFilters(header.id, option)}
+                            open={openFilters[header.id]} // Pasar si el filtro está abierto
+                            onToggle={() => handleToggle(header.id)} // Maneja el toggle
+                          />
+                        )}
+                    </StyledRow>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
               <tr
-                key={idx}
+                key={row.id}
                 style={{ borderBottom: `1px solid ${theme.gray200}`, cursor: 'pointer' }}
                 onClick={() =>
                   dispatch(
                     setModalOpen({
                       modalType: 'STUDENTS_STATUS',
-                      metadata: { studentId: student.id, programVersionId },
+                      metadata: { studentId: row.original.id, programVersionId },
                     }),
                   )
                 }
               >
-                <td style={{ padding: '12px 10px 12px 0px' }}>
-                  <StyledRow
-                    style={{ justifyContent: 'flex-start', alignItems: 'center', gap: 12 }}
-                  >
-                    <StyledAvatar src={transformFirstLetterToLowerCase(student.image ?? '')} />
-                    <StyledText
-                      variant="body1"
-                      style={{
-                        textAlign: 'center',
-                        fontSize: 14,
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                      }}
-                      data-tooltip-content={student?.email}
-                      data-tooltip-id={student?.email?.length > 30 ? 'email' : undefined}
-                    >
-                      {student?.email}
-                    </StyledText>
-                    <Tooltip
-                      style={{
-                        padding: '8px 12px 8px 12px',
-                        borderRadius: 8,
-                        gap: 10,
-                        backgroundColor: theme.gray600,
-                        color: 'white',
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        textAlign: 'center',
-                        whiteSpace: 'normal',
-                        width: '20%',
-                      }}
-                      place="right"
-                      id="email"
-                    />
-                  </StyledRow>
-                </td>
-                <td style={{ padding: '12px 10px 12px 10px' }}>
-                  <StyledText
-                    variant="body1"
-                    style={{
-                      textAlign: 'center',
-                      fontSize: 14,
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-                    }}
-                    data-tooltip-content={fullname}
-                    data-tooltip-id={fullname && fullname.length > 20 ? 'name' : undefined}
-                  >
-                    {`${student.name ?? ''} ${student.lastname ?? '...'}`}
-                  </StyledText>
-                  <Tooltip
-                    style={{
-                      padding: '8px 12px 8px 12px',
-                      borderRadius: 8,
-                      gap: 10,
-                      backgroundColor: theme.gray600,
-                      color: 'white',
-                      fontSize: 14,
-                      fontFamily: 'Roboto',
-                      textAlign: 'center',
-                      whiteSpace: 'normal',
-                      width: '20%',
-                    }}
-                    place="right"
-                    id="name"
-                  />
-                </td>
-                <td
-                  style={{
-                    padding: '12px 10px 12px 10px',
-                    fontSize: 14,
-                    color: isRegistered ? theme.gray900 : theme.red500,
-                  }}
-                >
-                  {isRegistered ? 'Registrado' : 'Sin registrar'}
-                </td>
-                <td
-                  style={{
-                    fontSize: 14,
-                    padding: '12px 0px 12px 10px',
-                  }}
-                >
-                  <StyledBox
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      justifyContent: 'flex-end',
-                      alignContent: 'flex-end',
-                    }}
-                  >
-                    <StyledBox
-                      style={{
-                        cursor: 'pointer',
-                        width: 'auto',
-                        // opacity: edit ? 1 : 0,
-                        pointerEvents: edit ? 'visible' : 'none',
-                      }}
-                      onClick={() => dispatch(removeStudent({ email: student.email }))}
-                    >
-                      <RemoveIcon size={18} color={theme.gray400} />
-                    </StyledBox>
-                  </StyledBox>
-                </td>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} style={{ padding: '12px 10px', textAlign: 'left' }}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </StyledTable>
-    </StyledBox>
+            ))}
+          </tbody>
+        </table>
+      </StyledBox>
+    </StyledColumn>
   );
 };

@@ -11,7 +11,7 @@ import { transformedCollectionValues } from '../utils/transformBody';
 import { errorToast, successToast } from '../components/Toasts';
 import { CollectionStudents } from '../components/collection/CollectionStudents';
 import { useCreateCollectionMutation } from '../redux/service/collection.service';
-import { resetCollectionSlice } from '../redux/slices/collectionSlice';
+import { resetCollectionSlice } from '../redux/slices/collection.slice';
 
 const CreateCollection = () => {
   const theme = useTheme();
@@ -37,6 +37,12 @@ const CreateCollection = () => {
       errorToast('Algo ha salido mal! ');
     }
   }, [isError]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetCollectionSlice());
+    };
+  }, []);
 
   return (
     <StyledBox css={{ height: '100%' }}>

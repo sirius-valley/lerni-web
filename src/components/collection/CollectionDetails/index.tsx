@@ -2,7 +2,7 @@ import { TextInput } from '../../styled/TextInput';
 import Card from '../../Card';
 import React from 'react';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
-import { updateCollectionInfo } from '../../../redux/slices/collectionSlice';
+import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
 
 const CollectionDetails = () => {
   const collection = useLSelector((state) => state.collection);

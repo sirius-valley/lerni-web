@@ -10,6 +10,7 @@ import CreateProfessorModal from './modals/CreateProfessorModal';
 import ReadPillModal from './modals/ReadPillModal';
 import AddStudentModal from './modals/AddStudentModal';
 import StudentsStatusModal from './modals/StudentsStatusModal';
+import StudentsGroupsModal from './modals/StudentsGroupsModal';
 
 export const withModal = (Component: FunctionComponent) => (props: any) => {
   const type = useLSelector((state) => state.utils.modalType);
@@ -40,6 +41,8 @@ export const withModal = (Component: FunctionComponent) => (props: any) => {
         return <AddStudentModal handleOnClose={handleOnClose} />;
       case 'STUDENTS_STATUS':
         return <StudentsStatusModal handleOnClose={handleOnClose}></StudentsStatusModal>;
+      case 'STUDENTS_GROUPS':
+        return <StudentsGroupsModal handleOnClose={handleOnClose}></StudentsGroupsModal>;
       default:
         <></>;
     }

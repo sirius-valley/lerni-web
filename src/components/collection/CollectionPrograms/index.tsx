@@ -7,7 +7,7 @@ import { AutocompleteComponent } from '../../Autocomplete';
 import { useProgramListQuery } from '../../../redux/service/program.service';
 import ProgramRow from './ProgramRow';
 import { ProgramListItem } from '../../../redux/service/types/program.types';
-import { updateCollectionInfo } from '../../../redux/slices/collectionSlice';
+import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
 
 const CollectionPrograms = () => {
   const theme = useTheme();

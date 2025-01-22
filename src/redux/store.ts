@@ -6,7 +6,8 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import authSlice from './slices/auth.slice';
 import utilsSlice from './slices/utils.slice';
 import programSlice from './slices/program.slice';
-import collectionSlice from './slices/collectionSlice';
+import collectionSlice from './slices/collection.slice';
+import groupsSlice from './slices/groups.slice';
 
 const reducers = combineReducers({
   [api.reducerPath]: api.reducer,
@@ -15,6 +16,7 @@ const reducers = combineReducers({
   counter: counterSlice,
   program: programSlice,
   collection: collectionSlice,
+  groups: groupsSlice,
   pokemon: pokemonSlice,
 });
 
