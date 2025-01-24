@@ -19,7 +19,7 @@ import {
 } from '../../../redux/service/professor.service';
 import { AutocompleteComponent } from '../../../components/Autocomplete';
 import { useGetGroupsQuery } from '../../../redux/service/groups.service';
-import { Group } from '../../../redux/service/types/groups.types';
+import { GroupDTO } from '../../../redux/service/types/groups.types';
 
 interface CreatePillModalProps extends ModalProps {
   openModal?: boolean;
@@ -148,7 +148,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     }));
   };
 
-  const matchGroups = (selectedGroups: { id: string; text: string }[]): Group[] => {
+  const matchGroups = (selectedGroups: { id: string; text: string }[]): GroupDTO[] => {
     return selectedGroups.map((group) => {
       const groupMatch = groups?.find((g) => g.id === group.id);
       if (groupMatch) return groupMatch;

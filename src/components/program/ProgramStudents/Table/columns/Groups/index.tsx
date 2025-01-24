@@ -6,9 +6,9 @@ import { useTheme } from 'styled-components';
 
 interface GroupsProps {
   studentId: string;
-  groups: { id: string; name: string }[];
+  groups: { name: string }[];
   maxGroups: number;
-  visibleGroups: { id: string; name: string }[];
+  visibleGroups: { name: string }[];
   extraGroups: number;
   expandedGroups: { [key: string]: boolean };
   onExpand: (id: string) => void;

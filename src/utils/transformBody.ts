@@ -73,7 +73,7 @@ export const transformedCollectionValues = (
     programs: values.programs.map((program) => program.programVersionId),
     students: values.students.map((student) => ({
       email: student.email,
-      group: ['nuevos', 'enfermeros'],
+      group: student.group.map((group) => group.name),
     })),
   };
 };

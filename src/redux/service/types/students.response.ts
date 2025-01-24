@@ -1,14 +1,14 @@
-import { Group } from './groups.types';
+import { GroupDTO } from './groups.types';
 
 export type StudentsRegisteredResponse = {
   registeredStudents: number;
 };
 
 export type StudentsListResponse = {
-  students: StudentDto[];
+  students: StudentDTO[];
 };
 
-export type StudentDto = {
+export type StudentDTO = {
   authId: string;
   career: string;
   city: string;
@@ -18,5 +18,6 @@ export type StudentDto = {
   lastname: string;
   name: string;
   profession?: string;
-  group: string[];
+  group: { name: string }[];
+  progress: number;
 };

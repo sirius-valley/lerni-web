@@ -28,29 +28,29 @@ import Groups from './columns/Groups';
 import Actions from './columns/Actions';
 import { Dropdown } from '../../../Dropdown';
 import FilterIcon from '../../../../assets/icons/FilterIcon';
+import { StudentDTO } from '../../../../redux/service/types/students.response';
+import { GroupDTO } from '../../../../redux/service/types/groups.types';
 
-interface Student {
-  authId: string;
-  email: string;
-  name?: string;
-  lastname?: string;
-  status?: boolean;
-  image?: string;
-  id: string;
-  progress?: number;
-  groups: {
-    id: string;
-    name: string;
-  }[];
-}
+// interface Student {
+//   authId: string;
+//   email: string;
+//   name?: string;
+//   lastname?: string;
+//   status?: boolean;
+//   image?: string;
+//   id: string;
+//   progress?: number;
+//   groups: {
+//     id: string;
+//     name: string;
+//   }[];
+// }
 
 interface StudentsTableProps {
-  students: Student[];
-  groups: {
-    id: string;
-    name: string;
-  }[];
+  students: StudentDTO[];
+  groups: GroupDTO[];
   programVersionId: string;
+  onMenuClick: (action: 'view' | 'delete' | 'edit', student: StudentDTO) => void;
 }
 
 interface Filters {
@@ -62,7 +62,12 @@ interface Filters {
 type StateStatus = 'Registrado' | 'No registrado';
 type ProgressStatus = 'Finalizado' | 'En progreso' | 'No iniciado';
 
-export const StudentsTable = ({ students, groups, programVersionId }: StudentsTableProps) => {
+export const StudentsTable = ({
+  students,
+  groups,
+  programVersionId,
+  onMenuClick,
+}: StudentsTableProps) => {
   const theme = useTheme();
   const dispatch = useLDispatch();
   const [value, setValue] = React.useState('');
@@ -117,21 +122,6 @@ export const StudentsTable = ({ students, groups, programVersionId }: StudentsTa
   const handleIcon = (isOpen: boolean) =>
     isOpen ? <UpArrowIcon size={20} /> : <DownArrowIcon size={20} />;
 
-  const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: Student) => {
-    if (action === 'view') {
-      dispatch(
-        setModalOpen({
-          modalType: 'STUDENTS_STATUS',
-          metadata: { studentId: student.id, programVersionId },
-        }),
-      );
-    } else if (action === 'delete') {
-      dispatch(removeStudent({ email: student.email }));
-    } else if (action === 'edit') {
-      console.log('Edit student:', student);
-    }
-  };
-
   const handleExpandGroups = (studentId: string) => {
     setExpandedGroups((prev) => ({
       ...prev,
@@ -139,7 +129,12 @@ export const StudentsTable = ({ students, groups, programVersionId }: StudentsTa
     }));
   };
 
-  const columns = React.useMemo<ColumnDef<Student, any>[]>(
+  const isRegistered = (student: StudentDTO) => {
+    const hasName = student.name != null;
+    const hasLastName = student.lastname != null;
+    return hasName && hasLastName;
+  };
+  const columns = React.useMemo<ColumnDef<StudentDTO, any>[]>(
     () => [
       {
         accessorKey: 'email',
@@ -163,7 +158,7 @@ export const StudentsTable = ({ students, groups, programVersionId }: StudentsTa
         accessorKey: 'status',
         header: 'Estado',
         cell: (info) => {
-          const status = info.row.original.status;
+          const status = isRegistered(info.row.original);
           return <Status status={status} />;
         },
         meta: {
@@ -189,7 +184,7 @@ export const StudentsTable = ({ students, groups, programVersionId }: StudentsTa
         },
       },
       {
-        accessorKey: 'groups',
+        accessorKey: 'group',
         header: 'Grupos',
         cell: (info) => {
           const groups = info.getValue() ?? [];
@@ -239,7 +234,7 @@ export const StudentsTable = ({ students, groups, programVersionId }: StudentsTa
               onExpand={handleExpandGroups}
               onClick={handleClick}
               onClose={handleClose}
-              onMenuClick={handleMenuClick}
+              onMenuClick={onMenuClick}
               student={student}
             />
           );

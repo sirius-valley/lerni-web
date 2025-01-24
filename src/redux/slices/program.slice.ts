@@ -2,7 +2,8 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { programApi } from '../service/program.service';
 import { RootState } from '../store';
 import dayjs from 'dayjs';
-import { Group } from '../service/types/groups.types';
+import { GroupDTO } from '../service/types/groups.types';
+import { StudentDTO } from '../service/types/students.response';
 
 type Pill = {
   id: string;
@@ -13,7 +14,7 @@ type Pill = {
   completionTimeMinutes: number;
   lerniPill: any;
   teacherId?: string;
-  groups: Group[];
+  groups: GroupDTO[];
 };
 interface Questionnaire {
   id: string;
@@ -36,17 +37,7 @@ export interface CreateProgramState {
     questionnaire: Questionnaire;
   };
   trivia?: any;
-  students: {
-    authId: string;
-    career: string;
-    city: string;
-    email: string;
-    id: string;
-    image?: string;
-    lastname: string;
-    name: string;
-    profession?: string;
-  }[];
+  students: StudentDTO[];
   hoursToComplete: number;
   pointsReward: number;
   startDate: string;

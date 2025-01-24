@@ -27,7 +27,7 @@ const CreateCollection = () => {
       createCollection(transformedCollectionValues(collection)).then((res: any) => {
         navigate('/');
         dispatch(resetCollectionSlice());
-        successToast('Programa creado exitosamente!');
+        successToast('Colección creada exitosamente!');
       });
     }
   };

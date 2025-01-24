@@ -2,22 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { ProgramListItem } from '../service/types/program.types';
 import { collectionApi } from '../service/collection.service';
+import { StudentDTO } from '../service/types/students.response';
 
 export interface CreateCollectionState {
   title: string;
   programs: ProgramListItem[];
-  students: {
-    authId: string;
-    career: string;
-    city: string;
-    email: string;
-    id: string;
-    image?: string;
-    lastname: string;
-    name: string;
-    profession?: string;
-    group: string[];
-  }[];
+  students: StudentDTO[];
   edit: boolean;
 }
 
@@ -33,10 +23,14 @@ export const collectionSlice = createSlice({
   initialState,
   reducers: {
     updateCollectionInfo: (state, action) => {
+      console.log('modifying state', action.payload);
       return {
         ...state,
         ...action.payload,
       };
+    },
+    removeStudent: (state, action: PayloadAction<{ email: string }>) => {
+      state.students = state.students.filter((user) => user.email !== action.payload.email);
     },
     resetCollectionSlice: (state, action: PayloadAction<void>) => {
       return initialState;
@@ -46,6 +40,7 @@ export const collectionSlice = createSlice({
     builder.addMatcher(
       collectionApi.endpoints.collectionDetails.matchFulfilled,
       (state, action) => {
+        console.log('collectionDetails', action.payload);
         state.edit = false;
         state.title = action.payload.name;
         state.programs = action.payload.programs.map((program) => {
@@ -55,7 +50,6 @@ export const collectionSlice = createSlice({
             programVersionId: program.program.id,
           } as ProgramListItem;
         });
-        state.students = [];
       },
     );
   },
@@ -63,6 +57,7 @@ export const collectionSlice = createSlice({
 
 const collection: any = (state: RootState) => state.collection;
 
-export const { updateCollectionInfo, resetCollectionSlice } = collectionSlice.actions;
+export const { updateCollectionInfo, removeStudent, resetCollectionSlice } =
+  collectionSlice.actions;
 
 export default collectionSlice.reducer;

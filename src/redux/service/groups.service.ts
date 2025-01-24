@@ -1,15 +1,15 @@
 import { api } from './api';
-import { Group } from './types/groups.types';
+import { GroupDTO } from './types/groups.types';
 
 export const groupsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getGroups: builder.query<Group[], void>({
+    getGroups: builder.query<GroupDTO[], void>({
       query: () => ({
         url: `group`,
         method: 'GET',
       }),
     }),
-    getGroup: builder.query<Group, string>({
+    getGroup: builder.query<GroupDTO, string>({
       query: (id) => ({
         url: `group/${id}`,
         method: 'GET',

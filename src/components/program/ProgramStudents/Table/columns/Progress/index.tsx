@@ -13,7 +13,17 @@ const Progress = ({ progress = 0 }: ProgressProps) => {
   const theme = useTheme();
   return (
     <StyledBox style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-      {progress < 100 ? (
+      {progress === 0 ? (
+        <CircularProgress
+          variant="determinate"
+          value={100} // Completo
+          size={20}
+          thickness={4}
+          sx={{ color: theme.gray200 }} // Color gris
+          data-tooltip-id={'progress-tooltip'}
+          data-tooltip-content={`${progress}%`}
+        />
+      ) : progress < 100 ? (
         <CircularProgress
           variant="determinate"
           value={progress}
@@ -28,6 +38,7 @@ const Progress = ({ progress = 0 }: ProgressProps) => {
           <CheckIcon size={20} color={theme.success} />
         </StyledBox>
       )}
+
       <Tooltip
         id="progress-tooltip"
         style={{

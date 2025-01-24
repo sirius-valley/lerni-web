@@ -6,12 +6,13 @@ import CloseIcon from '../../../assets/icons/CloseIcon';
 import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
-import { useLDispatch } from '../../../redux/hooks';
+import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { updatePillInfo } from '../../../redux/slices/program.slice';
 import { useVerifyStudentsMutation } from '../../../redux/service/program.service';
 import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
 import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
+import { StudentDTO } from '../../../redux/service/types/students.response';
 
 interface CreateStudentsModal extends ModalProps {
   openModal?: boolean;
@@ -45,6 +46,8 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
     file: null,
   });
   const [errors, setErrors] = useState(false);
+
+  const students = useLSelector((state) => state.collection.students);
 
   const dispatch = useLDispatch();
   const theme = useTheme();
@@ -90,11 +93,39 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
     });
   };
 
+  const transformStudentData = (students: StudentDTO[]): StudentDTO[] => {
+    return students.map((student) => {
+      return {
+        id: student.id ?? '',
+        name: student.name ?? null,
+        lastname: student.lastname ?? null,
+        city: student.city ?? null,
+        profession: student.profession ?? undefined,
+        career: student.career ?? null,
+        image: student.image ?? undefined,
+        authId: student.authId ?? '',
+        group: student.group ?? [],
+        progress: student.progress ?? 0,
+        email: student.email ?? '',
+      };
+    });
+  };
+
   const handleSavePill = () => {
     if (studentsSuccess) {
       if (studentsData) {
         if (entityType === 'COLLECTION') {
-          dispatch(updateCollectionInfo({ students: studentsData }));
+          dispatch(
+            updateCollectionInfo({
+              students: [
+                ...students,
+                ...transformStudentData(studentsData).filter(
+                  (newStudent) =>
+                    !students.some((currentStudent) => currentStudent.email === newStudent.email),
+                ),
+              ],
+            }),
+          );
         } else {
           dispatch(updatePillInfo({ students: studentsData }));
         }

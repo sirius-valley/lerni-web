@@ -4,6 +4,7 @@ import {
   CollectionListResponse,
   CreateCollectionRequestDto,
 } from './types/collection.types';
+import { StudentDTO } from './types/students.response';
 
 export const collectionApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -11,6 +12,13 @@ export const collectionApi = api.injectEndpoints({
       query: (body) => ({
         url: 'colections',
         method: 'POST',
+        body: body,
+      }),
+    }),
+    updateCollection: builder.mutation<any, { id: string; body: CreateCollectionRequestDto }>({
+      query: ({ id, body }) => ({
+        url: `colections/${id}`,
+        method: 'PUT',
         body: body,
       }),
     }),
@@ -27,8 +35,19 @@ export const collectionApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    collectionStudentsList: builder.query<StudentDTO[], string>({
+      query: (collectionId) => ({
+        url: `colections/students/in-progress/${collectionId}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useCreateCollectionMutation, useCollectionListQuery, useCollectionDetailsQuery } =
-  collectionApi;
+export const {
+  useCreateCollectionMutation,
+  useUpdateCollectionMutation,
+  useCollectionListQuery,
+  useCollectionDetailsQuery,
+  useCollectionStudentsListQuery,
+} = collectionApi;

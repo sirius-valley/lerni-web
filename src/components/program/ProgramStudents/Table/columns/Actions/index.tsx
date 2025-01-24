@@ -4,21 +4,7 @@ import { IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { setModalOpen } from '../../../../../../redux/slices/utils.slice';
 import { useLDispatch } from '../../../../../../redux/hooks';
-
-interface Student {
-  authId: string;
-  email: string;
-  name?: string;
-  lastname?: string;
-  status?: boolean;
-  image?: string;
-  id: string;
-  progress?: number;
-  groups: {
-    id: string;
-    name: string;
-  }[];
-}
+import { StudentDTO } from '../../../../../../redux/service/types/students.response';
 
 interface ActionsProps {
   open: boolean;
@@ -28,8 +14,8 @@ interface ActionsProps {
   onExpand: (id: string) => void;
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
   onClose: () => void;
-  onMenuClick: (action: 'view' | 'delete' | 'edit', student: Student) => void;
-  student: Student;
+  onMenuClick: (action: 'view' | 'delete' | 'edit', student: StudentDTO) => void;
+  student: StudentDTO;
 }
 
 const Actions = ({
@@ -78,12 +64,6 @@ const Actions = ({
             event.stopPropagation();
             onMenuClick('edit', student);
             onClose();
-            dispatch(
-              setModalOpen({
-                modalType: 'STUDENTS_GROUPS',
-                metadata: { studentId: student.id, programVersionId },
-              }),
-            );
           }}
         >
           Editar grupos

@@ -2,13 +2,16 @@ import { useTheme } from 'styled-components';
 import Card from '../../Card';
 import { StyledBox, StyledRow, StyledText } from '../../styled/styles';
 import Button from '../../styled/Button';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { ComponentVariantType } from '../../../utils/constants';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
 import { StudentsTable } from '../../program/ProgramStudents/Table/index';
 import { useGetGroupsQuery } from '../../../redux/service/groups.service';
+import { useCollectionStudentsListQuery } from '../../../redux/service/collection.service';
+import { removeStudent, updateCollectionInfo } from '../../../redux/slices/collection.slice';
+import { StudentDTO } from '../../../redux/service/types/students.response';
 
 const mockedStudents = [
   {
@@ -101,22 +104,48 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
 
   const groups = useGetGroupsQuery();
 
+  const { data: fetchedStudents, isLoading } = collectionId
+    ? useCollectionStudentsListQuery(collectionId)
+    : { data: undefined, isLoading: false };
+  console.log('fetching collection', collectionId);
+
   const students = useLSelector((state) => state.collection.students);
 
-  const studentsWithGroups = !students
-    ? []
-    : students.map((student) => ({
-        ...student,
-        groups: student.group
-          ? student.group.map((group) => ({
-              id: group,
-              name: group,
-            }))
-          : [],
-      }));
+  useEffect(() => {
+    console.log(fetchedStudents);
+    if (fetchedStudents) {
+      dispatch(updateCollectionInfo({ students: fetchedStudents }));
+    }
+  }, [fetchedStudents, dispatch]);
 
   const handleShowModal = () => {
     dispatch(setModalOpen({ modalType: 'COLLECTION_STUDENTS_CREATE' }));
+  };
+
+  const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: StudentDTO) => {
+    switch (action) {
+      case 'view':
+        console.log('viewing');
+        break;
+
+      case 'delete':
+        dispatch(removeStudent({ email: student.email }));
+        break;
+
+      case 'edit':
+        console.log('editing');
+        dispatch(
+          setModalOpen({
+            modalType: 'STUDENTS_GROUPS',
+            metadata: { studentEmail: student.email, entityType: 'COLLECTION' },
+          }),
+        );
+        break;
+
+      default:
+        console.warn(`Unhandled action: ${action}`);
+        break;
+    }
   };
 
   return (
@@ -156,9 +185,10 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
     >
       {students?.length ? (
         <StudentsTable
-          students={studentsWithGroups}
+          students={students}
           groups={groups.data ?? []}
           programVersionId={collectionId ?? ''}
+          onMenuClick={handleMenuClick}
         />
       ) : (
         <StyledBox

@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Group } from '../service/types/groups.types';
+import { GroupDTO } from '../service/types/groups.types';
 import { groupsApi } from '../service/groups.service';
 import { RootState } from '../store';
 
 interface GroupsState {
-  groups: Group[];
+  groups: GroupDTO[];
 }
 
 const initialState: GroupsState = {

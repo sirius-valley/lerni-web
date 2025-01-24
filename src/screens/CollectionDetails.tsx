@@ -4,23 +4,40 @@ import Button from '../components/styled/Button';
 import CollectionDetailsComponent from '../components/collection/CollectionDetails';
 import { ComponentVariantType } from '../utils/constants';
 import { useTheme } from 'styled-components';
-import { useLocation, useParams } from 'react-router-dom';
-import { useLDispatch } from '../redux/hooks';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLDispatch, useLSelector } from '../redux/hooks';
 import { api } from '../redux/service/api';
-import { useCollectionDetailsQuery } from '../redux/service/collection.service';
+import {
+  useCollectionDetailsQuery,
+  useCreateCollectionMutation,
+  useUpdateCollectionMutation,
+} from '../redux/service/collection.service';
 import { resetCollectionSlice } from '../redux/slices/collection.slice';
 import CollectionPrograms from '../components/collection/CollectionPrograms';
 import { CollectionStudents } from '../components/collection/CollectionStudents';
+import { transformedCollectionValues } from '../utils/transformBody';
+import { errorToast, successToast } from '../components/Toasts';
 
 const CollectionDetails = () => {
   const theme = useTheme();
   const { id } = useParams();
   const dispatch = useLDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const collection = useLSelector((state) => state.collection);
+
+  const [updateCollection, { isError, error, isSuccess }] = useUpdateCollectionMutation();
 
   const { data } = useCollectionDetailsQuery(id as string);
   const handleSave = () => {
-    null;
+    if (!id) return;
+    updateCollection({ id, body: transformedCollectionValues(collection) }).then((res: any) => {
+      navigate('/');
+      dispatch(resetCollectionSlice());
+      if (isSuccess) successToast('Colección modificada exitosamente!');
+      else errorToast('Algo ha salido mal! ');
+    });
   };
   useEffect(() => {
     return () => {
@@ -60,7 +77,7 @@ const CollectionDetails = () => {
         >
           <CollectionDetailsComponent />
           <CollectionPrograms />
-          <CollectionStudents />
+          <CollectionStudents collectionId={id} />
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={handleSave}

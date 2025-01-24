@@ -27,6 +27,7 @@ export const utilsSlice = createSlice({
     setModalOpen: (state, action) => {
       state.modalType = action.payload?.modalType;
       state.metadata = action.payload?.metadata;
+      console.log('state', action.payload);
     },
     closeModal: (state) => {
       state.modalType = undefined;

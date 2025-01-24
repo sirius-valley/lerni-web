@@ -1,4 +1,4 @@
-export interface Group {
+export interface GroupDTO {
   id: string;
   name: string;
   institutionId: string | null;
