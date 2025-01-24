@@ -12,6 +12,7 @@ import { errorToast, successToast } from '../components/Toasts';
 import { CollectionStudents } from '../components/collection/CollectionStudents';
 import { useCreateCollectionMutation } from '../redux/service/collection.service';
 import { resetCollectionSlice } from '../redux/slices/collection.slice';
+import { api } from '../redux/service/api';
 
 const CreateCollection = () => {
   const theme = useTheme();
@@ -27,6 +28,8 @@ const CreateCollection = () => {
       createCollection(transformedCollectionValues(collection)).then((res: any) => {
         navigate('/');
         dispatch(resetCollectionSlice());
+        dispatch(api.util.invalidateTags(['CollectionList']));
+
         successToast('Colección creada exitosamente!');
       });
     }

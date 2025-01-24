@@ -23,6 +23,7 @@ export const collectionApi = api.injectEndpoints({
       }),
     }),
     collectionList: builder.query<CollectionListResponse, void>({
+      providesTags: ['CollectionList'],
       query: () => ({
         url: 'colections',
         method: 'GET',
@@ -36,6 +37,7 @@ export const collectionApi = api.injectEndpoints({
       }),
     }),
     collectionStudentsList: builder.query<StudentDTO[], string>({
+      providesTags: ['CollectionStudentsList'],
       query: (collectionId) => ({
         url: `colections/students/in-progress/${collectionId}`,
         method: 'GET',

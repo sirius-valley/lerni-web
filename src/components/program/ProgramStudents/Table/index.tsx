@@ -71,7 +71,6 @@ export const StudentsTable = ({
   const theme = useTheme();
   const dispatch = useLDispatch();
   const [value, setValue] = React.useState('');
-  const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({});
   const [filteredGroups, setFilteredGroups] = useState<{ id: string; name: string }[]>([]);
 
   const [showFilters, setShowFilters] = useState(false);
@@ -122,12 +121,28 @@ export const StudentsTable = ({
   const handleIcon = (isOpen: boolean) =>
     isOpen ? <UpArrowIcon size={20} /> : <DownArrowIcon size={20} />;
 
-  const handleExpandGroups = (studentId: string) => {
+  const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({});
+
+  const handleExpandGroups = React.useCallback((id: string) => {
     setExpandedGroups((prev) => ({
       ...prev,
-      [studentId]: !prev[studentId],
+      [id]: !prev[id], // Alterna entre expandido y no expandido
     }));
-  };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      console.log('Desmontando');
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('-------------------------------');
+    console.log('');
+    console.log('expandedGroups', expandedGroups);
+    console.log('');
+    console.log('-------------------------------');
+  }, [expandedGroups]);
 
   const isRegistered = (student: StudentDTO) => {
     const hasName = student.name != null;
@@ -188,10 +203,11 @@ export const StudentsTable = ({
         header: 'Grupos',
         cell: (info) => {
           const groups = info.getValue() ?? [];
+          const studentId = info.row.original.id;
+          const expanded = expandedGroups[studentId] ?? false;
           const maxGroups = 1;
           const visibleGroups = groups.slice(0, maxGroups);
           const extraGroups = groups.length - maxGroups;
-          const studentId = info.row.original.id;
 
           return (
             <Groups
@@ -200,8 +216,8 @@ export const StudentsTable = ({
               maxGroups={maxGroups}
               visibleGroups={visibleGroups}
               extraGroups={extraGroups}
-              expandedGroups={expandedGroups}
-              onExpand={handleExpandGroups}
+              expanded={expanded}
+              onExpand={() => handleExpandGroups(studentId)}
             />
           );
         },
@@ -225,13 +241,17 @@ export const StudentsTable = ({
             setAnchorEl(null);
           };
 
+          const onExpand = (id: string) => {
+            handleExpandGroups(id);
+          };
+
           return (
             <Actions
               open={open}
               anchorEl={anchorEl}
               programVersionId={programVersionId}
               expandedGroups={expandedGroups}
-              onExpand={handleExpandGroups}
+              onExpand={onExpand}
               onClick={handleClick}
               onClose={handleClose}
               onMenuClick={onMenuClick}
@@ -241,7 +261,7 @@ export const StudentsTable = ({
         },
       },
     ],
-    [],
+    [expandedGroups],
   );
 
   const table = useReactTable({
@@ -368,14 +388,7 @@ export const StudentsTable = ({
               <tr
                 key={row.id}
                 style={{ borderBottom: `1px solid ${theme.gray200}`, cursor: 'pointer' }}
-                onClick={() =>
-                  dispatch(
-                    setModalOpen({
-                      modalType: 'STUDENTS_STATUS',
-                      metadata: { studentId: row.original.id, programVersionId },
-                    }),
-                  )
-                }
+                onClick={() => console.log('view Profile')}
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} style={{ padding: '12px 10px', textAlign: 'left' }}>

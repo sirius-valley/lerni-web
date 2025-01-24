@@ -10,7 +10,7 @@ interface GroupsProps {
   maxGroups: number;
   visibleGroups: { name: string }[];
   extraGroups: number;
-  expandedGroups: { [key: string]: boolean };
+  expanded: boolean;
   onExpand: (id: string) => void;
 }
 
@@ -20,16 +20,17 @@ const Groups = ({
   maxGroups,
   visibleGroups,
   extraGroups,
-  expandedGroups,
+  expanded,
   onExpand,
 }: GroupsProps) => {
   const theme = useTheme();
+  console.log(expanded);
   return (
     <StyledRow style={{ alignItems: 'center' }}>
       {visibleGroups.map((group, index) => (
         <Chip key={index} label={group.name} style={{ margin: '2px', fontSize: '12px' }} />
       ))}
-      {extraGroups > 0 && !expandedGroups[studentId] && (
+      {extraGroups > 0 && !expanded && (
         <Chip
           style={{
             cursor: 'pointer',
@@ -46,7 +47,7 @@ const Groups = ({
             .join(', ')}
         />
       )}
-      {expandedGroups[studentId] &&
+      {expanded &&
         groups.slice(maxGroups).map((group, index) => (
           <StyledRow key={index} style={{ margin: '0 4px' }}>
             <Chip label={group.name} style={{ fontSize: '12px' }} />

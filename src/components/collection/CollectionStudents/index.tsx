@@ -112,7 +112,6 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
   const students = useLSelector((state) => state.collection.students);
 
   useEffect(() => {
-    console.log(fetchedStudents);
     if (fetchedStudents) {
       dispatch(updateCollectionInfo({ students: fetchedStudents }));
     }

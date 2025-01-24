@@ -35,13 +35,12 @@ const CollectionDetails = () => {
     updateCollection({ id, body: transformedCollectionValues(collection) }).then((res: any) => {
       navigate('/');
       dispatch(resetCollectionSlice());
-      if (isSuccess) successToast('Colección modificada exitosamente!');
-      else errorToast('Algo ha salido mal! ');
+      successToast('Colección modificada exitosamente!');
     });
   };
   useEffect(() => {
     return () => {
-      dispatch(api.util.invalidateTags(['CollectionDetails']));
+      dispatch(api.util.invalidateTags(['CollectionDetails', 'CollectionStudentsList']));
       dispatch(resetCollectionSlice());
     };
   }, []);

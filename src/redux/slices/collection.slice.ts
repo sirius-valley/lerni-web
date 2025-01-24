@@ -47,7 +47,7 @@ export const collectionSlice = createSlice({
           return {
             icon: program.program.icon,
             name: program.program.name,
-            programVersionId: program.program.id,
+            programVersionId: program.id,
           } as ProgramListItem;
         });
       },

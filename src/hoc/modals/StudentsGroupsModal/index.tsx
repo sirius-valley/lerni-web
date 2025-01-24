@@ -174,8 +174,7 @@ const StudentsGroupsModal = ({ handleOnClose }: StudentsGroupsModalProps) => {
           labelSize={'body3'}
           css={{ padding: '16px 8px', height: '30px' }}
         >
-          {' '}
-          Cancelar
+          {'Cancelar'}
         </Button>
         <Button
           onClick={handleSave}
@@ -183,8 +182,7 @@ const StudentsGroupsModal = ({ handleOnClose }: StudentsGroupsModalProps) => {
           labelSize={'body3'}
           css={{ padding: '16px 8px', height: '30px' }}
         >
-          {' '}
-          Guardar
+          {'Guardar'}
         </Button>
       </StyledRow>
     </Card>
