@@ -5,6 +5,7 @@ import {
   CreateCollectionRequestDto,
 } from './types/collection.types';
 import { StudentDTO } from './types/students.response';
+import { BaseQueryArg } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
 
 export const collectionApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -43,6 +44,21 @@ export const collectionApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    verifyCollectionStudents: builder.mutation<StudentDTO[], any>({
+      query: (body) => ({
+        url: 'colections/student/check',
+        method: 'POST',
+        body: body,
+      }),
+      transformResponse: (response: any) =>
+        response.map((student: any) => {
+          const { groups, ...rest } = student;
+          return {
+            ...rest,
+            group: groups?.map((groupName: string) => ({ name: groupName })) || [],
+          };
+        }),
+    }),
   }),
 });
 
@@ -52,4 +68,5 @@ export const {
   useCollectionListQuery,
   useCollectionDetailsQuery,
   useCollectionStudentsListQuery,
+  useVerifyCollectionStudentsMutation,
 } = collectionApi;

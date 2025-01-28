@@ -183,6 +183,11 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
       }
     >
       {students?.length ? (
+        // students.map((student: StudentDTO, index: number) => (
+        //   <div key={index}>
+        //     {student.email}
+        //   </div>
+        // ))
         <StudentsTable
           students={students}
           groups={groups.data ?? []}

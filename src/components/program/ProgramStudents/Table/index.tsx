@@ -9,7 +9,9 @@ import {
   useReactTable,
   getSortedRowModel,
   getFilteredRowModel,
+  Row,
 } from '@tanstack/react-table';
+import { useVirtual } from 'react-virtual';
 import { useTheme } from 'styled-components';
 import { StyledBox, StyledColumn, StyledRow } from '../../../styled/styles';
 import { useLDispatch } from '../../../../redux/hooks';
@@ -30,6 +32,7 @@ import { Dropdown } from '../../../Dropdown';
 import FilterIcon from '../../../../assets/icons/FilterIcon';
 import { StudentDTO } from '../../../../redux/service/types/students.response';
 import { GroupDTO } from '../../../../redux/service/types/groups.types';
+import { boolean, string } from 'yup';
 
 // interface Student {
 //   authId: string;
@@ -126,23 +129,9 @@ export const StudentsTable = ({
   const handleExpandGroups = React.useCallback((id: string) => {
     setExpandedGroups((prev) => ({
       ...prev,
-      [id]: !prev[id], // Alterna entre expandido y no expandido
+      [id]: !prev[id],
     }));
   }, []);
-
-  useEffect(() => {
-    return () => {
-      console.log('Desmontando');
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log('-------------------------------');
-    console.log('');
-    console.log('expandedGroups', expandedGroups);
-    console.log('');
-    console.log('-------------------------------');
-  }, [expandedGroups]);
 
   const isRegistered = (student: StudentDTO) => {
     const hasName = student.name != null;
@@ -187,7 +176,7 @@ export const StudentsTable = ({
           if (value === 'false') {
             return status === false;
           }
-          return true; // Para que no se filtre si no se selecciona ningún valor
+          return true;
         },
       },
       {
@@ -273,6 +262,21 @@ export const StudentsTable = ({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
+  const { rows } = table.getRowModel();
+
+  const tableContainerRef = React.useRef<HTMLDivElement>(null);
+
+  const rowVirtualizer = useVirtual({
+    parentRef: tableContainerRef,
+    size: rows.length,
+    overscan: 15,
+  });
+
+  const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
+
+  const paddingTop = virtualRows?.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
+  const paddingBottom = virtualRows?.length > 0 ? totalSize - (virtualRows?.at(-1)?.end || 0) : 0;
+
   const [openFilters, setOpenFilters] = useState<Record<string, boolean>>({}); // Estado de mapa para filtros abiertos
 
   const handleToggle = (filterId: string) => {
@@ -298,7 +302,7 @@ export const StudentsTable = ({
   };
 
   return (
-    <StyledColumn style={{ padding: '2px' }}>
+    <StyledColumn style={{ padding: '2px', maxHeight: '80vh' }}>
       <StyledRow style={{ alignItems: 'center', gap: '20px' }}>
         <TextInput
           type="text"
@@ -334,7 +338,7 @@ export const StudentsTable = ({
           />
         ))}
       </StyledRow>
-      <StyledBox style={{ maxWidth: '100%', overflowX: 'auto' }}>
+      <StyledBox style={{ maxWidth: '100%', overflowX: 'auto' }} ref={tableContainerRef}>
         <table style={{ width: '100%', borderCollapse: 'collapse', maxWidth: '100%' }}>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -384,19 +388,35 @@ export const StudentsTable = ({
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                style={{ borderBottom: `1px solid ${theme.gray200}`, cursor: 'pointer' }}
-                onClick={() => console.log('view Profile')}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} style={{ padding: '12px 10px', textAlign: 'left' }}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+            {paddingTop > 0 && (
+              <tr>
+                <td style={{ height: paddingTop }} />
               </tr>
-            ))}
+            )}
+            {virtualRows.map((virtualRow) => {
+              const row = rows[virtualRow.index] as Row<StudentDTO>;
+              return (
+                <tr
+                  key={row.id}
+                  style={{ borderBottom: `1px solid ${theme.gray200}`, cursor: 'pointer' }}
+                  onClick={() => console.log('view Profile')}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      style={{ padding: '12px 10px', textAlign: 'left', height: '65px' }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+            {paddingBottom > 0 && (
+              <tr>
+                <td style={{ height: paddingBottom }} />
+              </tr>
+            )}
           </tbody>
         </table>
       </StyledBox>

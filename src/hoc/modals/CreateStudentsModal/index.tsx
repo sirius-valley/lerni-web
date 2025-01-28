@@ -13,6 +13,7 @@ import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
 import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
 import { StudentDTO } from '../../../redux/service/types/students.response';
+import { useVerifyCollectionStudentsMutation } from '../../../redux/service/collection.service';
 
 interface CreateStudentsModal extends ModalProps {
   openModal?: boolean;
@@ -38,7 +39,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
   const [
     verifyStudents,
     { isLoading: studentsLoading, error, data: studentsData, isSuccess: studentsSuccess },
-  ] = useVerifyStudentsMutation();
+  ] = useVerifyCollectionStudentsMutation();
 
   const [inputValues, setInputValues] = useState<{
     file: any;
@@ -81,7 +82,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
         setInputValues({
           file: value,
         });
-        verifyStudents({ emails: mails });
+        verifyStudents(mails);
       };
 
       reader.readAsText(value);
@@ -94,6 +95,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
   };
 
   const transformStudentData = (students: StudentDTO[]): StudentDTO[] => {
+    console.log('transforming...');
     return students.map((student) => {
       return {
         id: student.id ?? '',
@@ -115,15 +117,13 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
     if (studentsSuccess) {
       if (studentsData) {
         if (entityType === 'COLLECTION') {
+          const existingEmails = new Set(students.map((student) => student.email));
+          const newStudents = transformStudentData(studentsData).filter(
+            (student) => !existingEmails.has(student.email),
+          );
           dispatch(
             updateCollectionInfo({
-              students: [
-                ...students,
-                ...transformStudentData(studentsData).filter(
-                  (newStudent) =>
-                    !students.some((currentStudent) => currentStudent.email === newStudent.email),
-                ),
-              ],
+              students: [...students, ...newStudents],
             }),
           );
         } else {
