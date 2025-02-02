@@ -17,7 +17,7 @@ import {
   useGetProfessorsQuery,
   useLazyGetProfessorsQuery,
 } from '../../../redux/service/professor.service';
-import { AutocompleteComponent } from '../../../components/Autocomplete';
+import { AutocompleteComponent, Option } from '../../../components/Autocomplete';
 import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { GroupDTO } from '../../../redux/service/types/groups.types';
 
@@ -148,6 +148,13 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     }));
   };
 
+  const handleChangeGroups = (values: Option[]) => {
+    const uniqueValues = values.filter(
+      (value, index, self) => index === self.findIndex((v) => v.id === value.id),
+    );
+    setSelectedGroups(uniqueValues);
+  };
+
   const matchGroups = (selectedGroups: { id: string; text: string }[]): GroupDTO[] => {
     return selectedGroups.map((group) => {
       const groupMatch = groups?.find((g) => g.id === group.id);
@@ -266,7 +273,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           content={groupsOptions}
           multiple
           allowNewOptions
-          setMultipleValues={(values) => setSelectedGroups(values)}
+          setMultipleValues={handleChangeGroups}
           css={{ fontSize: 14 }}
         />
 

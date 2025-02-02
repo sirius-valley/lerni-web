@@ -314,7 +314,7 @@ export const StudentsTable = ({
                 <tr
                   key={row.id}
                   style={{ borderBottom: `1px solid ${theme.gray200}`, cursor: 'pointer' }}
-                  onClick={() => console.log('view Profile')}
+                  onClick={() => handleMenuClick('view', row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td

@@ -83,7 +83,14 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
             if (columns.length < 1) return null;
 
             const email = columns[0].trim();
-            const groups = columns.slice(1).map((col) => col.trim());
+            const groups = Array.from(
+              new Set(
+                columns
+                  .slice(1)
+                  .map((col) => col.trim().toLowerCase())
+                  .filter((col) => col !== ''),
+              ),
+            );
 
             return { email, groups };
           })
