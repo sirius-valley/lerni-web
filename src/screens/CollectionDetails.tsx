@@ -8,6 +8,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useLDispatch, useLSelector } from '../redux/hooks';
 import { api } from '../redux/service/api';
 import {
+  useAddStudentsToCollectionMutation,
   useCollectionDetailsQuery,
   useCreateCollectionMutation,
   useUpdateCollectionMutation,
@@ -15,7 +16,10 @@ import {
 import { resetCollectionSlice } from '../redux/slices/collection.slice';
 import CollectionPrograms from '../components/collection/CollectionPrograms';
 import { CollectionStudents } from '../components/collection/CollectionStudents';
-import { transformedCollectionValues } from '../utils/transformBody';
+import {
+  transformedCollectionValues,
+  transformedStudentCollectionValues,
+} from '../utils/transformBody';
 import { errorToast, successToast } from '../components/Toasts';
 
 const CollectionDetails = () => {
@@ -28,6 +32,15 @@ const CollectionDetails = () => {
   const collection = useLSelector((state) => state.collection);
 
   const [updateCollection, { isError, error, isSuccess }] = useUpdateCollectionMutation();
+  const [
+    addStudents,
+    {
+      isError: isStudentError,
+      error: studentsError,
+      data: studentData,
+      isSuccess: studentsSuccess,
+    },
+  ] = useAddStudentsToCollectionMutation();
 
   const { data } = useCollectionDetailsQuery(id as string);
   const handleSave = () => {

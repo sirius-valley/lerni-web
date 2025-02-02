@@ -10,7 +10,7 @@ interface EmailProps {
   email: string;
   image?: string;
 }
-const Email = ({ email, image }: EmailProps) => {
+const Email = React.memo(({ email, image }: EmailProps) => {
   const theme = useTheme();
   return (
     <StyledRow style={{ justifyContent: 'flex-start', alignItems: 'center', gap: 12 }}>
@@ -42,24 +42,12 @@ const Email = ({ email, image }: EmailProps) => {
           whiteSpace: 'nowrap',
         }}
         data-tooltip-content={email}
-        data-tooltip-id={email?.length > 20 ? 'email-tooltip' : undefined}
+        data-tooltip-id={email?.length > 20 ? 'table-tooltip' : undefined}
       >
         {email}
       </StyledText>
-      <Tooltip
-        id="email-tooltip"
-        style={{
-          padding: '8px 12px',
-          borderRadius: 8,
-          backgroundColor: theme.gray600,
-          color: 'white',
-          fontSize: 14,
-          fontFamily: 'Roboto',
-        }}
-        place="top"
-      />
     </StyledRow>
   );
-};
+});
 
 export default Email;

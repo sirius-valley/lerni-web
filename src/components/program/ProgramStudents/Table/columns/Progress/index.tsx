@@ -9,7 +9,7 @@ interface ProgressProps {
   progress?: number;
 }
 
-const Progress = ({ progress = 0 }: ProgressProps) => {
+const Progress = React.memo(({ progress = 0 }: ProgressProps) => {
   const theme = useTheme();
   return (
     <StyledBox style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
@@ -20,7 +20,7 @@ const Progress = ({ progress = 0 }: ProgressProps) => {
           size={20}
           thickness={4}
           sx={{ color: theme.gray200 }} // Color gris
-          data-tooltip-id={'progress-tooltip'}
+          data-tooltip-id={'table-tooltip'}
           data-tooltip-content={`${progress}%`}
         />
       ) : progress < 100 ? (
@@ -30,29 +30,16 @@ const Progress = ({ progress = 0 }: ProgressProps) => {
           size={20}
           thickness={4}
           sx={{ color: progress < 100 ? theme.primary500 : theme.success }}
-          data-tooltip-id={'progress-tooltip'}
+          data-tooltip-id={'table-tooltip'}
           data-tooltip-content={`${progress}%`}
         />
       ) : (
-        <StyledBox data-tooltip-id={'progress-tooltip'} data-tooltip-content={`${progress}%`}>
+        <StyledBox>
           <CheckIcon size={20} color={theme.success} />
         </StyledBox>
       )}
-
-      <Tooltip
-        id="progress-tooltip"
-        style={{
-          padding: '8px 12px',
-          borderRadius: 8,
-          backgroundColor: theme.gray600,
-          color: 'white',
-          fontSize: 14,
-          fontFamily: 'Roboto',
-        }}
-        place="top"
-      />
     </StyledBox>
   );
-};
+});
 
 export default Progress;

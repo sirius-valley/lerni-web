@@ -5,93 +5,74 @@ import Button from '../../styled/Button';
 import React, { useEffect, useState } from 'react';
 import { ButtonLabelSize } from '../../styled/Button/styles';
 import { ComponentVariantType } from '../../../utils/constants';
+import { StudentsTable } from '../../program/ProgramStudents/Table';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
-import { StudentsTable } from '../../program/ProgramStudents/Table/index';
 import { useGetGroupsQuery } from '../../../redux/service/groups.service';
+import { StudentDTO } from '../../../redux/service/types/students.response';
 import { useCollectionStudentsListQuery } from '../../../redux/service/collection.service';
 import { removeStudent, updateCollectionInfo } from '../../../redux/slices/collection.slice';
-import { StudentDTO } from '../../../redux/service/types/students.response';
+import { EntityType } from '../../../hoc/modals/StudentsGroupsModal';
 
-const mockedStudents = [
-  {
-    authId: 'auth1',
-    email: 'hola@email.com',
-    name: 'holaholaholaholaholaholaholaholaholaholahola',
-    lastname: 'email',
-    status: true,
-    profilePicture: 'https://dlp3kegsr4prd.cloudfront.net/introduction/primerprogramaheader.png',
-    id: '1',
-    progress: 90,
-    groups: [
-      { id: 'g1', name: 'Frontend Masters' },
-      { id: 'g2', name: 'Backend Gurus' },
-      { id: 'g3', name: 'UI Designers' },
+const mockedStudents: StudentDTO[] = [
+  ...Array.from({ length: 3000 }, () => ({
+    authId: crypto.randomUUID(),
+    career: [
+      'Ingeniería',
+      'Medicina',
+      'Arquitectura',
+      'Derecho',
+      'Psicología',
+      'Administración',
+      'Economía',
+      'Informática',
+    ][Math.floor(Math.random() * 8)],
+    city: [
+      'Buenos Aires',
+      'Madrid',
+      'Ciudad de México',
+      'Lima',
+      'Bogotá',
+      'Santiago',
+      'Quito',
+      'Montevideo',
+    ][Math.floor(Math.random() * 8)],
+    email: `${Math.random().toString(36).substring(7)}@example.com`,
+    id: crypto.randomUUID(),
+    image: Math.random() > 0.5 ? `https://example.com/${crypto.randomUUID()}.jpg` : undefined,
+    lastname: [
+      'González',
+      'Rodríguez',
+      'Fernández',
+      'López',
+      'Martínez',
+      'Pérez',
+      'Gómez',
+      'Díaz',
+      'Torres',
+      'Ramírez',
+    ][Math.floor(Math.random() * 10)],
+    name: ['Juan', 'María', 'Carlos', 'Laura', 'Pedro', 'Ana', 'Luis', 'Sofía', 'Diego', 'Martina'][
+      Math.floor(Math.random() * 10)
     ],
-  },
-  {
-    authId: 'auth2',
-    email: 'chatchatchatchatchat@gmail.com',
-    name: 'hola@email.com',
-    lastname: 'gmail',
-    status: true,
-    profilePicture: 'https://dlp3kegsr4prd.cloudfront.net/introduction/primerprogramaheader.png',
-    id: '2',
-    progress: 75,
-    groups: [{ id: 'g4', name: 'Chess Club' }],
-  },
-  {
-    authId: 'auth3',
-    email: 'test@gmail.com',
-    name: 'Test',
-    lastname: 'User',
-    status: false,
-    profilePicture: 'https://dlp3kegsr4prd.cloudfront.net/introduction/primerprogramaheader.png',
-    id: '3',
-    progress: 0,
-    groups: [],
-  },
-  {
-    authId: 'auth4',
-    email: 'maxgroups@example.com',
-    name: 'Max',
-    lastname: 'Groups',
-    status: true,
-    profilePicture: 'https://dlp3kegsr4prd.cloudfront.net/introduction/primerprogramaheader.png',
-    id: '4',
-    progress: 100,
-    groups: [
-      { id: 'g5', name: 'Science Club' },
-      { id: 'g6', name: 'Robotics Team' },
-      { id: 'g7', name: 'Art Enthusiasts' },
-      { id: 'g8', name: 'Sports Club' },
-      { id: 'g9', name: 'Music Band' },
-      { id: 'g10', name: 'Debate Team' },
-    ],
-  },
-  {
-    authId: 'auth5',
-    email: 'minimal@example.com',
-    name: 'Minimal',
-    lastname: 'Example',
-    status: true,
-    profilePicture: '',
-    id: '5',
-    progress: 10,
-    groups: [{ id: 'g11', name: 'Literature Club' }],
-  },
-  {
-    authId: 'auth6',
-    email: 'bordercase@example.com',
-    name: '',
-    lastname: '',
-    status: false,
-    profilePicture:
-      'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&accessoriesType=Sunglasses&hairColor=Red&facialHairType=MoustacheFancy&clotheType=Hoodie&eyeType=Happy&eyebrowType=AngryNatural&mouthType=Disbelief&skinColor=Brown',
-    id: '6',
-    progress: 50,
-    groups: [{ id: 'g12', name: 'Gaming Club' }],
-  },
+    profession:
+      Math.random() > 0.5
+        ? [
+            'Ingeniero',
+            'Médico',
+            'Arquitecto',
+            'Abogado',
+            'Psicólogo',
+            'Administrador',
+            'Economista',
+            'Desarrollador',
+          ][Math.floor(Math.random() * 8)]
+        : undefined,
+    group: Array.from({ length: Math.floor(Math.random() * 3) + 1 }, (_, i) => ({
+      name: `Grupo ${i + 1}`,
+    })),
+    progress: Math.floor(Math.random() * 101),
+  })),
 ];
 
 interface CollectionStudents {
@@ -107,7 +88,6 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
   const { data: fetchedStudents, isLoading } = collectionId
     ? useCollectionStudentsListQuery(collectionId)
     : { data: undefined, isLoading: false };
-  console.log('fetching collection', collectionId);
 
   const students = useLSelector((state) => state.collection.students);
 
@@ -136,7 +116,7 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
         dispatch(
           setModalOpen({
             modalType: 'STUDENTS_GROUPS',
-            metadata: { studentEmail: student.email, entityType: 'COLLECTION' },
+            metadata: { studentEmail: student.email, entityType: EntityType.COLLECTION },
           }),
         );
         break;
@@ -183,11 +163,6 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
       }
     >
       {students?.length ? (
-        // students.map((student: StudentDTO, index: number) => (
-        //   <div key={index}>
-        //     {student.email}
-        //   </div>
-        // ))
         <StudentsTable
           students={students}
           groups={groups.data ?? []}

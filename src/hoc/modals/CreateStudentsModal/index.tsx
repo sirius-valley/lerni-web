@@ -21,6 +21,7 @@ interface CreateStudentsModal extends ModalProps {
 }
 interface EmailObject {
   email: string;
+  groups: string[];
 }
 
 interface Student {
@@ -49,6 +50,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
   const [errors, setErrors] = useState(false);
 
   const students = useLSelector((state) => state.collection.students);
+  const [uploadedStudents, setUploadedStudents] = useState<EmailObject[]>([]);
 
   const dispatch = useLDispatch();
   const theme = useTheme();
@@ -70,19 +72,28 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
 
       reader.onload = (event: any) => {
         const result = event.target.result;
+        console.log('result', result);
         const lines = result.split(/\r?\n/);
 
-        const mails = lines
-          .map((line: any, index: number) => {
-            if (index === 0) return null;
-            return line.trim();
+        const mails: EmailObject[] = lines
+          .map((line: string, index: number) => {
+            if (index === 0 || !line.trim()) return null;
+
+            const columns = line.split(';');
+            if (columns.length < 1) return null;
+
+            const email = columns[0].trim();
+            const groups = columns.slice(1).map((col) => col.trim());
+
+            return { email, groups };
           })
           .filter((email: any) => email);
 
         setInputValues({
           file: value,
         });
-        verifyStudents(mails);
+        setUploadedStudents(mails);
+        verifyStudents(mails.map((mail: EmailObject) => mail.email));
       };
 
       reader.readAsText(value);
@@ -115,15 +126,17 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
 
   const handleSavePill = () => {
     if (studentsSuccess) {
-      if (studentsData) {
+      if (studentsData && uploadedStudents) {
         if (entityType === 'COLLECTION') {
           const existingEmails = new Set(students.map((student) => student.email));
           const newStudents = transformStudentData(studentsData).filter(
             (student) => !existingEmails.has(student.email),
           );
+          const mergedStudents = mergeStudentsWithGroups(newStudents, uploadedStudents);
+
           dispatch(
             updateCollectionInfo({
-              students: [...students, ...newStudents],
+              students: [...students, ...mergedStudents],
             }),
           );
         } else {
@@ -135,6 +148,21 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
         errorToast('Los estudiantes no forman parte de LERNI');
       }
     }
+  };
+
+  const mergeStudentsWithGroups = (
+    studentsData: StudentDTO[],
+    uploadedStudents: EmailObject[],
+  ): StudentDTO[] => {
+    const uploadedMap = new Map(uploadedStudents.map((student) => [student.email, student.groups]));
+
+    return studentsData.map((student) => ({
+      ...student,
+      group: [
+        ...(student.group || []),
+        ...(uploadedMap.get(student.email)?.map((groupName) => ({ name: groupName })) || []),
+      ],
+    }));
   };
 
   const cardHeader = () => (

@@ -1,6 +1,9 @@
 import { CreateProgramState } from '../redux/slices/program.slice';
 import { CreateCollectionState } from '../redux/slices/collection.slice';
-import { CreateCollectionRequestDto } from '../redux/service/types/collection.types';
+import {
+  CreateCollectionRequestDto,
+  StudentCollectionRequestDto,
+} from '../redux/service/types/collection.types';
 
 export const transformedValues = (values: CreateProgramState) => {
   const amountOfQuestions = values?.questionnaire?.questionnaire.elements.reduce(
@@ -70,6 +73,18 @@ export const transformedCollectionValues = (
 ): CreateCollectionRequestDto => {
   return {
     title: values.title,
+    programs: values.programs.map((program) => program.programVersionId),
+    students: values.students.map((student) => ({
+      email: student.email,
+      group: student.group.map((group) => group.name),
+    })),
+  };
+};
+
+export const transformedStudentCollectionValues = (
+  values: CreateCollectionState,
+): StudentCollectionRequestDto => {
+  return {
     programs: values.programs.map((program) => program.programVersionId),
     students: values.students.map((student) => ({
       email: student.email,

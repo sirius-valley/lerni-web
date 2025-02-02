@@ -4,6 +4,11 @@ export type CreateCollectionRequestDto = {
   students: Student[];
 };
 
+export type StudentCollectionRequestDto = {
+  programs: string[];
+  students: Student[];
+};
+
 type Student = {
   email: string;
   group: string[];

@@ -11,6 +11,7 @@
     "@mui/styled-engine-sc": "^6.0.0-alpha.10",
     "@reduxjs/toolkit": "^2.0.1",
     "@tanstack/react-table": "^8.20.6",
+    "@tanstack/react-virtual": "^3.11.3",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

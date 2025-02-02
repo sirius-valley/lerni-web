@@ -3,6 +3,7 @@ import {
   CollectionDetailsResponseDto,
   CollectionListResponse,
   CreateCollectionRequestDto,
+  StudentCollectionRequestDto,
 } from './types/collection.types';
 import { StudentDTO } from './types/students.response';
 import { BaseQueryArg } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
@@ -59,6 +60,16 @@ export const collectionApi = api.injectEndpoints({
           };
         }),
     }),
+    addStudentsToCollection: builder.mutation<
+      any,
+      { collectionId: string; body: StudentCollectionRequestDto }
+    >({
+      query: ({ collectionId, body }) => ({
+        url: `colections/student/batch/${collectionId}`,
+        method: 'PUT',
+        body: body,
+      }),
+    }),
   }),
 });
 
@@ -69,4 +80,5 @@ export const {
   useCollectionDetailsQuery,
   useCollectionStudentsListQuery,
   useVerifyCollectionStudentsMutation,
+  useAddStudentsToCollectionMutation,
 } = collectionApi;

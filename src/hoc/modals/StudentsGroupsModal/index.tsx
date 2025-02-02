@@ -14,8 +14,14 @@ import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
+import { updatePillInfo } from '../../../redux/slices/program.slice';
 
 type StudentsGroupsModalProps = ModalProps;
+
+export enum EntityType {
+  COLLECTION = 'collection',
+  PROGRAM = 'program',
+}
 
 const StudentsGroupsModal = ({ handleOnClose }: StudentsGroupsModalProps) => {
   const dispatch = useLDispatch();
@@ -23,7 +29,12 @@ const StudentsGroupsModal = ({ handleOnClose }: StudentsGroupsModalProps) => {
   const studentEmail = useLSelector((state) => state.utils.metadata.studentEmail);
   const entityType = useLSelector((state) => state.utils.metadata.entityType);
 
-  const students = useLSelector((state) => state.collection.students);
+  const students = useLSelector((state) =>
+    entityType === EntityType.COLLECTION ? state.collection.students : state.program.students,
+  );
+
+  const updateAction = entityType === EntityType.COLLECTION ? updateCollectionInfo : updatePillInfo;
+
   const student = students.find((s) => s.email === studentEmail);
   const { data: allGroups } = useGetGroupsQuery();
 
@@ -54,7 +65,7 @@ const StudentsGroupsModal = ({ handleOnClose }: StudentsGroupsModalProps) => {
 
   const handleSave = () => {
     dispatch(
-      updateCollectionInfo({
+      updateAction({
         students: students.map((s) => {
           if (s.email === studentEmail) {
             return {

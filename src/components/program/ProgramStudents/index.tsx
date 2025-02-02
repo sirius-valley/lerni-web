@@ -12,6 +12,7 @@ import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { StudentDTO } from '../../../redux/service/types/students.response';
 import { removeStudent, updatePillInfo } from '../../../redux/slices/program.slice';
 import { useStudentsListQuery } from '../../../redux/service/program.service';
+import { EntityType } from '../../../hoc/modals/StudentsGroupsModal';
 
 interface ProgramStudents {
   programVersionId?: string;
@@ -26,12 +27,10 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
   const { data: fetchedStudents, isLoading } = programVersionId
     ? useStudentsListQuery(programVersionId)
     : { data: undefined, isLoading: false };
-  console.log('fetching program', programVersionId);
 
   const students = useLSelector((state) => state.program.students);
 
   useEffect(() => {
-    console.log(fetchedStudents);
     if (fetchedStudents) {
       dispatch(updatePillInfo({ students: fetchedStudents }));
     }
@@ -42,17 +41,33 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
   };
 
   const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: StudentDTO) => {
-    if (action === 'view') {
-      dispatch(
-        setModalOpen({
-          modalType: 'STUDENTS_STATUS',
-          metadata: { studentId: student.id, programVersionId },
-        }),
-      );
-    } else if (action === 'delete') {
-      dispatch(removeStudent({ email: student.email }));
-    } else if (action === 'edit') {
-      console.log('Edit student:', student);
+    switch (action) {
+      case 'view':
+        dispatch(
+          setModalOpen({
+            modalType: 'STUDENTS_STATUS',
+            metadata: { studentId: student.id, programVersionId },
+          }),
+        );
+        break;
+
+      case 'delete':
+        dispatch(removeStudent({ email: student.email }));
+        break;
+
+      case 'edit':
+        console.log('editing');
+        dispatch(
+          setModalOpen({
+            modalType: 'STUDENTS_GROUPS',
+            metadata: { studentEmail: student.email, entityType: EntityType.PROGRAM },
+          }),
+        );
+        break;
+
+      default:
+        console.warn(`Unhandled action: ${action}`);
+        break;
     }
   };
 
@@ -85,13 +100,13 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
                 cursor: 'pointer',
               }}
             >
-              {'Agregar estudiantes'}
+              {'Cargar estudiantes'}
             </Button>
           </StyledBox>
         </StyledRow>
       }
     >
-      {students.length ? (
+      {students?.length ? (
         <StudentsTable
           students={students}
           groups={groups.data ?? []}

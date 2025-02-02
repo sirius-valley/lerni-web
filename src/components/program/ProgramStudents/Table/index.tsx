@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Column,
   ColumnDef,
-  ColumnFiltersState,
-  createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -11,43 +8,24 @@ import {
   getFilteredRowModel,
   Row,
 } from '@tanstack/react-table';
-import { useVirtual } from 'react-virtual';
 import { useTheme } from 'styled-components';
 import { StyledBox, StyledColumn, StyledRow } from '../../../styled/styles';
 import { useLDispatch } from '../../../../redux/hooks';
-import { removeStudent } from '../../../../redux/slices/program.slice';
-import { setModalOpen } from '../../../../redux/slices/utils.slice';
 import { TextInput } from '../../../styled/TextInput';
 import { UpArrowIcon } from '../../../../assets/icons/UpArrowIcon';
 import { DownArrowIcon } from '../../../../assets/icons/DownArrowIcon';
-import { Chip, IconButton } from '@mui/material';
-import FilterGroups from './FilterGroups';
+import { Chip } from '@mui/material';
 import Email from './columns/Email';
 import Fullname from './columns/Fullname';
 import Status from './columns/Status';
 import Progress from './columns/Progress';
 import Groups from './columns/Groups';
 import Actions from './columns/Actions';
-import { Dropdown } from '../../../Dropdown';
-import FilterIcon from '../../../../assets/icons/FilterIcon';
 import { StudentDTO } from '../../../../redux/service/types/students.response';
 import { GroupDTO } from '../../../../redux/service/types/groups.types';
-import { boolean, string } from 'yup';
-
-// interface Student {
-//   authId: string;
-//   email: string;
-//   name?: string;
-//   lastname?: string;
-//   status?: boolean;
-//   image?: string;
-//   id: string;
-//   progress?: number;
-//   groups: {
-//     id: string;
-//     name: string;
-//   }[];
-// }
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { Tooltip } from 'react-tooltip';
+import TableMenu from './Menu';
 
 interface StudentsTableProps {
   students: StudentDTO[];
@@ -55,15 +33,6 @@ interface StudentsTableProps {
   programVersionId: string;
   onMenuClick: (action: 'view' | 'delete' | 'edit', student: StudentDTO) => void;
 }
-
-interface Filters {
-  progress: ProgressStatus;
-  status: StateStatus;
-  groups: string[];
-}
-
-type StateStatus = 'Registrado' | 'No registrado';
-type ProgressStatus = 'Finalizado' | 'En progreso' | 'No iniciado';
 
 export const StudentsTable = ({
   students,
@@ -76,41 +45,24 @@ export const StudentsTable = ({
   const [value, setValue] = React.useState('');
   const [filteredGroups, setFilteredGroups] = useState<{ id: string; name: string }[]>([]);
 
-  const [showFilters, setShowFilters] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<StudentDTO | null>(null);
 
-  const filtersMap: Record<string, any[]> = {
-    progress: ['Finalizado', 'En progreso', 'No iniciado'],
-    status: ['Registrado', 'No registrado'],
-    groups: groups.map((group) => group.name), // Dinámico basado en los grupos disponibles
-  };
+  const handleMenuOpen = useCallback(
+    (event: React.MouseEvent<HTMLElement>, student: StudentDTO) => {
+      setMenuAnchor(event.currentTarget);
+      setSelectedStudent(student);
+    },
+    [],
+  );
 
-  const [appliedFilters, setAppliedFilters] = useState<Filters>({
-    progress: 'No iniciado',
-    status: 'No registrado',
-    groups: [],
-  });
+  const handleMenuClose = useCallback(() => {
+    setMenuAnchor(null);
+    setSelectedStudent(null);
+  }, []);
 
-  const filterableColumns = ['status', 'progress', 'groups'];
-
-  const handleFilters = (columnId: string, value: string) => {
-    const updatedFilters = {
-      ...appliedFilters,
-      [columnId]: value,
-    };
-    setAppliedFilters(updatedFilters);
-  };
-
-  const getFilterValue = (columnId: string) => {
-    switch (columnId) {
-      case 'status':
-        return appliedFilters.status;
-      case 'progress':
-        return appliedFilters.progress;
-      case 'groups':
-        return appliedFilters.groups;
-      default:
-        return '';
-    }
+  const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: StudentDTO | null) => {
+    student && onMenuClick(action, student);
   };
 
   useEffect(() => {
@@ -124,9 +76,9 @@ export const StudentsTable = ({
   const handleIcon = (isOpen: boolean) =>
     isOpen ? <UpArrowIcon size={20} /> : <DownArrowIcon size={20} />;
 
-  const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({});
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
-  const handleExpandGroups = React.useCallback((id: string) => {
+  const handleExpandGroups = useCallback((id: string) => {
     setExpandedGroups((prev) => ({
       ...prev,
       [id]: !prev[id],
@@ -236,14 +188,7 @@ export const StudentsTable = ({
 
           return (
             <Actions
-              open={open}
-              anchorEl={anchorEl}
-              programVersionId={programVersionId}
-              expandedGroups={expandedGroups}
-              onExpand={onExpand}
-              onClick={handleClick}
-              onClose={handleClose}
-              onMenuClick={onMenuClick}
+              onMenuOpen={(event, student) => handleMenuOpen(event, student)}
               student={student}
             />
           );
@@ -263,43 +208,32 @@ export const StudentsTable = ({
   });
 
   const { rows } = table.getRowModel();
+  const getItemKey = useCallback((index: number) => {
+    return rows[index]?.id;
+  }, []);
 
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
 
-  const rowVirtualizer = useVirtual({
-    parentRef: tableContainerRef,
-    size: rows.length,
-    overscan: 15,
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => 65,
+    overscan: 5,
+    getItemKey: getItemKey,
   });
 
-  const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
+  const items = virtualizer.getVirtualItems();
 
-  const paddingTop = virtualRows?.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
-  const paddingBottom = virtualRows?.length > 0 ? totalSize - (virtualRows?.at(-1)?.end || 0) : 0;
-
-  const [openFilters, setOpenFilters] = useState<Record<string, boolean>>({}); // Estado de mapa para filtros abiertos
-
-  const handleToggle = (filterId: string) => {
-    setOpenFilters((prev) => {
-      const newState = { ...prev, [filterId]: !prev[filterId] };
-      // Asegúrate de que solo uno esté abierto a la vez
-      Object.keys(newState).forEach((key) => {
-        if (key !== filterId) newState[key] = false;
-      });
-      return newState;
-    });
-  };
-
-  const handleClickFilters = () => {
-    setShowFilters(!showFilters);
-    setOpenFilters((prev) => {
-      const newState = { ...prev };
-      Object.keys(newState).forEach((key) => {
-        newState[key] = false;
-      });
-      return newState;
-    });
-  };
+  // const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
+  const [paddingTop, paddingBottom] =
+    items.length > 0
+      ? [
+          Math.max(0, items[0].start - virtualizer.options.scrollMargin),
+          Math.max(0, virtualizer.getTotalSize() - items[items.length - 1].end),
+        ]
+      : [0, 0];
+  // const paddingTop = virtualRows?.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
+  // const paddingBottom = virtualRows?.length > 0 ? totalSize - (virtualRows?.at(-1)?.end || 0) : 0;
 
   return (
     <StyledColumn style={{ padding: '2px', maxHeight: '80vh' }}>
@@ -310,23 +244,8 @@ export const StudentsTable = ({
           onChange={(value) => setValue(value)}
           value={value}
         />
-        {/*<FilterGroups*/}
-        {/*  groups={groups}*/}
-        {/*  filterGroup={(group) => {*/}
-        {/*    if (!filteredGroups.some((filteredGroup) => filteredGroup.id === group.id)) {*/}
-        {/*      setFilteredGroups([...filteredGroups, group]);*/}
-        {/*    }*/}
-        {/*  }}*/}
-        {/*/>*/}
-        {/*<IconButton*/}
-        {/*  aria-label="filter"*/}
-        {/*  style={{ overflow: 'visible' }}*/}
-        {/*  onClick={handleClickFilters}*/}
-        {/*>*/}
-        {/*  <FilterIcon color={theme.primary500} selected={showFilters} />*/}
-        {/*</IconButton>*/}
       </StyledRow>
-
+      {students.length}
       <StyledRow style={{ gap: '8px', width: '100%', overflowX: 'auto' }}>
         {filteredGroups.map((group) => (
           <Chip
@@ -338,8 +257,16 @@ export const StudentsTable = ({
           />
         ))}
       </StyledRow>
-      <StyledBox style={{ maxWidth: '100%', overflowX: 'auto' }} ref={tableContainerRef}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', maxWidth: '100%' }}>
+      <StyledBox style={{ maxWidth: '100%', overflow: 'auto' }} ref={tableContainerRef}>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            maxWidth: '100%',
+            willChange: 'transform',
+            transform: 'translate3d(0, 0, 0)',
+          }}
+        >
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -369,18 +296,6 @@ export const StudentsTable = ({
                         {header.column.getIsSorted() &&
                           handleIcon(header.column.getIsSorted() === 'asc')}
                       </StyledRow>
-                      {header.column.getCanFilter() &&
-                        filterableColumns.includes(header.id) &&
-                        showFilters && (
-                          <FilterGroups
-                            id={header.id}
-                            options={filtersMap[header.id]}
-                            selected={getFilterValue(header.id)}
-                            onSelect={(option) => handleFilters(header.id, option)}
-                            open={openFilters[header.id]} // Pasar si el filtro está abierto
-                            onToggle={() => handleToggle(header.id)} // Maneja el toggle
-                          />
-                        )}
                     </StyledRow>
                   </th>
                 ))}
@@ -393,7 +308,7 @@ export const StudentsTable = ({
                 <td style={{ height: paddingTop }} />
               </tr>
             )}
-            {virtualRows.map((virtualRow) => {
+            {items.map((virtualRow, index) => {
               const row = rows[virtualRow.index] as Row<StudentDTO>;
               return (
                 <tr
@@ -420,6 +335,23 @@ export const StudentsTable = ({
           </tbody>
         </table>
       </StyledBox>
+      <Tooltip
+        id="table-tooltip"
+        style={{
+          padding: '8px 12px',
+          borderRadius: 8,
+          backgroundColor: theme.gray600,
+          color: 'white',
+          fontSize: 14,
+          fontFamily: 'Roboto',
+        }}
+        place="top"
+      />
+      <TableMenu
+        onClick={(action) => handleMenuClick(action, selectedStudent)}
+        onClose={handleMenuClose}
+        menuAnchor={menuAnchor}
+      />
     </StyledColumn>
   );
 };

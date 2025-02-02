@@ -7,7 +7,7 @@ interface FullnameProps {
   fullname: string;
 }
 
-const Fullname = ({ fullname }: FullnameProps) => {
+const Fullname = React.memo(({ fullname }: FullnameProps) => {
   const theme = useTheme();
   return (
     <StyledText
@@ -21,23 +21,11 @@ const Fullname = ({ fullname }: FullnameProps) => {
         whiteSpace: 'nowrap',
       }}
       data-tooltip-content={fullname}
-      data-tooltip-id={fullname && fullname.length > 20 ? 'name-tooltip' : undefined}
+      data-tooltip-id={fullname && fullname.length > 20 ? 'table-tooltip' : undefined}
     >
       {fullname}
-      <Tooltip
-        id="name-tooltip"
-        style={{
-          padding: '8px 12px',
-          borderRadius: 8,
-          backgroundColor: theme.gray600,
-          color: 'white',
-          fontSize: 14,
-          fontFamily: 'Roboto',
-        }}
-        place="top"
-      />
     </StyledText>
   );
-};
+});
 
 export default Fullname;

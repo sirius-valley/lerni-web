@@ -7,7 +7,7 @@ interface StatusProps {
   status?: boolean;
 }
 
-const Status = ({ status }: StatusProps) => {
+const Status = React.memo(({ status }: StatusProps) => {
   const theme = useTheme();
   return (
     <StyledBox style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
@@ -18,23 +18,11 @@ const Status = ({ status }: StatusProps) => {
           borderRadius: '100%',
           backgroundColor: status ? theme.success : theme.error,
         }}
-        data-tooltip-id={'status-tooltip'}
+        data-tooltip-id={'table-tooltip'}
         data-tooltip-content={status ? 'Registrado' : 'No registrado'}
-      />
-      <Tooltip
-        id="status-tooltip"
-        style={{
-          padding: '8px 12px',
-          borderRadius: 8,
-          backgroundColor: theme.gray600,
-          color: 'white',
-          fontSize: 14,
-          fontFamily: 'Roboto',
-        }}
-        place="top"
       />
     </StyledBox>
   );
-};
+});
 
 export default Status;
