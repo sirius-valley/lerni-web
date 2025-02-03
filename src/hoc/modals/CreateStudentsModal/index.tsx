@@ -81,6 +81,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
 
             const columns = line.split(',');
             if (columns.length < 1) return null;
+            console.log('columns', columns);
 
             const email = columns[0].trim();
             const groups = Array.from(
@@ -91,6 +92,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
                   .filter((col) => col !== ''),
               ),
             );
+            console.log(groups);
 
             return { email, groups };
           })
@@ -99,7 +101,12 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
         setInputValues({
           file: value,
         });
-        setUploadedStudents(mails);
+        setUploadedStudents(
+          mails.map((mail: EmailObject) => ({
+            email: mail.email,
+            groups: mail.groups.map((group) => group.toLowerCase()),
+          })),
+        );
         verifyStudents(mails.map((mail: EmailObject) => mail.email));
       };
 
@@ -144,6 +151,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
             (student) => !existingEmails.has(student.email),
           );
           const mergedStudents = mergeStudentsWithGroups(newStudents, uploadedStudents);
+          console.log('merged', mergedStudents);
 
           dispatch(
             updateCollectionInfo({
@@ -165,15 +173,21 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
     studentsData: StudentDTO[],
     uploadedStudents: EmailObject[],
   ): StudentDTO[] => {
-    const uploadedMap = new Map(uploadedStudents.map((student) => [student.email, student.groups]));
-
-    return studentsData.map((student) => ({
-      ...student,
-      group: [
-        ...(student.group || []),
-        ...(uploadedMap.get(student.email)?.map((groupName) => ({ name: groupName })) || []),
-      ],
-    }));
+    console.log('uploaded', uploadedStudents);
+    const uploadedMap = new Map(
+      uploadedStudents.map((student) => [student.email.toLowerCase(), student.groups]),
+    );
+    console.log('uploadedMap', uploadedMap);
+    return studentsData.map((student) => {
+      console.log(uploadedMap.get(student.email)?.map((groupName) => ({ name: groupName })));
+      return {
+        ...student,
+        group: [
+          ...(student.group || []),
+          ...(uploadedMap.get(student.email)?.map((groupName) => ({ name: groupName })) || []),
+        ],
+      };
+    });
   };
 
   const cardHeader = () => (
