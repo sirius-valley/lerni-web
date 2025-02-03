@@ -79,7 +79,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
           .map((line: string, index: number) => {
             if (index === 0 || !line.trim()) return null;
 
-            const columns = line.split(';');
+            const columns = line.split(',');
             if (columns.length < 1) return null;
 
             const email = columns[0].trim();
