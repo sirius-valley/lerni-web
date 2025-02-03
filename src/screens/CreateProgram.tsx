@@ -14,6 +14,7 @@ import { useCreateProgramMutation } from '../redux/service/program.service';
 import { errorToast, successToast } from '../components/Toasts';
 import { transformedValues } from '../utils/transformBody';
 import { resetProgramSlice } from '../redux/slices/program.slice';
+import { api } from '../redux/service/api';
 
 const CreateProgram = () => {
   const theme = useTheme();
@@ -29,6 +30,7 @@ const CreateProgram = () => {
       createProgram(transformedValues(program)).then((res: any) => {
         navigate('/');
         dispatch(resetProgramSlice());
+        dispatch(api.util.invalidateTags(['Groups']));
         successToast('Programa creado exitosamente!');
       });
     }

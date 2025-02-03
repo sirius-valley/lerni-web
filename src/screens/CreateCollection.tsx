@@ -28,7 +28,7 @@ const CreateCollection = () => {
       createCollection(transformedCollectionValues(collection)).then((res: any) => {
         navigate('/');
         dispatch(resetCollectionSlice());
-        dispatch(api.util.invalidateTags(['CollectionList']));
+        dispatch(api.util.invalidateTags(['CollectionList', 'Groups']));
 
         successToast('Colección creada exitosamente!');
       });

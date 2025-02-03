@@ -135,8 +135,12 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
     if (studentsSuccess) {
       if (studentsData && uploadedStudents) {
         if (entityType === 'COLLECTION') {
+          const studentDataLowercase = studentsData.map((student) => ({
+            ...student,
+            email: student.email.toLowerCase(),
+          }));
           const existingEmails = new Set(students.map((student) => student.email));
-          const newStudents = transformStudentData(studentsData).filter(
+          const newStudents = transformStudentData(studentDataLowercase).filter(
             (student) => !existingEmails.has(student.email),
           );
           const mergedStudents = mergeStudentsWithGroups(newStudents, uploadedStudents);
