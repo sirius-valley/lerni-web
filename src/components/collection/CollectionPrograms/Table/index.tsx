@@ -98,17 +98,29 @@ const ProgramsTable = ({ programs }: ProgramsTableProps) => {
       {
         accessorKey: 'studentsInProgram',
         header: 'En progreso',
-        cell: (info) => <StyledText style={{ textAlign: 'center' }}>{info.getValue()}</StyledText>,
+        cell: (info) => (
+          <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
+            {info.getValue()}
+          </StyledText>
+        ),
       },
       {
         accessorKey: 'studentsCompleted',
         header: 'Completados',
-        cell: (info) => <StyledText style={{ textAlign: 'center' }}>{info.getValue()}</StyledText>,
+        cell: (info) => (
+          <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
+            {info.getValue()}
+          </StyledText>
+        ),
       },
       {
         accessorKey: 'studentsNotStarted',
         header: 'Sin iniciar',
-        cell: (info) => <StyledText style={{ textAlign: 'center' }}>{info.getValue()}</StyledText>,
+        cell: (info) => (
+          <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
+            {info.getValue()}
+          </StyledText>
+        ),
       },
     ],
     [],

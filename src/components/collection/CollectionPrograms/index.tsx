@@ -79,7 +79,26 @@ const CollectionPrograms = () => {
         </StyledRow>
       }
     >
-      {edit ? <List programs={programs} onDelete={deleteProgram} /> : <Table programs={programs} />}
+      {programs.length !== 0 ? (
+        edit ? (
+          <List programs={programs} onDelete={deleteProgram} />
+        ) : (
+          <Table programs={programs} />
+        )
+      ) : (
+        <StyledBox
+          css={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '16px 0px 16px 0px',
+          }}
+        >
+          <StyledText variant="body3" style={{ textAlign: 'center', color: theme.gray400 }}>
+            {'No se agregaron programas todavía'}
+          </StyledText>
+        </StyledBox>
+      )}
     </Card>
   );
 };
