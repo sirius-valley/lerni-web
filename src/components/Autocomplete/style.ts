@@ -32,6 +32,15 @@ export const StyledTextField = styled(TextField)`
       box-shadow: 0 0 0 1px ${({ theme }) => theme.primary500};
       transition: box-shadow 0.2s ease-in-out;
     }
+      
+    &.Mui-disabled fieldset{
+      //background-color: ${({ theme }) => theme.gray200};
+      // color: ${({ theme }) => theme.gray400};
+      border-color: ${({ theme }) => theme.gray200};
+    }
+      
+    &.Mui-disabled {
+        background-color: ${({ theme }) => theme.gray200};
   }
 
   & input::placeholder {

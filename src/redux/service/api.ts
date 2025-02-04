@@ -50,6 +50,7 @@ export const api = createApi({
     'CollectionStudentsList',
     'CollectionList',
     'Groups',
+    'ProfileDetails',
   ],
   endpoints: () => ({}),
 });

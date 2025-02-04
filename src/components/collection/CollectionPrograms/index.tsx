@@ -5,9 +5,11 @@ import { useTheme } from 'styled-components';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { AutocompleteComponent } from '../../Autocomplete';
 import { useProgramListQuery } from '../../../redux/service/program.service';
-import ProgramRow from './ProgramRow';
+import ProgramRow from './List/ProgramRow';
 import { ProgramListItem } from '../../../redux/service/types/program.types';
 import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
+import List from './List';
+import Table from './Table';
 
 const CollectionPrograms = () => {
   const theme = useTheme();
@@ -77,38 +79,7 @@ const CollectionPrograms = () => {
         </StyledRow>
       }
     >
-      {programs.length !== 0 ? (
-        <StyledColumn css={{ gap: '0px', maxHeight: '262px', overflowY: 'auto' }}>
-          {programs.map((program, index) => (
-            <StyledColumn
-              key={index}
-              style={{
-                borderBottom: index !== programs.length - 1 ? `1px solid ${theme.gray200}` : 'none',
-                paddingBottom: '16px',
-              }}
-            >
-              <ProgramRow
-                deletable={edit}
-                program={program}
-                onDelete={() => deleteProgram(program.programVersionId)}
-              />
-            </StyledColumn>
-          ))}
-        </StyledColumn>
-      ) : (
-        <StyledBox
-          css={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '16px 0px 16px 0px',
-          }}
-        >
-          <StyledText variant="body3" style={{ textAlign: 'center', color: theme.gray400 }}>
-            {'No se agregaron programas todavía'}
-          </StyledText>
-        </StyledBox>
-      )}
+      {edit ? <List programs={programs} onDelete={deleteProgram} /> : <Table programs={programs} />}
     </Card>
   );
 };

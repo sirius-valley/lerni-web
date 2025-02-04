@@ -107,7 +107,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
             groups: mail.groups.map((group) => group.toLowerCase()),
           })),
         );
-        verifyStudents(mails.map((mail: EmailObject) => mail.email));
+        verifyStudents(mails.map((mail: EmailObject) => mail.email.toLowerCase()));
       };
 
       reader.readAsText(value);
@@ -120,7 +120,6 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
   };
 
   const transformStudentData = (students: StudentDTO[]): StudentDTO[] => {
-    console.log('transforming...');
     return students.map((student) => {
       return {
         id: student.id ?? '',

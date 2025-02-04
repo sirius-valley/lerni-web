@@ -1,5 +1,5 @@
 import { api } from './api';
-import { StudentsRegisteredResponse } from './types/students.response';
+import { StudentDetailsResponse, StudentsRegisteredResponse } from './types/students.response';
 
 export const studentsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -16,7 +16,14 @@ export const studentsApi = api.injectEndpoints({
         params: { page },
       }),
     }),
+    studentProfile: builder.query<StudentDetailsResponse, string>({
+      query: (id: string) => ({
+        url: `api/student/profile/${id}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useStudentsRegisteredQuery, useStudentsListQuery } = studentsApi;
+export const { useStudentsRegisteredQuery, useStudentsListQuery, useStudentProfileQuery } =
+  studentsApi;

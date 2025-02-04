@@ -9,7 +9,7 @@ import {
   Row,
 } from '@tanstack/react-table';
 import { useTheme } from 'styled-components';
-import { StyledBox, StyledColumn, StyledRow } from '../../../styled/styles';
+import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../styled/styles';
 import { useLDispatch } from '../../../../redux/hooks';
 import { TextInput } from '../../../styled/TextInput';
 import { UpArrowIcon } from '../../../../assets/icons/UpArrowIcon';
@@ -170,22 +170,7 @@ export const StudentsTable = ({
       {
         id: 'actions',
         cell: (info) => {
-          const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-          const open = Boolean(anchorEl);
           const student = info.row.original;
-
-          const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-            setAnchorEl(event.currentTarget);
-          };
-
-          const handleClose = () => {
-            setAnchorEl(null);
-          };
-
-          const onExpand = (id: string) => {
-            handleExpandGroups(id);
-          };
-
           return (
             <Actions
               onMenuOpen={(event, student) => handleMenuOpen(event, student)}
@@ -245,7 +230,6 @@ export const StudentsTable = ({
           value={value}
         />
       </StyledRow>
-      {students.length}
       <StyledRow style={{ gap: '8px', width: '100%', overflowX: 'auto' }}>
         {filteredGroups.map((group) => (
           <Chip
@@ -335,6 +319,11 @@ export const StudentsTable = ({
           </tbody>
         </table>
       </StyledBox>
+      <StyledRow style={{ display: 'flex', justifyContent: 'flex-end', padding: '20px 20px 0 0' }}>
+        <StyledText style={{ color: theme.gray400, fontSize: 12 }}>
+          {students.length} estudiantes
+        </StyledText>
+      </StyledRow>
       <Tooltip
         id="table-tooltip"
         style={{

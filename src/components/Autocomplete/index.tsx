@@ -18,6 +18,8 @@ export interface AutocompleteProps {
   onChange?: (value: string) => void;
   setMultipleValues?: (values: Option[]) => void;
   allowNewOptions?: boolean;
+  disabled?: boolean;
+  limitTags?: number;
 }
 
 export const AutocompleteComponent = ({
@@ -31,6 +33,8 @@ export const AutocompleteComponent = ({
   multiple = false,
   setMultipleValues,
   allowNewOptions = false,
+  disabled = false,
+  limitTags = -1,
 }: AutocompleteProps) => {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar si el menú está abierto
 
@@ -91,10 +95,11 @@ export const AutocompleteComponent = ({
         }}
       >
         <Autocomplete
+          disabled={disabled}
           autoComplete
           multiple={multiple}
           freeSolo={allowNewOptions}
-          limitTags={2}
+          limitTags={limitTags}
           id="multiple-limit-tags"
           options={content}
           value={value}

@@ -5,10 +5,10 @@ import {
   StyledColumn,
   StyledRow,
   StyledText,
-} from '../../../styled/styles';
-import { ProgramListItem } from '../../../../redux/service/types/program.types';
-import { transformFirstLetterToLowerCase } from '../../../../utils/utils';
-import { RemoveIcon } from '../../../../assets/icons/RemoveIcon';
+} from '../../../../styled/styles';
+import { ProgramListItem } from '../../../../../redux/service/types/program.types';
+import { transformFirstLetterToLowerCase } from '../../../../../utils/utils';
+import { RemoveIcon } from '../../../../../assets/icons/RemoveIcon';
 import { useTheme } from 'styled-components';
 
 interface ProgramRowProps {

@@ -14,6 +14,7 @@ import { getTokenFromLocalStorage } from '../utils/utils';
 import ProgramDetails from '../screens/ProgramDetails';
 import CreateCollection from '../screens/CreateCollection';
 import CollectionDetails from '../screens/CollectionDetails';
+import ProfileDetails from '../screens/ProfileDetails';
 
 const Router = () => {
   const dispatch = useLDispatch();
@@ -32,6 +33,7 @@ const Router = () => {
           <Route path="/create/collection" element={<CreateCollection />} />
           <Route path="/details/program/:id" element={<ProgramDetails />} />
           <Route path="/details/collection/:id" element={<CollectionDetails />} />
+          <Route path="/profile/:id" element={<ProfileDetails />} />
         </Route>
       </Route>
       <Route element={<PublicRoute />}>

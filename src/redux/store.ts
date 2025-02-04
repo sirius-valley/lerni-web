@@ -8,6 +8,7 @@ import utilsSlice from './slices/utils.slice';
 import programSlice from './slices/program.slice';
 import collectionSlice from './slices/collection.slice';
 import groupsSlice from './slices/groups.slice';
+import profileSlice from './slices/profile.slice';
 
 const reducers = combineReducers({
   [api.reducerPath]: api.reducer,
@@ -17,6 +18,7 @@ const reducers = combineReducers({
   program: programSlice,
   collection: collectionSlice,
   groups: groupsSlice,
+  profile: profileSlice,
   pokemon: pokemonSlice,
 });
 
