@@ -45,7 +45,7 @@ const CollectionDetails = () => {
   const { data } = useCollectionDetailsQuery(id as string);
   const handleSave = () => {
     if (!id) return;
-    updateCollection({ id, body: transformedCollectionValues(collection) }).then((res: any) => {
+    addStudents({ id, body: transformedStudentCollectionValues(collection) }).then((res: any) => {
       navigate('/');
       dispatch(resetCollectionSlice());
       successToast('Colección modificada exitosamente!');

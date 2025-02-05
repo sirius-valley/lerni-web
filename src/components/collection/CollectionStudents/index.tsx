@@ -13,6 +13,7 @@ import { StudentDTO } from '../../../redux/service/types/students.response';
 import { useCollectionStudentsListQuery } from '../../../redux/service/collection.service';
 import { removeStudent, updateCollectionInfo } from '../../../redux/slices/collection.slice';
 import { EntityType } from '../../../hoc/modals/StudentsGroupsModal';
+import { useNavigate } from 'react-router-dom';
 
 const mockedStudents: StudentDTO[] = [
   ...Array.from({ length: 3000 }, () => ({
@@ -82,6 +83,10 @@ interface CollectionStudents {
 export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
   const theme = useTheme();
   const dispatch = useLDispatch();
+  const navigate = useNavigate();
+
+  const collection = useLSelector((state) => state.collection);
+  const { edit } = collection;
 
   const groups = useGetGroupsQuery();
 
@@ -104,7 +109,7 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
   const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: StudentDTO) => {
     switch (action) {
       case 'view':
-        console.log('viewing');
+        if (!edit) navigate(`/profile/${student.id}`);
         break;
 
       case 'delete':
@@ -112,7 +117,6 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
         break;
 
       case 'edit':
-        console.log('editing');
         dispatch(
           setModalOpen({
             modalType: 'STUDENTS_GROUPS',

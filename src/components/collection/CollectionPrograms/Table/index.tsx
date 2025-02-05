@@ -1,31 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { ProgramListItem } from '../../../../redux/service/types/program.types';
+import { ColumnDef, flexRender, getCoreRowModel, Row, useReactTable } from '@tanstack/react-table';
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  Row,
-  useReactTable,
-} from '@tanstack/react-table';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import {
-  StyledAvatar,
-  StyledBox,
   StyledColumn,
-  StyledRow,
+  StyledBox,
   StyledText,
+  StyledRow,
+  StyledAvatar,
 } from '../../../styled/styles';
-import { TextInput } from '../../../styled/TextInput';
-import { Chip } from '@mui/material';
-import { StudentDTO } from '../../../../redux/service/types/students.response';
-import { Tooltip } from 'react-tooltip';
-import TableMenu from '../../../program/ProgramStudents/Table/Menu';
-import { useTheme } from 'styled-components';
-import { UpArrowIcon } from '../../../../assets/icons/UpArrowIcon';
 import { transformFirstLetterToLowerCase } from '../../../../utils/utils';
-import { useGetProgramAttendanceQuery } from '../../../../redux/service/program.service';
+import { useTheme } from 'styled-components';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { UpArrowIcon } from '../../../../assets/icons/UpArrowIcon';
 
 interface ProgramsTableProps {
   programs: ProgramListItem[];
@@ -40,20 +26,27 @@ interface ProgramItem {
 
 const ProgramsTable = ({ programs }: ProgramsTableProps) => {
   const theme = useTheme();
-  const programData = programs.map((program) => {
-    const { data } = useGetProgramAttendanceQuery(program.programVersionId);
-    return {
-      program,
-      studentsInProgram: data?.inProgress || 0,
-      studentsCompleted: data?.completed || 0,
-      studentsNotStarted: data?.notStarted || 0,
-    };
-  });
 
-  const columns = React.useMemo<ColumnDef<ProgramItem, any>[]>(
+  if (!programs || programs.length === 0) {
+    return <StyledText>No hay programas disponibles.</StyledText>;
+  }
+
+  const programData = useMemo(
+    () =>
+      programs.map((program) => ({
+        program,
+        studentsInProgram: 0,
+        studentsCompleted: 0,
+        studentsNotStarted: 0,
+      })),
+    [programs],
+  );
+
+  const columns: ColumnDef<ProgramItem, any>[] = useMemo(
     () => [
       {
-        accessorKey: 'programName',
+        accessorFn: (row) => row.program.name,
+        id: 'programName',
         header: 'Programa',
         cell: (info) => {
           const program = info.row.original.program;
@@ -127,19 +120,12 @@ const ProgramsTable = ({ programs }: ProgramsTableProps) => {
   );
 
   const table = useReactTable({
-    data: programData,
+    data: programData ?? [],
     columns,
-    filterFns: {},
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
   });
 
   const { rows } = table.getRowModel();
-  const getItemKey = useCallback((index: number) => {
-    return rows[index]?.id;
-  }, []);
-
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
 
   const virtualizer = useVirtualizer({
@@ -147,11 +133,9 @@ const ProgramsTable = ({ programs }: ProgramsTableProps) => {
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => 65,
     overscan: 5,
-    getItemKey: getItemKey,
   });
 
   const items = virtualizer.getVirtualItems();
-
   const [paddingTop, paddingBottom] =
     items.length > 0
       ? [

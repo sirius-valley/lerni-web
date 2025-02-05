@@ -62,10 +62,10 @@ export const collectionApi = api.injectEndpoints({
     }),
     addStudentsToCollection: builder.mutation<
       any,
-      { collectionId: string; body: StudentCollectionRequestDto }
+      { id: string; body: StudentCollectionRequestDto }
     >({
-      query: ({ collectionId, body }) => ({
-        url: `colections/student/batch/${collectionId}`,
+      query: ({ id, body }) => ({
+        url: `colections/student/batch/${id}`,
         method: 'PUT',
         body: body,
       }),
