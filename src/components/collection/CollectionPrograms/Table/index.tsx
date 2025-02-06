@@ -11,17 +11,36 @@ interface ProgramsTableProps {
   programs: ProgramListItem[];
 }
 
+interface ProgramItem {
+  program: ProgramListItem;
+  studentsInProgram?: number;
+  studentsCompleted?: number;
+  studentsNotStarted?: number;
+}
+
 const ProgramsTable = ({ programs }: ProgramsTableProps) => {
   const theme = useTheme();
 
-  const columns: ColumnDef<ProgramListItem, any>[] = useMemo(
+  const attendanceData = programs.map((program) => {
+    const { data } = useGetProgramAttendanceQuery(program.programVersionId, {
+      refetchOnMountOrArgChange: true,
+    });
+    return {
+      program,
+      studentsInProgram: data?.inProgress ?? 0,
+      studentsCompleted: data?.completed ?? 0,
+      studentsNotStarted: data?.notStarted ?? 0,
+    };
+  });
+
+  const columns: ColumnDef<ProgramItem, any>[] = useMemo(
     () => [
       {
-        accessorFn: (row) => row.name,
+        accessorFn: (row) => row.program.name,
         id: 'programName',
         header: 'Programa',
         cell: (info) => {
-          const program = info.row.original;
+          const program = info.row.original.program;
           return (
             <StyledRow style={{ gap: '8px', alignItems: 'center', height: '100%' }}>
               <StyledAvatar
@@ -61,49 +80,37 @@ const ProgramsTable = ({ programs }: ProgramsTableProps) => {
         },
       },
       {
-        id: 'studentsInProgram',
+        accessorKey: 'studentsInProgram',
         header: 'En progreso',
-        cell: (info) => {
-          const program = info.row.original;
-          const { data } = useGetProgramAttendanceQuery(program.programVersionId);
-          return (
-            <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
-              {data?.inProgress ?? 0}
-            </StyledText>
-          );
-        },
+        cell: (info) => (
+          <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
+            {info.getValue()}
+          </StyledText>
+        ),
       },
       {
-        id: 'studentsCompleted',
+        accessorKey: 'studentsCompleted',
         header: 'Completados',
-        cell: (info) => {
-          const program = info.row.original;
-          const { data } = useGetProgramAttendanceQuery(program.programVersionId);
-          return (
-            <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
-              {data?.completed ?? 0}
-            </StyledText>
-          );
-        },
+        cell: (info) => (
+          <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
+            {info.getValue()}
+          </StyledText>
+        ),
       },
       {
-        id: 'studentsNotStarted',
+        accessorKey: 'studentsNotStarted',
         header: 'Sin iniciar',
-        cell: (info) => {
-          const program = info.row.original;
-          const { data } = useGetProgramAttendanceQuery(program.programVersionId);
-          return (
-            <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
-              {data?.notStarted ?? 0}
-            </StyledText>
-          );
-        },
+        cell: (info) => (
+          <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
+            {info.getValue()}
+          </StyledText>
+        ),
       },
     ],
     [],
   );
 
-  return <Table data={programs ?? []} columns={columns} entityName={'programa'} />;
+  return <Table data={attendanceData ?? []} columns={columns} entityName={'programa'} />;
 };
 
 export default ProgramsTable;
