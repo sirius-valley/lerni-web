@@ -1,55 +1,27 @@
 import React, { useMemo } from 'react';
 import { ProgramListItem } from '../../../../redux/service/types/program.types';
-import { ColumnDef, flexRender, getCoreRowModel, Row, useReactTable } from '@tanstack/react-table';
-import {
-  StyledColumn,
-  StyledBox,
-  StyledText,
-  StyledRow,
-  StyledAvatar,
-} from '../../../styled/styles';
+import { ColumnDef } from '@tanstack/react-table';
+import { StyledColumn, StyledText, StyledRow, StyledAvatar } from '../../../styled/styles';
 import { transformFirstLetterToLowerCase } from '../../../../utils/utils';
 import { useTheme } from 'styled-components';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { UpArrowIcon } from '../../../../assets/icons/UpArrowIcon';
+import Table from '../../../Table';
+import { useGetProgramAttendanceQuery } from '../../../../redux/service/program.service';
 
 interface ProgramsTableProps {
   programs: ProgramListItem[];
 }
 
-interface ProgramItem {
-  program: ProgramListItem;
-  studentsInProgram: number;
-  studentsCompleted: number;
-  studentsNotStarted: number;
-}
-
 const ProgramsTable = ({ programs }: ProgramsTableProps) => {
   const theme = useTheme();
 
-  if (!programs || programs.length === 0) {
-    return <StyledText>No hay programas disponibles.</StyledText>;
-  }
-
-  const programData = useMemo(
-    () =>
-      programs.map((program) => ({
-        program,
-        studentsInProgram: 0,
-        studentsCompleted: 0,
-        studentsNotStarted: 0,
-      })),
-    [programs],
-  );
-
-  const columns: ColumnDef<ProgramItem, any>[] = useMemo(
+  const columns: ColumnDef<ProgramListItem, any>[] = useMemo(
     () => [
       {
-        accessorFn: (row) => row.program.name,
+        accessorFn: (row) => row.name,
         id: 'programName',
         header: 'Programa',
         cell: (info) => {
-          const program = info.row.original.program;
+          const program = info.row.original;
           return (
             <StyledRow style={{ gap: '8px', alignItems: 'center', height: '100%' }}>
               <StyledAvatar
@@ -89,143 +61,49 @@ const ProgramsTable = ({ programs }: ProgramsTableProps) => {
         },
       },
       {
-        accessorKey: 'studentsInProgram',
+        id: 'studentsInProgram',
         header: 'En progreso',
-        cell: (info) => (
-          <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
-            {info.getValue()}
-          </StyledText>
-        ),
+        cell: (info) => {
+          const program = info.row.original;
+          const { data } = useGetProgramAttendanceQuery(program.programVersionId);
+          return (
+            <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
+              {data?.inProgress ?? 0}
+            </StyledText>
+          );
+        },
       },
       {
-        accessorKey: 'studentsCompleted',
+        id: 'studentsCompleted',
         header: 'Completados',
-        cell: (info) => (
-          <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
-            {info.getValue()}
-          </StyledText>
-        ),
+        cell: (info) => {
+          const program = info.row.original;
+          const { data } = useGetProgramAttendanceQuery(program.programVersionId);
+          return (
+            <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
+              {data?.completed ?? 0}
+            </StyledText>
+          );
+        },
       },
       {
-        accessorKey: 'studentsNotStarted',
+        id: 'studentsNotStarted',
         header: 'Sin iniciar',
-        cell: (info) => (
-          <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
-            {info.getValue()}
-          </StyledText>
-        ),
+        cell: (info) => {
+          const program = info.row.original;
+          const { data } = useGetProgramAttendanceQuery(program.programVersionId);
+          return (
+            <StyledText style={{ textAlign: 'center', fontSize: '14px' }}>
+              {data?.notStarted ?? 0}
+            </StyledText>
+          );
+        },
       },
     ],
     [],
   );
 
-  const table = useReactTable({
-    data: programData ?? [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-  const { rows } = table.getRowModel();
-  const tableContainerRef = React.useRef<HTMLDivElement>(null);
-
-  const virtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => 65,
-    overscan: 5,
-  });
-
-  const items = virtualizer.getVirtualItems();
-  const [paddingTop, paddingBottom] =
-    items.length > 0
-      ? [
-          Math.max(0, items[0].start - virtualizer.options.scrollMargin),
-          Math.max(0, virtualizer.getTotalSize() - items[items.length - 1].end),
-        ]
-      : [0, 0];
-
-  return (
-    <StyledColumn style={{ padding: '2px', maxHeight: '80vh' }}>
-      <StyledRow style={{ alignItems: 'center', gap: '20px' }}></StyledRow>
-
-      <StyledBox style={{ maxWidth: '100%', overflow: 'auto' }} ref={tableContainerRef}>
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            maxWidth: '100%',
-            willChange: 'transform',
-            transform: 'translate3d(0, 0, 0)',
-          }}
-        >
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    style={{
-                      textAlign: 'left',
-                      padding: '14px 10px',
-                      borderBottom: `2px solid ${theme.gray200}`,
-                      fontFamily: 'Roboto, sans-serif',
-                      fontWeight: 700,
-                      fontSize: '14px',
-                      color: theme.gray900,
-                    }}
-                  >
-                    <StyledRow>
-                      <StyledRow
-                        onClick={header.column.getToggleSortingHandler()}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          cursor: header.column.getCanSort() ? 'pointer' : 'default',
-                        }}
-                      >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        {header.column.getIsSorted() && <UpArrowIcon size={20} />}
-                      </StyledRow>
-                    </StyledRow>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {paddingTop > 0 && (
-              <tr>
-                <td style={{ height: paddingTop }} />
-              </tr>
-            )}
-            {items.map((virtualRow, index) => {
-              const row = rows[virtualRow.index] as Row<ProgramItem>;
-              return (
-                <tr
-                  key={row.id}
-                  style={{ borderBottom: `1px solid ${theme.gray200}`, cursor: 'pointer' }}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      style={{ padding: '12px 10px', textAlign: 'left', height: '65px' }}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-            {paddingBottom > 0 && (
-              <tr>
-                <td style={{ height: paddingBottom }} />
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </StyledBox>
-    </StyledColumn>
-  );
+  return <Table data={programs ?? []} columns={columns} entityName={'programa'} />;
 };
 
 export default ProgramsTable;

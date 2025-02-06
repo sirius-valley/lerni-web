@@ -26,6 +26,7 @@ import { GroupDTO } from '../../../../redux/service/types/groups.types';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Tooltip } from 'react-tooltip';
 import TableMenu from './Menu';
+import Table from '../../../Table';
 
 interface StudentsTableProps {
   students: StudentDTO[];
@@ -41,9 +42,6 @@ export const StudentsTable = ({
   onMenuClick,
 }: StudentsTableProps) => {
   const theme = useTheme();
-  const dispatch = useLDispatch();
-  const [value, setValue] = React.useState('');
-  const [filteredGroups, setFilteredGroups] = useState<{ id: string; name: string }[]>([]);
 
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<StudentDTO | null>(null);
@@ -64,17 +62,6 @@ export const StudentsTable = ({
   const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: StudentDTO | null) => {
     student && onMenuClick(action, student);
   };
-
-  useEffect(() => {
-    table.setGlobalFilter(value);
-  }, [value]);
-
-  useEffect(() => {
-    table.getColumn('groups')?.setFilterValue(filteredGroups);
-  }, [filteredGroups]);
-
-  const handleIcon = (isOpen: boolean) =>
-    isOpen ? <UpArrowIcon size={20} /> : <DownArrowIcon size={20} />;
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
@@ -130,6 +117,12 @@ export const StudentsTable = ({
           }
           return true;
         },
+        sortingFn: (a, b) => {
+          const statusA = isRegistered(a.original);
+          const statusB = isRegistered(b.original);
+          // Esto ordena los valores `true` antes que los `false`
+          return statusA === statusB ? 0 : statusA ? 1 : -1;
+        },
       },
       {
         accessorKey: 'progress',
@@ -183,147 +176,14 @@ export const StudentsTable = ({
     [expandedGroups],
   );
 
-  const table = useReactTable({
-    data: students,
-    columns,
-    filterFns: {},
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-  });
-
-  const { rows } = table.getRowModel();
-  const getItemKey = useCallback((index: number) => {
-    return rows[index]?.id;
-  }, []);
-
-  const tableContainerRef = React.useRef<HTMLDivElement>(null);
-
-  const virtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => 65,
-    overscan: 5,
-    getItemKey: getItemKey,
-  });
-
-  const items = virtualizer.getVirtualItems();
-
-  // const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
-  const [paddingTop, paddingBottom] =
-    items.length > 0
-      ? [
-          Math.max(0, items[0].start - virtualizer.options.scrollMargin),
-          Math.max(0, virtualizer.getTotalSize() - items[items.length - 1].end),
-        ]
-      : [0, 0];
-  // const paddingTop = virtualRows?.length > 0 ? virtualRows?.[0]?.start || 0 : 0;
-  // const paddingBottom = virtualRows?.length > 0 ? totalSize - (virtualRows?.at(-1)?.end || 0) : 0;
-
   return (
-    <StyledColumn style={{ padding: '2px', maxHeight: '80vh' }}>
-      <StyledRow style={{ alignItems: 'center', gap: '20px' }}>
-        <TextInput
-          type="text"
-          placeholder="Search..."
-          onChange={(value) => setValue(value)}
-          value={value}
-        />
-      </StyledRow>
-      <StyledRow style={{ gap: '8px', width: '100%', overflowX: 'auto' }}>
-        {filteredGroups.map((group) => (
-          <Chip
-            key={group.id}
-            label={group.name}
-            style={{ borderColor: theme.primary500 }}
-            variant="outlined"
-            onDelete={() => setFilteredGroups(filteredGroups.filter((g) => g.id !== group.id))}
-          />
-        ))}
-      </StyledRow>
-      <StyledBox style={{ maxWidth: '100%', overflow: 'auto' }} ref={tableContainerRef}>
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            maxWidth: '100%',
-            willChange: 'transform',
-            transform: 'translate3d(0, 0, 0)',
-          }}
-        >
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    style={{
-                      textAlign: 'left',
-                      padding: '14px 10px',
-                      borderBottom: `2px solid ${theme.gray200}`,
-                      fontFamily: 'Roboto, sans-serif',
-                      fontWeight: 700,
-                      fontSize: '14px',
-                      color: theme.gray900,
-                    }}
-                  >
-                    <StyledRow>
-                      <StyledRow
-                        onClick={header.column.getToggleSortingHandler()}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          cursor: header.column.getCanSort() ? 'pointer' : 'default',
-                        }}
-                      >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        {header.column.getIsSorted() &&
-                          handleIcon(header.column.getIsSorted() === 'asc')}
-                      </StyledRow>
-                    </StyledRow>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {paddingTop > 0 && (
-              <tr>
-                <td style={{ height: paddingTop }} />
-              </tr>
-            )}
-            {items.map((virtualRow, index) => {
-              const row = rows[virtualRow.index] as Row<StudentDTO>;
-              return (
-                <tr
-                  key={row.id}
-                  style={{ borderBottom: `1px solid ${theme.gray200}`, cursor: 'pointer' }}
-                  onClick={() => handleMenuClick('view', row.original)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      style={{ padding: '12px 10px', textAlign: 'left', height: '65px' }}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-            {paddingBottom > 0 && (
-              <tr>
-                <td style={{ height: paddingBottom }} />
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </StyledBox>
-      <StyledRow style={{ display: 'flex', justifyContent: 'flex-end', padding: '20px 20px 0 0' }}>
-        <StyledText style={{ color: theme.gray400, fontSize: 12 }}>
-          {students.length} estudiantes
-        </StyledText>
-      </StyledRow>
+    <>
+      <Table
+        data={students}
+        columns={columns}
+        entityName={'estudiante'}
+        onRowClick={(student: StudentDTO) => handleMenuClick('view', student)}
+      />
       <Tooltip
         id="table-tooltip"
         style={{
@@ -341,6 +201,6 @@ export const StudentsTable = ({
         onClose={handleMenuClose}
         menuAnchor={menuAnchor}
       />
-    </StyledColumn>
+    </>
   );
 };

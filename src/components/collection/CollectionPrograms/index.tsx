@@ -52,7 +52,7 @@ const CollectionPrograms = () => {
   return (
     <Card
       height="auto"
-      css={{ gap: 0 }}
+      css={{ gap: '12px' }}
       headerComponent={
         <StyledRow
           style={{

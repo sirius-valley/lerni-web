@@ -16,6 +16,7 @@ type Pill = {
   teacherId?: string;
   groups: GroupDTO[];
 };
+
 interface Questionnaire {
   id: string;
   type: string;
