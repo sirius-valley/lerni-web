@@ -12,8 +12,8 @@ import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { StudentDTO } from '../../../redux/service/types/students.response';
 import { useCollectionStudentsListQuery } from '../../../redux/service/collection.service';
 import { removeStudent, updateCollectionInfo } from '../../../redux/slices/collection.slice';
-import { EntityType } from '../../../hoc/modals/StudentsGroupsModal';
 import { useNavigate } from 'react-router-dom';
+import { EntityType } from '../../../utils/permissions';
 
 const mockedStudents: StudentDTO[] = [
   ...Array.from({ length: 3000 }, () => ({

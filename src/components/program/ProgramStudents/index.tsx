@@ -12,7 +12,7 @@ import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { StudentDTO } from '../../../redux/service/types/students.response';
 import { removeStudent, updatePillInfo } from '../../../redux/slices/program.slice';
 import { useStudentsListQuery } from '../../../redux/service/program.service';
-import { EntityType } from '../../../hoc/modals/StudentsGroupsModal';
+import { EntityType } from '../../../utils/permissions';
 
 interface ProgramStudents {
   programVersionId?: string;

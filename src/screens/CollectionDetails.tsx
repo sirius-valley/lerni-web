@@ -42,7 +42,7 @@ const CollectionDetails = () => {
     },
   ] = useAddStudentsToCollectionMutation();
 
-  const { data } = useCollectionDetailsQuery(id as string);
+  const { data, isError: collectionError } = useCollectionDetailsQuery(id as string);
   const handleSave = () => {
     if (!id) return;
     addStudents({ id, body: transformedStudentCollectionValues(collection) }).then((res: any) => {
@@ -51,12 +51,21 @@ const CollectionDetails = () => {
       successToast('Colección modificada exitosamente!');
     });
   };
+
   useEffect(() => {
     return () => {
       dispatch(api.util.invalidateTags(['CollectionDetails', 'CollectionStudentsList']));
       dispatch(resetCollectionSlice());
     };
   }, []);
+
+  useEffect(() => {
+    if (collectionError) {
+      errorToast('La colección no existe');
+      navigate('/');
+    }
+  }, [collectionError]);
+
   return (
     <StyledBox css={{ height: '100%' }}>
       <StyledRow

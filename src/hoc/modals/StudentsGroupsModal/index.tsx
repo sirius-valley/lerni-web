@@ -15,13 +15,9 @@ import { ComponentVariantType } from '../../../utils/constants';
 import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
 import { updatePillInfo } from '../../../redux/slices/program.slice';
+import { EntityType } from '../../../utils/permissions';
 
 type StudentsGroupsModalProps = ModalProps;
-
-export enum EntityType {
-  COLLECTION = 'collection',
-  PROGRAM = 'program',
-}
 
 const StudentsGroupsModal = ({ handleOnClose }: StudentsGroupsModalProps) => {
   const dispatch = useLDispatch();

@@ -5,8 +5,14 @@ import { RootContainer, StyledColumn, StyledRow } from '../components/styled/sty
 import AllProgramsChart from '../components/charts/AllProgramsChart';
 import { StudentsRegisteredChart } from '../components/charts/StudentsRegisteredChart';
 import CollectionsList from '../components/home/CollectionsList';
+import { useMeQuery } from '../redux/service/auth.service';
+import { useLSelector } from '../redux/hooks';
 
 const Home = () => {
+  const { data, isError } = useMeQuery();
+  const permissions = useLSelector((state) => state.auth.permissions);
+
+  console.log('permissions', permissions);
   return (
     <RootContainer
       css={{

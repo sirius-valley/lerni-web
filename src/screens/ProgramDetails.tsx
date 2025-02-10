@@ -4,7 +4,7 @@ import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
 import { useTheme } from 'styled-components';
 import ProgramDetailsComponent from '../components/program/ProgramDetails';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useProgramDetailsQuery } from '../redux/service/program.service';
 import { ProgramStudents } from '../components/program/ProgramStudents';
 import ProgramContent from '../components/program/ProgramContent';
@@ -14,23 +14,35 @@ import { useLDispatch } from '../redux/hooks';
 import { resetProgramSlice } from '../redux/slices/program.slice';
 import { ProgramStatistics } from '../components/program/ProgramStatistics';
 import { api } from '../redux/service/api';
+import { errorToast } from '../components/Toasts';
 
 const ProgramDetails = () => {
   const theme = useTheme();
   const { id } = useParams();
   const dispatch = useLDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const { data } = useProgramDetailsQuery(id as string);
+  const { data, isError } = useProgramDetailsQuery(id as string);
+
   const handleSave = () => {
     null;
   };
+
   useEffect(() => {
     return () => {
       dispatch(api.util.invalidateTags(['ProgramDetails']));
       dispatch(resetProgramSlice());
     };
   }, []);
+
+  useEffect(() => {
+    if (isError) {
+      errorToast('El programa no existe');
+      navigate('/');
+    }
+  }, [isError]);
+
   return (
     <StyledBox css={{ height: '100%' }}>
       <StyledRow
@@ -66,7 +78,7 @@ const ProgramDetails = () => {
           <ProgramContent />
           <ProgramQuestionnaire />
           <ProgramTrivia />
-          <ProgramStudents programVersionId={location.state.programVersionId} />
+          <ProgramStudents programVersionId={location.state?.programVersionId} />
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={handleSave}

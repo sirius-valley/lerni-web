@@ -1,4 +1,5 @@
 import { api } from './api';
+import { PermissionsResponseDTO } from './types/auth.types';
 
 export type AuthType = { token?: string; data: { message: string } };
 
@@ -26,7 +27,13 @@ export const authApi = api.injectEndpoints({
         body: { email, password, name, lastname },
       }),
     }),
+    me: builder.query<PermissionsResponseDTO, void>({
+      query: () => ({
+        url: `auth/admin/me`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = authApi;
+export const { useLoginMutation, useRegisterMutation, useMeQuery } = authApi;

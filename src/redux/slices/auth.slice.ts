@@ -1,12 +1,37 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { authApi, AuthType } from '../service/auth.service';
+import { Permissions, PermissionType } from '../service/types/auth.types';
 
 interface InitialStateAuthType {
   token: string;
+  permissions: Permissions;
 }
+
+const permissionsInitialState: Permissions = {
+  collections: {
+    general: [PermissionType.READ],
+    specific: [],
+  },
+  programs: {
+    general: [PermissionType.READ],
+    specific: [],
+  },
+};
 
 const initialState: InitialStateAuthType = {
   token: '',
+  permissions: permissionsInitialState,
+};
+
+const mockedPermissions: Permissions = {
+  collections: {
+    general: [PermissionType.READ],
+    specific: [],
+  },
+  programs: {
+    general: [PermissionType.READ, PermissionType.CREATE],
+    specific: [],
+  },
 };
 
 export const authSlice = createSlice({
@@ -40,6 +65,9 @@ export const authSlice = createSlice({
         localStorage.setItem('token', token);
       },
     );
+    builder.addMatcher(authApi.endpoints.me.matchFulfilled, (state, action) => {
+      state.permissions = mockedPermissions;
+    });
   },
 });
 
