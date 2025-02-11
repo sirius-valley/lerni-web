@@ -237,7 +237,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
         </StyledRow>
         <AutocompleteComponent
           label={'Profesor'}
-          value={professorsList?.find((prof) => prof.id === professor)}
+          value={professorsList?.find((prof) => prof.id === professor) ?? null}
           placeholder={'Profesor del programa'}
           content={professorsList ?? []}
           multiple={false}

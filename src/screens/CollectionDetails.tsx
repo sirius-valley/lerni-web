@@ -21,6 +21,8 @@ import {
   transformedStudentCollectionValues,
 } from '../utils/transformBody';
 import { errorToast, successToast } from '../components/Toasts';
+import { useMeQuery } from '../redux/service/auth.service';
+import { usePermissions } from '../utils/permissions';
 
 const CollectionDetails = () => {
   const theme = useTheme();
@@ -30,6 +32,10 @@ const CollectionDetails = () => {
   const navigate = useNavigate();
 
   const collection = useLSelector((state) => state.collection);
+  const { data: meData, isError: meError } = useMeQuery();
+
+  const { canOnlyReadCollection } = usePermissions();
+  const canOnlyRead = canOnlyReadCollection();
 
   const [updateCollection, { isError, error, isSuccess }] = useUpdateCollectionMutation();
   const [
@@ -99,21 +105,23 @@ const CollectionDetails = () => {
           <CollectionDetailsComponent />
           <CollectionPrograms />
           <CollectionStudents collectionId={id} />
-          <Button
-            variant={ComponentVariantType.PRIMARY}
-            onClick={handleSave}
-            labelSize={'body3'}
-            css={{
-              marginTop: '8px',
-              width: 'auto',
-              height: '30px',
-              padding: '8px 16px 8px 16px',
-              fontFamily: 'Roboto-Bold',
-              cursor: 'pointer',
-            }}
-          >
-            Guardar
-          </Button>
+          {!canOnlyRead && (
+            <Button
+              variant={ComponentVariantType.PRIMARY}
+              onClick={handleSave}
+              labelSize={'body3'}
+              css={{
+                marginTop: '8px',
+                width: 'auto',
+                height: '30px',
+                padding: '8px 16px 8px 16px',
+                fontFamily: 'Roboto-Bold',
+                cursor: 'pointer',
+              }}
+            >
+              Guardar
+            </Button>
+          )}
         </StyledColumn>
       </StyledColumn>
     </StyledBox>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormControl, Autocomplete } from '@mui/material';
 import { StyledColumn, StyledRow, StyledText } from '../styled/styles';
 import { DownArrowIcon } from '../../assets/icons/DownArrowIcon';
@@ -13,7 +13,7 @@ export interface AutocompleteProps {
   label?: string;
   required?: boolean;
   placeholder?: string;
-  value: Option | Option[] | null | undefined;
+  value: Option | Option[] | null;
   multiple?: boolean;
   onChange?: (value: string) => void;
   setMultipleValues?: (values: Option[]) => void;
@@ -38,6 +38,10 @@ export const AutocompleteComponent = ({
 }: AutocompleteProps) => {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar si el menú está abierto
 
+  useEffect(() => {
+    console.log('autocomplete', value);
+  }, [value]);
+
   const handleSelect = (value: string | Option | (string | Option)[] | null) => {
     console.log(value);
     if (!value) {
@@ -52,7 +56,7 @@ export const AutocompleteComponent = ({
       onChange && onChange(options[options.length - 1]?.id);
     } else if (!Array.isArray(value)) {
       const option = handleValue(value);
-      onChange && onChange(option ? option.id : '');
+      onChange && onChange(option ? option.id : `new-${value}-${Date.now()}`);
     }
   };
 
@@ -65,7 +69,7 @@ export const AutocompleteComponent = ({
     if (typeof value === 'string') {
       const option = content.find((opt) => opt.text === value);
       if (option) return option;
-      return { id: '', text: value };
+      return { id: `new-${value}-${Date.now()}`, text: value };
     }
     return value;
   };

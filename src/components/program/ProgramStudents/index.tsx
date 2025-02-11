@@ -12,7 +12,7 @@ import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { StudentDTO } from '../../../redux/service/types/students.response';
 import { removeStudent, updatePillInfo } from '../../../redux/slices/program.slice';
 import { useStudentsListQuery } from '../../../redux/service/program.service';
-import { EntityType } from '../../../utils/permissions';
+import { EntityType, usePermissions } from '../../../utils/permissions';
 
 interface ProgramStudents {
   programVersionId?: string;
@@ -21,6 +21,9 @@ interface ProgramStudents {
 export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
   const theme = useTheme();
   const dispatch = useLDispatch();
+
+  const { canAddStudentToProgram } = usePermissions();
+  const canAdd = canAddStudentToProgram();
 
   const groups = useGetGroupsQuery();
 
@@ -73,7 +76,7 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
 
   return (
     <Card
-      padding="18px"
+      padding="24px"
       height="auto"
       headerComponent={
         <StyledRow
@@ -87,22 +90,24 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
           <StyledText variant="h2" style={{ marginBottom: '6px' }}>
             {'Estudiantes'}
           </StyledText>
-          <StyledBox style={{ marginBottom: '6px' }}>
-            <Button
-              variant={ComponentVariantType.PRIMARY}
-              onClick={handleShowModal}
-              labelSize={ButtonLabelSize.BODY3}
-              css={{
-                width: 'auto',
-                height: '30px',
-                padding: '8px 16px 8px 16px',
-                fontFamily: 'Roboto-Bold',
-                cursor: 'pointer',
-              }}
-            >
-              {'Cargar estudiantes'}
-            </Button>
-          </StyledBox>
+          {canAdd && (
+            <StyledBox style={{ marginBottom: '6px' }}>
+              <Button
+                variant={ComponentVariantType.PRIMARY}
+                onClick={handleShowModal}
+                labelSize={ButtonLabelSize.BODY3}
+                css={{
+                  width: 'auto',
+                  height: '30px',
+                  padding: '8px 16px 8px 16px',
+                  fontFamily: 'Roboto-Bold',
+                  cursor: 'pointer',
+                }}
+              >
+                {'Cargar estudiantes'}
+              </Button>
+            </StyledBox>
+          )}
         </StyledRow>
       }
     >
@@ -112,6 +117,7 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
           groups={groups.data ?? []}
           programVersionId={programVersionId ?? ''}
           onMenuClick={handleMenuClick}
+          entityType={EntityType.PROGRAM}
         />
       ) : (
         <StyledBox

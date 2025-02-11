@@ -15,6 +15,8 @@ import { resetProgramSlice } from '../redux/slices/program.slice';
 import { ProgramStatistics } from '../components/program/ProgramStatistics';
 import { api } from '../redux/service/api';
 import { errorToast } from '../components/Toasts';
+import { useMeQuery } from '../redux/service/auth.service';
+import { usePermissions } from '../utils/permissions';
 
 const ProgramDetails = () => {
   const theme = useTheme();
@@ -24,6 +26,10 @@ const ProgramDetails = () => {
   const navigate = useNavigate();
 
   const { data, isError } = useProgramDetailsQuery(id as string);
+  const { data: meData, isError: meError } = useMeQuery();
+
+  const { canOnlyReadProgram } = usePermissions();
+  const canOnlyRead = canOnlyReadProgram();
 
   const handleSave = () => {
     null;
@@ -79,21 +85,23 @@ const ProgramDetails = () => {
           <ProgramQuestionnaire />
           <ProgramTrivia />
           <ProgramStudents programVersionId={location.state?.programVersionId} />
-          <Button
-            variant={ComponentVariantType.PRIMARY}
-            onClick={handleSave}
-            labelSize={'body3'}
-            css={{
-              marginTop: '8px',
-              width: 'auto',
-              height: '30px',
-              padding: '8px 16px 8px 16px',
-              fontFamily: 'Roboto-Bold',
-              cursor: 'pointer',
-            }}
-          >
-            Guardar
-          </Button>
+          {!canOnlyRead && (
+            <Button
+              variant={ComponentVariantType.PRIMARY}
+              onClick={handleSave}
+              labelSize={'body3'}
+              css={{
+                marginTop: '8px',
+                width: 'auto',
+                height: '30px',
+                padding: '8px 16px 8px 16px',
+                fontFamily: 'Roboto-Bold',
+                cursor: 'pointer',
+              }}
+            >
+              Guardar
+            </Button>
+          )}
         </StyledColumn>
       </StyledColumn>
     </StyledBox>

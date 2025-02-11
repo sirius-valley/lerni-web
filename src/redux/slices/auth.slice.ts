@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { authApi, AuthType } from '../service/auth.service';
-import { Permissions, PermissionType } from '../service/types/auth.types';
+import { Permissions, PermissionType, SpecificAction } from '../service/types/auth.types';
 
 interface InitialStateAuthType {
   token: string;
@@ -13,7 +13,7 @@ const permissionsInitialState: Permissions = {
     specific: [],
   },
   programs: {
-    general: [PermissionType.READ],
+    general: [],
     specific: [],
   },
 };
@@ -23,15 +23,73 @@ const initialState: InitialStateAuthType = {
   permissions: permissionsInitialState,
 };
 
-const mockedPermissions: Permissions = {
-  collections: {
-    general: [PermissionType.READ],
-    specific: [],
-  },
-  programs: {
-    general: [PermissionType.READ, PermissionType.CREATE],
-    specific: [],
-  },
+const mockedPermissions = (
+  type: 'fullAccess' | 'readOnly' | 'readOnlyCollections',
+): Permissions => {
+  switch (type) {
+    case 'fullAccess':
+      return {
+        collections: {
+          general: [
+            PermissionType.READ,
+            PermissionType.CREATE,
+            PermissionType.UPDATE,
+            PermissionType.DELETE,
+          ],
+          specific: [
+            SpecificAction.ADD_STUDENT,
+            SpecificAction.EDIT_STUDENTS_LIST,
+            SpecificAction.EDIT_CONTENT,
+          ],
+        },
+        programs: {
+          general: [
+            PermissionType.READ,
+            PermissionType.CREATE,
+            PermissionType.UPDATE,
+            PermissionType.DELETE,
+          ],
+          specific: [
+            SpecificAction.ADD_STUDENT,
+            SpecificAction.EDIT_STUDENTS_LIST,
+            SpecificAction.EDIT_CONTENT,
+          ],
+        },
+      };
+    case 'readOnly':
+      return {
+        collections: {
+          general: [PermissionType.READ],
+          specific: [],
+        },
+        programs: {
+          general: [PermissionType.READ],
+          specific: [],
+        },
+      };
+    case 'readOnlyCollections':
+      return {
+        collections: {
+          general: [PermissionType.READ],
+          specific: [],
+        },
+        programs: {
+          general: [],
+          specific: [],
+        },
+      };
+    default:
+      return {
+        collections: {
+          general: [PermissionType.READ],
+          specific: [],
+        },
+        programs: {
+          general: [PermissionType.READ],
+          specific: [],
+        },
+      };
+  }
 };
 
 export const authSlice = createSlice({
@@ -65,8 +123,8 @@ export const authSlice = createSlice({
         localStorage.setItem('token', token);
       },
     );
-    builder.addMatcher(authApi.endpoints.me.matchFulfilled, (state, action) => {
-      state.permissions = mockedPermissions;
+    builder.addMatcher(authApi.endpoints.me.matchRejected, (state, action) => {
+      state.permissions = mockedPermissions('fullAccess');
     });
   },
 });

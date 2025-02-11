@@ -10,6 +10,7 @@ import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
 import { removePill } from '../../../redux/slices/program.slice';
 import PillRow from './PillRow';
+import { usePermissions } from '../../../utils/permissions';
 
 const ProgramContent = () => {
   const theme = useTheme();
@@ -17,6 +18,9 @@ const ProgramContent = () => {
   const pills = useLSelector((state) => state.program.pills);
   const emptyPills = pills.length === 0;
   const edit = useLSelector((state) => state.program.edit);
+
+  const { canUpdateProgram } = usePermissions();
+  const canUpdate = canUpdateProgram();
 
   const handleShowModal = () => {
     dispatch(setModalOpen({ modalType: 'PILL_CREATE' }));
@@ -42,20 +46,22 @@ const ProgramContent = () => {
       <StyledText variant="h2" style={{ marginBottom: '6px' }}>
         Contenido
       </StyledText>
-      <StyledBox style={{ marginBottom: '6px' }}>
-        <Button
-          variant={ComponentVariantType.PRIMARY}
-          onClick={handleShowModal}
-          labelSize={ButtonLabelSize.BODY3}
-          css={{
-            width: '114px',
-            height: '30px',
-            cursor: 'pointer',
-          }}
-        >
-          Agregar pildora
-        </Button>
-      </StyledBox>
+      {canUpdate && (
+        <StyledBox style={{ marginBottom: '6px' }}>
+          <Button
+            variant={ComponentVariantType.PRIMARY}
+            onClick={handleShowModal}
+            labelSize={ButtonLabelSize.BODY3}
+            css={{
+              width: '114px',
+              height: '30px',
+              cursor: 'pointer',
+            }}
+          >
+            Agregar pildora
+          </Button>
+        </StyledBox>
+      )}
     </StyledRow>
   );
 

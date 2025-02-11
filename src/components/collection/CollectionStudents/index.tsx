@@ -13,7 +13,7 @@ import { StudentDTO } from '../../../redux/service/types/students.response';
 import { useCollectionStudentsListQuery } from '../../../redux/service/collection.service';
 import { removeStudent, updateCollectionInfo } from '../../../redux/slices/collection.slice';
 import { useNavigate } from 'react-router-dom';
-import { EntityType } from '../../../utils/permissions';
+import { EntityType, usePermissions } from '../../../utils/permissions';
 
 const mockedStudents: StudentDTO[] = [
   ...Array.from({ length: 3000 }, () => ({
@@ -88,6 +88,9 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
   const collection = useLSelector((state) => state.collection);
   const { edit } = collection;
 
+  const { canAddStudentToCollection } = usePermissions();
+  const canAdd = canAddStudentToCollection();
+
   const groups = useGetGroupsQuery();
 
   const { data: fetchedStudents, isLoading } = collectionId
@@ -147,22 +150,24 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
           <StyledText variant="h2" style={{ marginBottom: '6px' }}>
             {'Estudiantes'}
           </StyledText>
-          <StyledBox style={{ marginBottom: '6px' }}>
-            <Button
-              variant={ComponentVariantType.PRIMARY}
-              onClick={handleShowModal}
-              labelSize={ButtonLabelSize.BODY3}
-              css={{
-                width: 'auto',
-                height: '30px',
-                padding: '8px 16px 8px 16px',
-                fontFamily: 'Roboto-Bold',
-                cursor: 'pointer',
-              }}
-            >
-              {'Cargar estudiantes'}
-            </Button>
-          </StyledBox>
+          {canAdd && (
+            <StyledBox style={{ marginBottom: '6px' }}>
+              <Button
+                variant={ComponentVariantType.PRIMARY}
+                onClick={handleShowModal}
+                labelSize={ButtonLabelSize.BODY3}
+                css={{
+                  width: 'auto',
+                  height: '30px',
+                  padding: '8px 16px 8px 16px',
+                  fontFamily: 'Roboto-Bold',
+                  cursor: 'pointer',
+                }}
+              >
+                {'Cargar estudiantes'}
+              </Button>
+            </StyledBox>
+          )}
         </StyledRow>
       }
     >
@@ -172,6 +177,7 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
           groups={groups.data ?? []}
           programVersionId={collectionId ?? ''}
           onMenuClick={handleMenuClick}
+          entityType={EntityType.COLLECTION}
         />
       ) : (
         <StyledBox

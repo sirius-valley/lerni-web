@@ -3,11 +3,15 @@ import Card from '../../Card';
 import React from 'react';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
+import { usePermissions } from '../../../utils/permissions';
 
 const CollectionDetails = () => {
   const collection = useLSelector((state) => state.collection);
   const { edit } = collection;
   const dispatch = useLDispatch();
+
+  const { canUpdateCollection } = usePermissions();
+  const canUpdate = canUpdateCollection() || edit;
 
   const handleChange = (name: string, value: string) => {
     dispatch(updateCollectionInfo({ ...collection, [name]: value }));
@@ -21,7 +25,7 @@ const CollectionDetails = () => {
         required
         value={collection.title}
         onChange={(value) => handleChange('title', value)}
-        disabled={!edit}
+        disabled={!canUpdate}
       ></TextInput>
     </Card>
   );

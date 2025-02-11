@@ -27,11 +27,13 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { Tooltip } from 'react-tooltip';
 import TableMenu from './Menu';
 import Table from '../../../Table';
+import { EntityType, usePermissions } from '../../../../utils/permissions';
 
 interface StudentsTableProps {
   students: StudentDTO[];
   groups: GroupDTO[];
   programVersionId: string;
+  entityType: EntityType;
   onMenuClick: (action: 'view' | 'delete' | 'edit', student: StudentDTO) => void;
 }
 
@@ -39,9 +41,16 @@ export const StudentsTable = ({
   students,
   groups,
   programVersionId,
+  entityType,
   onMenuClick,
 }: StudentsTableProps) => {
   const theme = useTheme();
+
+  const { canEditStudentsListFromCollection, canEditStudentsListFromProgram } = usePermissions();
+  const canEdit =
+    entityType === EntityType.COLLECTION
+      ? canEditStudentsListFromCollection()
+      : canEditStudentsListFromProgram();
 
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<StudentDTO | null>(null);
@@ -200,6 +209,7 @@ export const StudentsTable = ({
         onClick={(action) => handleMenuClick(action, selectedStudent)}
         onClose={handleMenuClose}
         menuAnchor={menuAnchor}
+        canEdit={canEdit}
       />
     </>
   );

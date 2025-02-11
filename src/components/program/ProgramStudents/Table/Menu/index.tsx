@@ -5,9 +5,10 @@ interface TableMenuProps {
   onClick: (action: 'view' | 'delete' | 'edit') => void;
   onClose: () => void;
   menuAnchor: HTMLElement | null;
+  canEdit?: boolean;
 }
 
-const TableMenu = ({ onClick, onClose, menuAnchor }: TableMenuProps) => {
+const TableMenu = ({ onClick, onClose, menuAnchor, canEdit = false }: TableMenuProps) => {
   return (
     <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={onClose}>
       <MenuItem
@@ -18,22 +19,26 @@ const TableMenu = ({ onClick, onClose, menuAnchor }: TableMenuProps) => {
       >
         Ver
       </MenuItem>
-      <MenuItem
-        onClick={() => {
-          onClick('edit');
-          onClose();
-        }}
-      >
-        Editar grupos
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          onClick('delete');
-          onClose();
-        }}
-      >
-        Eliminar
-      </MenuItem>
+      {canEdit && (
+        <>
+          <MenuItem
+            onClick={() => {
+              onClick('edit');
+              onClose();
+            }}
+          >
+            Editar grupos
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              onClick('delete');
+              onClose();
+            }}
+          >
+            Eliminar
+          </MenuItem>
+        </>
+      )}
     </Menu>
   );
 };

@@ -7,12 +7,15 @@ import { StudentsRegisteredChart } from '../components/charts/StudentsRegistered
 import CollectionsList from '../components/home/CollectionsList';
 import { useMeQuery } from '../redux/service/auth.service';
 import { useLSelector } from '../redux/hooks';
+import { usePermissions } from '../utils/permissions';
 
 const Home = () => {
   const { data, isError } = useMeQuery();
-  const permissions = useLSelector((state) => state.auth.permissions);
 
-  console.log('permissions', permissions);
+  const { canReadCollection, canReadProgram } = usePermissions();
+  const viewPrograms = canReadProgram();
+  const viewCollections = canReadCollection();
+
   return (
     <RootContainer
       css={{
@@ -33,8 +36,8 @@ const Home = () => {
             gap: '12px',
           }}
         >
-          <ProgramsList />
-          <CollectionsList />
+          {viewPrograms && <ProgramsList />}
+          {viewCollections && <CollectionsList />}
         </StyledColumn>
         <StyledColumn
           css={{

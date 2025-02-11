@@ -11,7 +11,7 @@ export enum PermissionType {
 
 export enum SpecificAction {
   ADD_STUDENT = 'add_student',
-  REMOVE_STUDENT = 'remove_student',
+  EDIT_STUDENTS_LIST = 'edit_students_list',
   EDIT_CONTENT = 'edit_content',
 }
 

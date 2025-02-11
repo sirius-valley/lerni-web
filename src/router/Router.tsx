@@ -15,9 +15,17 @@ import ProgramDetails from '../screens/ProgramDetails';
 import CreateCollection from '../screens/CreateCollection';
 import CollectionDetails from '../screens/CollectionDetails';
 import ProfileDetails from '../screens/ProfileDetails';
+import { usePermissions } from '../utils/permissions';
 
 const Router = () => {
   const dispatch = useLDispatch();
+
+  const { canCreateCollection, canCreateProgram, canReadProgram, canReadCollection } =
+    usePermissions();
+  const viewPrograms = canReadProgram();
+  const viewCollections = canReadCollection();
+  const createProgram = canCreateProgram();
+  const createCollection = canCreateCollection();
 
   useEffect(() => {
     const token = getTokenFromLocalStorage();
@@ -29,10 +37,14 @@ const Router = () => {
       <Route element={<ProtectedRoute />}>
         <Route element={<NavigationLayout />}>
           <Route index element={<Home />} />
-          <Route path="/create/program" element={<CreateProgram />} />
-          <Route path="/create/collection" element={<CreateCollection />} />
-          <Route path="/details/program/:id" element={<ProgramDetails />} />
-          <Route path="/details/collection/:id" element={<CollectionDetails />} />
+          {createProgram && <Route path="/create/program" element={<CreateProgram />} />}
+          {createCollection && <Route path="/create/collection" element={<CreateCollection />} />}
+          {(viewPrograms || viewCollections) && (
+            <Route path="/details/program/:id" element={<ProgramDetails />} />
+          )}
+          {viewCollections && (
+            <Route path="/details/collection/:id" element={<CollectionDetails />} />
+          )}
           <Route path="/profile/:id" element={<ProfileDetails />} />
         </Route>
       </Route>

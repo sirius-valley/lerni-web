@@ -6,6 +6,7 @@ import { transformFirstLetterToLowerCase } from '../../../../utils/utils';
 import { useTheme } from 'styled-components';
 import Table from '../../../Table';
 import { useGetProgramAttendanceQuery } from '../../../../redux/service/program.service';
+import { useNavigate } from 'react-router-dom';
 
 interface ProgramsTableProps {
   programs: ProgramListItem[];
@@ -20,6 +21,7 @@ interface ProgramItem {
 
 const ProgramsTable = ({ programs }: ProgramsTableProps) => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const attendanceData = programs.map((program) => {
     const { data } = useGetProgramAttendanceQuery(program.programVersionId, {
@@ -32,6 +34,10 @@ const ProgramsTable = ({ programs }: ProgramsTableProps) => {
       studentsNotStarted: data?.notStarted ?? 0,
     };
   });
+
+  const redirectToProgram = (program: ProgramItem) => {
+    navigate(`/details/program/${program.program.programVersionId}`);
+  };
 
   const columns: ColumnDef<ProgramItem, any>[] = useMemo(
     () => [
@@ -110,7 +116,14 @@ const ProgramsTable = ({ programs }: ProgramsTableProps) => {
     [],
   );
 
-  return <Table data={attendanceData ?? []} columns={columns} entityName={'programa'} />;
+  return (
+    <Table
+      data={attendanceData ?? []}
+      columns={columns}
+      entityName={'programa'}
+      onRowClick={redirectToProgram}
+    />
+  );
 };
 
 export default ProgramsTable;
