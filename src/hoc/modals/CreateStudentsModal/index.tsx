@@ -93,8 +93,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
             const columns = line.split(/[;,]/);
             if (columns.length < 1) return null;
 
-            //TODO creeria  que si aca pongo el toLoweerCase ya no necesito ponerlo en todos lados
-            const email = columns[0].trim();
+            const email = columns[0].trim().toLowerCase();
             const groups = Array.from(
               new Set(
                 columns
@@ -114,10 +113,10 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
         setUploadedStudents(
           mails.map((mail: EmailObject) => ({
             email: mail.email,
-            groups: mail.groups.map((group) => group.toLowerCase()),
+            groups: mail.groups.map((group) => group),
           })),
         );
-        verifyStudents(mails.map((mail: EmailObject) => mail.email.toLowerCase()));
+        verifyStudents(mails.map((mail: EmailObject) => mail.email));
       };
 
       reader.readAsText(value);
@@ -154,20 +153,12 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
       return;
     }
 
-    const normalizedStudents = normalizeEmails(studentsData);
-    const newStudents = getNewStudents(normalizedStudents, currentStudents);
+    const newStudents = getNewStudents(studentsData, currentStudents);
     const mergedStudents = mergeStudentsWithGroups(newStudents, uploadedStudents);
 
     dispatch(addStudents(mergedStudents));
     successToast('Estudiantes cargados con exito!');
     handleOnClose();
-  };
-
-  const normalizeEmails = (students: StudentDTO[]) => {
-    return students.map((student) => ({
-      ...student,
-      email: student.email.toLowerCase(),
-    }));
   };
 
   const getNewStudents = (students: StudentDTO[], currentStudents: StudentDTO[]) => {
