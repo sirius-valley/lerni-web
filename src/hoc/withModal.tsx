@@ -11,6 +11,7 @@ import ReadPillModal from './modals/ReadPillModal';
 import AddStudentModal from './modals/AddStudentModal';
 import StudentsStatusModal from './modals/StudentsStatusModal';
 import StudentsGroupsModal from './modals/StudentsGroupsModal';
+import { EntityType } from '../utils/permissions';
 
 export const withModal = (Component: FunctionComponent) => (props: any) => {
   const type = useLSelector((state) => state.utils.modalType);
@@ -32,9 +33,13 @@ export const withModal = (Component: FunctionComponent) => (props: any) => {
       case 'TRIVIA_CREATE':
         return <CreateTriviaModal handleOnClose={handleOnClose} />;
       case 'PROGRAM_STUDENTS_CREATE':
-        return <CreateStudentsModal handleOnClose={handleOnClose} entityType="PROGRAM" />;
+        return (
+          <CreateStudentsModal handleOnClose={handleOnClose} entityType={EntityType.PROGRAM} />
+        );
       case 'COLLECTION_STUDENTS_CREATE':
-        return <CreateStudentsModal handleOnClose={handleOnClose} entityType="COLLECTION" />;
+        return (
+          <CreateStudentsModal handleOnClose={handleOnClose} entityType={EntityType.COLLECTION} />
+        );
       case 'PROFESSOR_CREATE':
         return <CreateProfessorModal handleOnClose={handleOnClose} />;
       case 'ADD_STUDENT':

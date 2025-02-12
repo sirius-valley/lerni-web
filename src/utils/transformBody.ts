@@ -4,6 +4,7 @@ import {
   CreateCollectionRequestDto,
   StudentCollectionRequestDto,
 } from '../redux/service/types/collection.types';
+import { StudentDTO } from '../redux/service/types/students.response';
 
 export const transformedValues = (values: CreateProgramState) => {
   const amountOfQuestions = values?.questionnaire?.questionnaire.elements.reduce(
@@ -62,33 +63,55 @@ export const transformedValues = (values: CreateProgramState) => {
       questionsCount: 12,
       order: 0,
     },
-    students: values.students.map((student) => student.email),
+    students: values.studentsState.current.map((student) => student.email),
     hoursToComplete: minutosTotales,
     pointsReward: amountOfQuestions * 5,
   };
 };
 
-export const transformedCollectionValues = (
+export const transformCreateCollectionRequest = (
   values: CreateCollectionState,
 ): CreateCollectionRequestDto => {
   return {
     title: values.title,
     programs: values.programs.map((program) => program.programVersionId),
-    students: values.students.map((student) => ({
+    students: values.studentsState.current.map((student) => ({
       email: student.email,
       group: student.group.map((group) => group.name),
     })),
   };
 };
 
-export const transformedStudentCollectionValues = (
+export const transformAddStudentsRequest = (
   values: CreateCollectionState,
+  students: StudentDTO[],
 ): StudentCollectionRequestDto => {
   return {
     programs: values.programs.map((program) => program.programVersionId),
-    students: values.students.map((student) => ({
+    students: students.map((student) => ({
       email: student.email,
       group: student.group.map((group) => group.name),
     })),
   };
+};
+
+export const transformDeleteStudentsRequest = (students: StudentDTO[]) => {
+  return students.map((student) => student.email);
+};
+
+export const getUpdatedAndDeletedStudents = (initial: StudentDTO[], current: StudentDTO[]) => {
+  // Encontrar eliminados (estaban en initial pero no en current)
+  const deleted = initial.filter(
+    (original) => !current.some((currentStudent) => currentStudent.email === original.email),
+  );
+
+  // Encontrar actualizados (SOLO si cambia `group`)
+  const updated = current.filter((currentStudent) => {
+    const originalStudent = initial.find((original) => original.email === currentStudent.email);
+    return originalStudent
+      ? JSON.stringify(originalStudent.group) !== JSON.stringify(currentStudent.group)
+      : true;
+  });
+
+  return { updated, deleted };
 };

@@ -70,6 +70,13 @@ export const collectionApi = api.injectEndpoints({
         body: body,
       }),
     }),
+    deleteStudentsFromCollection: builder.mutation<any, { id: string; emails: string[] }>({
+      query: ({ id, emails }) => ({
+        url: `colections/students/${id}`,
+        method: 'DELETE',
+        body: emails,
+      }),
+    }),
   }),
 });
 
@@ -81,4 +88,5 @@ export const {
   useCollectionStudentsListQuery,
   useVerifyCollectionStudentsMutation,
   useAddStudentsToCollectionMutation,
+  useDeleteStudentsFromCollectionMutation,
 } = collectionApi;

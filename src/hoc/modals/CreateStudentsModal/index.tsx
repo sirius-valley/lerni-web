@@ -7,17 +7,22 @@ import Button from '../../../components/styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
-import { updatePillInfo } from '../../../redux/slices/program.slice';
 import { useVerifyStudentsMutation } from '../../../redux/service/program.service';
 import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
-import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
+import {
+  addStudents as addStudentsCollection,
+  updateCollectionInfo,
+} from '../../../redux/slices/collection.slice';
+import { addStudents as addStudentsProgram } from '../../../redux/slices/program.slice';
+
 import { StudentDTO } from '../../../redux/service/types/students.response';
 import { useVerifyCollectionStudentsMutation } from '../../../redux/service/collection.service';
+import { EntityType } from '../../../utils/permissions';
 
 interface CreateStudentsModal extends ModalProps {
   openModal?: boolean;
-  entityType?: 'PROGRAM' | 'COLLECTION';
+  entityType?: EntityType;
 }
 interface EmailObject {
   email: string;
@@ -49,7 +54,14 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
   });
   const [errors, setErrors] = useState(false);
 
-  const students = useLSelector((state) => state.collection.students);
+  const currentStudents =
+    entityType === EntityType.COLLECTION
+      ? useLSelector((state) => state.collection.studentsState.current)
+      : useLSelector((state) => state.program.studentsState.current);
+
+  const addStudents =
+    entityType === EntityType.COLLECTION ? addStudentsCollection : addStudentsProgram;
+
   const [uploadedStudents, setUploadedStudents] = useState<EmailObject[]>([]);
 
   const dispatch = useLDispatch();
@@ -72,7 +84,6 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
 
       reader.onload = (event: any) => {
         const result = event.target.result;
-        console.log('result', result);
         const lines = result.split(/\r?\n/);
 
         const mails: EmailObject[] = lines
@@ -81,8 +92,8 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
 
             const columns = line.split(/[;,]/);
             if (columns.length < 1) return null;
-            console.log('columns', columns);
 
+            //TODO creeria  que si aca pongo el toLoweerCase ya no necesito ponerlo en todos lados
             const email = columns[0].trim();
             const groups = Array.from(
               new Set(
@@ -92,7 +103,6 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
                   .filter((col) => col !== ''),
               ),
             );
-            console.log(groups);
 
             return { email, groups };
           })
@@ -138,34 +148,31 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
   };
 
   const handleSavePill = () => {
-    if (studentsSuccess) {
-      if (studentsData && uploadedStudents) {
-        if (entityType === 'COLLECTION') {
-          const studentDataLowercase = studentsData.map((student) => ({
-            ...student,
-            email: student.email.toLowerCase(),
-          }));
-          const existingEmails = new Set(students.map((student) => student.email));
-          const newStudents = transformStudentData(studentDataLowercase).filter(
-            (student) => !existingEmails.has(student.email),
-          );
-          const mergedStudents = mergeStudentsWithGroups(newStudents, uploadedStudents);
-          console.log('merged', mergedStudents);
-
-          dispatch(
-            updateCollectionInfo({
-              students: [...students, ...mergedStudents],
-            }),
-          );
-        } else {
-          dispatch(updatePillInfo({ students: studentsData }));
-        }
-        successToast('Estudiantes cargados con exito!');
-        handleOnClose();
-      } else {
-        errorToast('Los estudiantes no forman parte de LERNI');
-      }
+    if (!studentsSuccess) return;
+    if (!studentsData || !uploadedStudents) {
+      errorToast('Los estudiantes no forman parte de LERNI');
+      return;
     }
+
+    const normalizedStudents = normalizeEmails(studentsData);
+    const newStudents = getNewStudents(normalizedStudents, currentStudents);
+    const mergedStudents = mergeStudentsWithGroups(newStudents, uploadedStudents);
+
+    dispatch(addStudents(mergedStudents));
+    successToast('Estudiantes cargados con exito!');
+    handleOnClose();
+  };
+
+  const normalizeEmails = (students: StudentDTO[]) => {
+    return students.map((student) => ({
+      ...student,
+      email: student.email.toLowerCase(),
+    }));
+  };
+
+  const getNewStudents = (students: StudentDTO[], currentStudents: StudentDTO[]) => {
+    const existingEmails = new Set(currentStudents.map((student) => student.email));
+    return transformStudentData(students).filter((student) => !existingEmails.has(student.email));
   };
 
   const mergeStudentsWithGroups = (
@@ -182,6 +189,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
       return {
         ...student,
         group: [
+          //TODO aca tengo que filtrar los que se repiten
           ...(student.group || []),
           ...(uploadedMap.get(student.email)?.map((groupName) => ({ name: groupName })) || []),
         ],

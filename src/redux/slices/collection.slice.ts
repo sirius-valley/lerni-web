@@ -7,14 +7,20 @@ import { StudentDTO } from '../service/types/students.response';
 export interface CreateCollectionState {
   title: string;
   programs: ProgramListItem[];
-  students: StudentDTO[];
+  studentsState: {
+    initial: StudentDTO[];
+    current: StudentDTO[];
+  };
   edit: boolean;
 }
 
 const initialState: CreateCollectionState = {
   title: '',
   programs: [],
-  students: [],
+  studentsState: {
+    initial: [],
+    current: [],
+  },
   edit: true,
 };
 
@@ -23,14 +29,30 @@ export const collectionSlice = createSlice({
   initialState,
   reducers: {
     updateCollectionInfo: (state, action) => {
-      console.log('modifying state', action.payload);
       return {
         ...state,
         ...action.payload,
       };
     },
+    updateCollectionStudentsState: (state, action) => {
+      state.studentsState = {
+        ...state.studentsState,
+        ...action.payload,
+      };
+    },
     removeStudent: (state, action: PayloadAction<{ email: string }>) => {
-      state.students = state.students.filter((user) => user.email !== action.payload.email);
+      state.studentsState.current = state.studentsState.current.filter(
+        (user) => user.email !== action.payload.email,
+      );
+    },
+    addStudents: (state, action: PayloadAction<StudentDTO[]>) => {
+      state.studentsState.current = [...action.payload, ...state.studentsState.current];
+    },
+    setStudents: (state, action: PayloadAction<StudentDTO[]>) => {
+      state.studentsState = {
+        current: action.payload,
+        initial: action.payload,
+      };
     },
     resetCollectionSlice: (state, action: PayloadAction<void>) => {
       return initialState;
@@ -57,7 +79,13 @@ export const collectionSlice = createSlice({
 
 const collection: any = (state: RootState) => state.collection;
 
-export const { updateCollectionInfo, removeStudent, resetCollectionSlice } =
-  collectionSlice.actions;
+export const {
+  updateCollectionInfo,
+  updateCollectionStudentsState,
+  removeStudent,
+  addStudents,
+  setStudents,
+  resetCollectionSlice,
+} = collectionSlice.actions;
 
 export default collectionSlice.reducer;

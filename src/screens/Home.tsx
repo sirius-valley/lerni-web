@@ -6,7 +6,6 @@ import AllProgramsChart from '../components/charts/AllProgramsChart';
 import { StudentsRegisteredChart } from '../components/charts/StudentsRegisteredChart';
 import CollectionsList from '../components/home/CollectionsList';
 import { useMeQuery } from '../redux/service/auth.service';
-import { useLSelector } from '../redux/hooks';
 import { usePermissions } from '../utils/permissions';
 
 const Home = () => {

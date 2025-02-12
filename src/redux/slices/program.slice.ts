@@ -38,7 +38,10 @@ export interface CreateProgramState {
     questionnaire: Questionnaire;
   };
   trivia?: any;
-  students: StudentDTO[];
+  studentsState: {
+    initial: StudentDTO[];
+    current: StudentDTO[];
+  };
   hoursToComplete: number;
   pointsReward: number;
   startDate: string;
@@ -481,7 +484,10 @@ const initialState: CreateProgramState = {
   //     },
   //   ],
   // },
-  students: [],
+  studentsState: {
+    initial: [],
+    current: [],
+  },
   hoursToComplete: 0,
   pointsReward: 0,
   startDate: dayjs().toISOString(),
@@ -512,8 +518,25 @@ export const programSlice = createSlice({
     removeTrivia: (state, action: PayloadAction<void>) => {
       state.trivia = undefined;
     },
+    updateProgramStudentsState: (state, action) => {
+      state.studentsState = {
+        ...state.studentsState,
+        ...action.payload,
+      };
+    },
     removeStudent: (state, action: PayloadAction<{ email: string }>) => {
-      state.students = state.students.filter((user) => user.email !== action.payload.email);
+      state.studentsState.current = state.studentsState.current.filter(
+        (user) => user.email !== action.payload.email,
+      );
+    },
+    addStudents: (state, action: PayloadAction<StudentDTO[]>) => {
+      state.studentsState.current = [...action.payload, ...state.studentsState.current];
+    },
+    setStudents: (state, action: PayloadAction<StudentDTO[]>) => {
+      state.studentsState = {
+        current: action.payload,
+        initial: action.payload,
+      };
     },
     resetProgramSlice: (state, action: PayloadAction<void>) => {
       return initialState;
@@ -529,7 +552,6 @@ export const programSlice = createSlice({
       state.description = action.payload.programDescription;
       state.startDate = action.payload.startDate;
       state.endDate = action.payload.endDate;
-      state.students = action.payload.students ?? [];
       state.pills = action.payload.pills.map((pill: any) => ({
         ...pill,
         lerniPill: JSON.parse(pill.block),
@@ -566,7 +588,10 @@ export const getBlockByType = createSelector(
 export const {
   resetProgramSlice,
   addNewPill,
+  updateProgramStudentsState,
   removeStudent,
+  addStudents,
+  setStudents,
   removeQuestionnaire,
   removeTrivia,
   removePill,

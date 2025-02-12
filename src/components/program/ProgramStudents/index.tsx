@@ -10,7 +10,7 @@ import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
 import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { StudentDTO } from '../../../redux/service/types/students.response';
-import { removeStudent, updatePillInfo } from '../../../redux/slices/program.slice';
+import { removeStudent, setStudents } from '../../../redux/slices/program.slice';
 import { useStudentsListQuery } from '../../../redux/service/program.service';
 import { EntityType, usePermissions } from '../../../utils/permissions';
 
@@ -31,11 +31,11 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
     ? useStudentsListQuery(programVersionId)
     : { data: undefined, isLoading: false };
 
-  const students = useLSelector((state) => state.program.students);
+  const students = useLSelector((state) => state.program.studentsState.current);
 
   useEffect(() => {
     if (fetchedStudents) {
-      dispatch(updatePillInfo({ students: fetchedStudents }));
+      dispatch(setStudents(fetchedStudents));
     }
   }, [fetchedStudents, dispatch]);
 

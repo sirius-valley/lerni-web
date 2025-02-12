@@ -11,7 +11,7 @@ import { setModalOpen } from '../../../redux/slices/utils.slice';
 import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { StudentDTO } from '../../../redux/service/types/students.response';
 import { useCollectionStudentsListQuery } from '../../../redux/service/collection.service';
-import { removeStudent, updateCollectionInfo } from '../../../redux/slices/collection.slice';
+import { removeStudent, setStudents } from '../../../redux/slices/collection.slice';
 import { useNavigate } from 'react-router-dom';
 import { EntityType, usePermissions } from '../../../utils/permissions';
 
@@ -97,11 +97,11 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
     ? useCollectionStudentsListQuery(collectionId)
     : { data: undefined, isLoading: false };
 
-  const students = useLSelector((state) => state.collection.students);
+  const students = useLSelector((state) => state.collection.studentsState.current);
 
   useEffect(() => {
     if (fetchedStudents) {
-      dispatch(updateCollectionInfo({ students: fetchedStudents }));
+      dispatch(setStudents(fetchedStudents));
     }
   }, [fetchedStudents, dispatch]);
 

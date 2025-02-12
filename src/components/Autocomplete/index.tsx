@@ -108,6 +108,9 @@ export const AutocompleteComponent = ({
           options={content}
           value={value}
           getOptionLabel={handleGetOption}
+          getOptionKey={(option) =>
+            typeof option === 'string' ? `new-${option}-${Date.now()}` : option.id
+          }
           fullWidth
           onClick={() => setIsOpen(!isOpen)}
           popupIcon={handleIcon()}

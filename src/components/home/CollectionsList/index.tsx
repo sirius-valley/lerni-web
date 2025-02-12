@@ -19,6 +19,7 @@ const CollectionsList = () => {
   const handleAddNewCollection = () => {
     navigation('/create/collection');
   };
+
   return (
     <StyledColumn
       css={{

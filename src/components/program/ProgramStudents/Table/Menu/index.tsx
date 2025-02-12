@@ -19,26 +19,26 @@ const TableMenu = ({ onClick, onClose, menuAnchor, canEdit = false }: TableMenuP
       >
         Ver
       </MenuItem>
-      {canEdit && (
-        <>
-          <MenuItem
-            onClick={() => {
-              onClick('edit');
-              onClose();
-            }}
-          >
-            Editar grupos
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              onClick('delete');
-              onClose();
-            }}
-          >
-            Eliminar
-          </MenuItem>
-        </>
-      )}
+      {canEdit && [
+        <MenuItem
+          key={'edit'}
+          onClick={() => {
+            onClick('edit');
+            onClose();
+          }}
+        >
+          Editar grupos
+        </MenuItem>,
+        <MenuItem
+          key={'delete'}
+          onClick={() => {
+            onClick('delete');
+            onClose();
+          }}
+        >
+          Eliminar
+        </MenuItem>,
+      ]}
     </Menu>
   );
 };

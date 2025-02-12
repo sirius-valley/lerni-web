@@ -124,6 +124,7 @@ export const programApi = api.injectEndpoints({
       }),
     }),
     studentsList: builder.query<StudentDTO[], string>({
+      providesTags: ['ProgramDetails'],
       query: (programVersionId) => ({
         url: `api/program/students/in-progress/${programVersionId}`,
         method: 'GET',

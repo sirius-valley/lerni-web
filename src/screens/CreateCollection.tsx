@@ -7,7 +7,7 @@ import { useLDispatch, useLSelector } from '../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import CollectionDetails from '../components/collection/CollectionDetails';
 import CollectionPrograms from '../components/collection/CollectionPrograms';
-import { transformedCollectionValues } from '../utils/transformBody';
+import { transformCreateCollectionRequest } from '../utils/transformBody';
 import { errorToast, successToast } from '../components/Toasts';
 import { CollectionStudents } from '../components/collection/CollectionStudents';
 import { useCreateCollectionMutation } from '../redux/service/collection.service';
@@ -25,7 +25,7 @@ const CreateCollection = () => {
   const handleSave = () => {
     const allFieldsFilled = Object.values(collection).every((value) => value !== '');
     if (allFieldsFilled) {
-      createCollection(transformedCollectionValues(collection)).then((res: any) => {
+      createCollection(transformCreateCollectionRequest(collection)).then((res: any) => {
         navigate('/');
         dispatch(resetCollectionSlice());
         dispatch(api.util.invalidateTags(['CollectionList', 'Groups']));

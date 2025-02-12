@@ -11,14 +11,16 @@ import {
   useAddStudentsToCollectionMutation,
   useCollectionDetailsQuery,
   useCreateCollectionMutation,
+  useDeleteStudentsFromCollectionMutation,
   useUpdateCollectionMutation,
 } from '../redux/service/collection.service';
 import { resetCollectionSlice } from '../redux/slices/collection.slice';
 import CollectionPrograms from '../components/collection/CollectionPrograms';
 import { CollectionStudents } from '../components/collection/CollectionStudents';
 import {
-  transformedCollectionValues,
-  transformedStudentCollectionValues,
+  transformDeleteStudentsRequest,
+  transformAddStudentsRequest,
+  getUpdatedAndDeletedStudents,
 } from '../utils/transformBody';
 import { errorToast, successToast } from '../components/Toasts';
 import { useMeQuery } from '../redux/service/auth.service';
@@ -48,14 +50,56 @@ const CollectionDetails = () => {
     },
   ] = useAddStudentsToCollectionMutation();
 
+  const [
+    deleteStudents,
+    {
+      isError: isDeleteStudentError,
+      error: deleteStudentError,
+      data: deleteStudentData,
+      isSuccess: deleteStudentSuccess,
+    },
+  ] = useDeleteStudentsFromCollectionMutation();
+
   const { data, isError: collectionError } = useCollectionDetailsQuery(id as string);
   const handleSave = () => {
     if (!id) return;
-    addStudents({ id, body: transformedStudentCollectionValues(collection) }).then((res: any) => {
-      navigate('/');
-      dispatch(resetCollectionSlice());
-      successToast('Colección modificada exitosamente!');
-    });
+
+    const studentsUpdates = getUpdatedAndDeletedStudents(
+      collection.studentsState.initial,
+      collection.studentsState.current,
+    );
+
+    const promises = [];
+
+    if (studentsUpdates.updated.length > 0) {
+      promises.push(
+        addStudents({
+          id,
+          body: transformAddStudentsRequest(collection, studentsUpdates.updated),
+        }),
+      );
+    }
+
+    if (studentsUpdates.deleted.length > 0) {
+      promises.push(
+        deleteStudents({
+          id,
+          emails: transformDeleteStudentsRequest(studentsUpdates.deleted),
+        }),
+      );
+    }
+
+    if (promises.length === 0) return;
+
+    Promise.all(promises)
+      .then(() => {
+        navigate('/');
+        dispatch(resetCollectionSlice());
+        successToast('Colección modificada exitosamente!');
+      })
+      .catch(() => {
+        errorToast('Hubo un problema al modificar la colección.');
+      });
   };
 
   useEffect(() => {

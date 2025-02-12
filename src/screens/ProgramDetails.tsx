@@ -10,13 +10,14 @@ import { ProgramStudents } from '../components/program/ProgramStudents';
 import ProgramContent from '../components/program/ProgramContent';
 import { ProgramQuestionnaire } from '../components/program/ProgramQuestionnaire';
 import { ProgramTrivia } from '../components/program/ProgramTrivia';
-import { useLDispatch } from '../redux/hooks';
+import { useLDispatch, useLSelector } from '../redux/hooks';
 import { resetProgramSlice } from '../redux/slices/program.slice';
 import { ProgramStatistics } from '../components/program/ProgramStatistics';
 import { api } from '../redux/service/api';
 import { errorToast } from '../components/Toasts';
 import { useMeQuery } from '../redux/service/auth.service';
 import { usePermissions } from '../utils/permissions';
+import { getUpdatedAndDeletedStudents } from '../utils/transformBody';
 
 const ProgramDetails = () => {
   const theme = useTheme();
@@ -28,11 +29,19 @@ const ProgramDetails = () => {
   const { data, isError } = useProgramDetailsQuery(id as string);
   const { data: meData, isError: meError } = useMeQuery();
 
+  const program = useLSelector((state) => state.program);
+
   const { canOnlyReadProgram } = usePermissions();
   const canOnlyRead = canOnlyReadProgram();
 
   const handleSave = () => {
-    null;
+    const studentsUpdated = getUpdatedAndDeletedStudents(
+      program.studentsState.initial,
+      program.studentsState.current,
+    );
+
+    console.log('');
+    console.log('studentsUpdated', studentsUpdated);
   };
 
   useEffect(() => {
@@ -84,7 +93,7 @@ const ProgramDetails = () => {
           <ProgramContent />
           <ProgramQuestionnaire />
           <ProgramTrivia />
-          <ProgramStudents programVersionId={location.state?.programVersionId} />
+          <ProgramStudents programVersionId={id} />
           {!canOnlyRead && (
             <Button
               variant={ComponentVariantType.PRIMARY}
