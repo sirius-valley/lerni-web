@@ -15,12 +15,14 @@ import { errorToast, successToast } from '../components/Toasts';
 import { transformedValues } from '../utils/transformBody';
 import { resetProgramSlice } from '../redux/slices/program.slice';
 import { api } from '../redux/service/api';
+import { useMeQuery } from '../redux/service/auth.service';
 
 const CreateProgram = () => {
   const theme = useTheme();
   const program = useLSelector((state) => state.program);
   const navigate = useNavigate();
   const dispatch = useLDispatch();
+  const { data: meData, isError: meError } = useMeQuery();
 
   const [createProgram, { isError, error, data, isSuccess }] = useCreateProgramMutation();
 

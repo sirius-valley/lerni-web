@@ -13,12 +13,14 @@ import { CollectionStudents } from '../components/collection/CollectionStudents'
 import { useCreateCollectionMutation } from '../redux/service/collection.service';
 import { resetCollectionSlice } from '../redux/slices/collection.slice';
 import { api } from '../redux/service/api';
+import { useMeQuery } from '../redux/service/auth.service';
 
 const CreateCollection = () => {
   const theme = useTheme();
   const collection = useLSelector((state) => state.collection);
   const navigate = useNavigate();
   const dispatch = useLDispatch();
+  const { data: meData, isError: meError } = useMeQuery();
 
   const [createCollection, { isError, error, data, isSuccess }] = useCreateCollectionMutation();
 

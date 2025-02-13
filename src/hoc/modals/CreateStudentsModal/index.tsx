@@ -74,58 +74,65 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
     }
   }, [errors, error]);
 
-  const handleInputFileChange = (value: any) => {
-    if (
-      value?.type === 'text/csv' ||
-      value?.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    ) {
-      setErrors(false);
-      const reader = new FileReader();
-
-      reader.onload = (event: any) => {
-        const result = event.target.result;
-        const lines = result.split(/\r?\n/);
-
-        const mails: EmailObject[] = lines
-          .map((line: string, index: number) => {
-            if (index === 0 || !line.trim()) return null;
-
-            const columns = line.split(/[;,]/);
-            if (columns.length < 1) return null;
-
-            const email = columns[0].trim().toLowerCase();
-            const groups = Array.from(
-              new Set(
-                columns
-                  .slice(1)
-                  .map((col) => col.trim().toLowerCase())
-                  .filter((col) => col !== ''),
-              ),
-            );
-
-            return { email, groups };
-          })
-          .filter((email: any) => email);
-
-        setInputValues({
-          file: value,
-        });
-        setUploadedStudents(
-          mails.map((mail: EmailObject) => ({
-            email: mail.email,
-            groups: mail.groups.map((group) => group),
-          })),
-        );
-        verifyStudents(mails.map((mail: EmailObject) => mail.email));
-      };
-
-      reader.readAsText(value);
-    } else {
+  const handleInputFileChange = (file: any) => {
+    if (!isValidFileType(file)) {
       setErrors(true);
+      setInputValues({ file });
+      return;
     }
-    setInputValues({
-      file: value,
-    });
+
+    setErrors(false);
+    setInputValues({ file });
+
+    const reader = new FileReader();
+    reader.onload = (event: any) => {
+      const result = event.target.result;
+      const emailsWithGroups = parseCSV(result);
+
+      setUploadedStudents(emailsWithGroups);
+      verifyStudents(emailsWithGroups.map((entry) => entry.email));
+    };
+
+    reader.readAsText(file);
+  };
+
+  const isValidFileType = (file: any) => {
+    return (
+      file?.type === 'text/csv' ||
+      file?.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+  };
+
+  const parseCSV = (content: string): EmailObject[] => {
+    const lines = content.split(/\r?\n/);
+
+    return lines
+      .map((line: string, index: number) => {
+        if (index === 0 || !line.trim()) return null;
+
+        const columns = line.split(/[;,]/);
+        if (columns.length < 1) return null;
+
+        const email = columns[0].trim().toLowerCase();
+
+        if (email === '') return null;
+
+        const groups = extractGroups(columns);
+
+        return { email, groups };
+      })
+      .filter((entry): entry is EmailObject => entry !== null);
+  };
+
+  const extractGroups = (columns: string[]): string[] => {
+    return Array.from(
+      new Set(
+        columns
+          .slice(1)
+          .map((col) => col.trim().toLowerCase())
+          .filter((col) => col !== ''),
+      ),
+    );
   };
 
   const transformStudentData = (students: StudentDTO[]): StudentDTO[] => {
@@ -170,20 +177,15 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
     studentsData: StudentDTO[],
     uploadedStudents: EmailObject[],
   ): StudentDTO[] => {
-    console.log('uploaded', uploadedStudents);
-    const uploadedMap = new Map(
-      uploadedStudents.map((student) => [student.email.toLowerCase(), student.groups]),
-    );
-    console.log('uploadedMap', uploadedMap);
+    const uploadedMap = new Map(uploadedStudents.map((student) => [student.email, student.groups]));
+
     return studentsData.map((student) => {
-      console.log(uploadedMap.get(student.email)?.map((groupName) => ({ name: groupName })));
+      const existingGroups = student.group?.map((g) => g.name) || [];
+      const newGroups = uploadedMap.get(student.email) || [];
+
       return {
         ...student,
-        group: [
-          //TODO aca tengo que filtrar los que se repiten
-          ...(student.group || []),
-          ...(uploadedMap.get(student.email)?.map((groupName) => ({ name: groupName })) || []),
-        ],
+        group: Array.from(new Set([...existingGroups, ...newGroups])).map((name) => ({ name })),
       };
     });
   };

@@ -16,9 +16,11 @@ import CreateCollection from '../screens/CreateCollection';
 import CollectionDetails from '../screens/CollectionDetails';
 import ProfileDetails from '../screens/ProfileDetails';
 import { usePermissions } from '../utils/permissions';
+import { useMeQuery } from '../redux/service/auth.service';
 
 const Router = () => {
   const dispatch = useLDispatch();
+  const { data: meData, isError: meError } = useMeQuery();
 
   const { canCreateCollection, canCreateProgram, canReadProgram, canReadCollection } =
     usePermissions();
