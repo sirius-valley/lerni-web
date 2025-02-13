@@ -24,7 +24,7 @@ const initialState: InitialStateAuthType = {
 };
 
 const mockedPermissions = (
-  type: 'fullAccess' | 'readOnly' | 'readOnlyCollections',
+  type: 'fullAccess' | 'readOnly' | 'readOnlyCollections' | 'admin',
 ): Permissions => {
   switch (type) {
     case 'fullAccess':
@@ -78,6 +78,25 @@ const mockedPermissions = (
           specific: [],
         },
       };
+    case 'admin':
+      return {
+        collections: {
+          general: [PermissionType.READ, PermissionType.CREATE, PermissionType.DELETE],
+          specific: [
+            SpecificAction.ADD_STUDENT,
+            SpecificAction.EDIT_STUDENTS_LIST,
+            SpecificAction.EDIT_CONTENT,
+          ],
+        },
+        programs: {
+          general: [PermissionType.READ, PermissionType.CREATE, PermissionType.DELETE],
+          specific: [
+            SpecificAction.ADD_STUDENT,
+            SpecificAction.EDIT_STUDENTS_LIST,
+            SpecificAction.EDIT_CONTENT,
+          ],
+        },
+      };
     default:
       return {
         collections: {
@@ -124,7 +143,7 @@ export const authSlice = createSlice({
       },
     );
     builder.addMatcher(authApi.endpoints.me.matchRejected, (state, action) => {
-      state.permissions = mockedPermissions('fullAccess');
+      state.permissions = mockedPermissions('admin');
     });
   },
 });
