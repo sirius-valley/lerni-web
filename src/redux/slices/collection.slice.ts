@@ -12,6 +12,7 @@ export interface CreateCollectionState {
     current: StudentDTO[];
   };
   edit: boolean;
+  isLoading: boolean;
 }
 
 const initialState: CreateCollectionState = {
@@ -22,6 +23,7 @@ const initialState: CreateCollectionState = {
     current: [],
   },
   edit: true,
+  isLoading: false,
 };
 
 export const collectionSlice = createSlice({
@@ -54,6 +56,9 @@ export const collectionSlice = createSlice({
         initial: action.payload,
       };
     },
+    isLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
     resetCollectionSlice: (state, action: PayloadAction<void>) => {
       return initialState;
     },
@@ -62,7 +67,6 @@ export const collectionSlice = createSlice({
     builder.addMatcher(
       collectionApi.endpoints.collectionDetails.matchFulfilled,
       (state, action) => {
-        console.log('collectionDetails', action.payload);
         state.edit = false;
         state.title = action.payload.name;
         state.programs = action.payload.programs.map((program) => {
@@ -72,6 +76,7 @@ export const collectionSlice = createSlice({
             programVersionId: program.id,
           } as ProgramListItem;
         });
+        state.isLoading = false;
       },
     );
   },
@@ -85,6 +90,7 @@ export const {
   removeStudent,
   addStudents,
   setStudents,
+  isLoading,
   resetCollectionSlice,
 } = collectionSlice.actions;
 

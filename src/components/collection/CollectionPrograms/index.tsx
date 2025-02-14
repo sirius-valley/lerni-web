@@ -10,11 +10,12 @@ import { ProgramListItem } from '../../../redux/service/types/program.types';
 import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
 import List from './List';
 import Table from './Table';
+import CollectionProgramsSkeleton from './Skeleton';
 
 const CollectionPrograms = () => {
   const theme = useTheme();
   const collection = useLSelector((state) => state.collection);
-  const { edit } = collection;
+  const { edit, isLoading } = collection;
 
   const dispatch = useLDispatch();
 
@@ -48,6 +49,8 @@ const CollectionPrograms = () => {
   const handleChange = (name: string, value: ProgramListItem[]) => {
     dispatch(updateCollectionInfo({ ...collection, [name]: value }));
   };
+
+  if (isLoading) return <CollectionProgramsSkeleton />;
 
   return (
     <Card

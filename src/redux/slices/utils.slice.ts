@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface initialStateUtilsType {
   modalType?:
@@ -11,13 +11,16 @@ export interface initialStateUtilsType {
     | 'PROFESSOR_CREATE'
     | 'ADD_STUDENT'
     | 'STUDENTS_STATUS'
-    | 'STUDENTS_GROUPS';
+    | 'STUDENTS_GROUPS'
+    | 'LOADER';
   metadata?: any;
+  closable?: boolean;
 }
 
 const initialState: initialStateUtilsType = {
   modalType: undefined,
   metadata: undefined,
+  closable: true,
 };
 
 export const utilsSlice = createSlice({
@@ -27,7 +30,7 @@ export const utilsSlice = createSlice({
     setModalOpen: (state, action) => {
       state.modalType = action.payload?.modalType;
       state.metadata = action.payload?.metadata;
-      console.log('state', action.payload);
+      state.closable = action.payload?.closable ?? true;
     },
     closeModal: (state) => {
       state.modalType = undefined;

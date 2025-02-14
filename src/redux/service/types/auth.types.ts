@@ -23,4 +23,5 @@ interface EntityPermissions {
 export interface Permissions {
   collections: EntityPermissions;
   programs: EntityPermissions;
+  profile: EntityPermissions;
 }

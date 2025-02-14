@@ -11,7 +11,7 @@ import ProgramContent from '../components/program/ProgramContent';
 import { ProgramQuestionnaire } from '../components/program/ProgramQuestionnaire';
 import { ProgramTrivia } from '../components/program/ProgramTrivia';
 import { useLDispatch, useLSelector } from '../redux/hooks';
-import { resetProgramSlice } from '../redux/slices/program.slice';
+import { isLoading, resetProgramSlice } from '../redux/slices/program.slice';
 import { ProgramStatistics } from '../components/program/ProgramStatistics';
 import { api } from '../redux/service/api';
 import { errorToast } from '../components/Toasts';
@@ -26,13 +26,17 @@ const ProgramDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { data, isError } = useProgramDetailsQuery(id as string);
+  const { data, isError, isLoading: programLoading } = useProgramDetailsQuery(id as string);
   const { data: meData, isError: meError } = useMeQuery();
 
   const program = useLSelector((state) => state.program);
 
   const { canOnlyReadProgram } = usePermissions();
   const canOnlyRead = canOnlyReadProgram();
+
+  useEffect(() => {
+    dispatch(isLoading(true));
+  }, []);
 
   const handleSave = () => {
     const studentsUpdated = getUpdatedAndDeletedStudents(

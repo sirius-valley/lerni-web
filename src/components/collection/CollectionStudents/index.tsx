@@ -14,6 +14,7 @@ import { useCollectionStudentsListQuery } from '../../../redux/service/collectio
 import { removeStudent, setStudents } from '../../../redux/slices/collection.slice';
 import { useNavigate } from 'react-router-dom';
 import { EntityType, usePermissions } from '../../../utils/permissions';
+import CollectionStudentsSkeleton from './Skeleton';
 
 const mockedStudents: StudentDTO[] = [
   ...Array.from({ length: 3000 }, () => ({
@@ -133,6 +134,8 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
         break;
     }
   };
+
+  if (isLoading) return <CollectionStudentsSkeleton />;
 
   return (
     <Card

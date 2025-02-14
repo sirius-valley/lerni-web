@@ -13,10 +13,11 @@ import { DateTimePicker } from './DateTimePicker';
 import dayjs from 'dayjs';
 import { AutocompleteComponent } from '../../Autocomplete';
 import { usePermissions } from '../../../utils/permissions';
+import ProgramDetailsSkeleton from './Skeleton';
 
 const ProgramDetails = () => {
   const program = useLSelector((state) => state.program);
-  const { edit } = program;
+  const { edit, isLoading } = program;
   const dispatch = useLDispatch();
 
   const { canUpdateProgram } = usePermissions();
@@ -58,8 +59,8 @@ const ProgramDetails = () => {
   }, [program.startDate, program.endDate]);
 
   const imageUrl = 'https://lerni-images-2024.s3.amazonaws.com/default_image_program.jpg';
-  console.log('program', program);
-  console.log(professors.find((prof) => prof.id === program.professor));
+
+  if (isLoading) return <ProgramDetailsSkeleton />;
 
   return (
     <Card title={'Detalles del programa'} height={'100%'}>

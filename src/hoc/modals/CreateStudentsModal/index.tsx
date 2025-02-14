@@ -265,10 +265,7 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
             variant={ComponentVariantType.PRIMARY}
             onClick={handleSavePill}
             disabled={errors || studentsLoading || !inputValues.file}
-            css={{
-              paddingLeft: '50px',
-              paddingRight: '50px',
-            }}
+            loading={studentsLoading}
           >
             Agregar
           </Button>

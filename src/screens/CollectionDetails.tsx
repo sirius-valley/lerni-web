@@ -25,6 +25,8 @@ import {
 import { errorToast, successToast } from '../components/Toasts';
 import { useMeQuery } from '../redux/service/auth.service';
 import { usePermissions } from '../utils/permissions';
+import { closeModal, setModalOpen } from '../redux/slices/utils.slice';
+import { isLoading } from '../redux/slices/collection.slice';
 
 const CollectionDetails = () => {
   const theme = useTheme();
@@ -47,6 +49,7 @@ const CollectionDetails = () => {
       error: studentsError,
       data: studentData,
       isSuccess: studentsSuccess,
+      isLoading: studentsLoading,
     },
   ] = useAddStudentsToCollectionMutation();
 
@@ -57,17 +60,31 @@ const CollectionDetails = () => {
       error: deleteStudentError,
       data: deleteStudentData,
       isSuccess: deleteStudentSuccess,
+      isLoading: deleteLoading,
     },
   ] = useDeleteStudentsFromCollectionMutation();
 
-  const { data, isError: collectionError } = useCollectionDetailsQuery(id as string);
+  const {
+    data,
+    isError: collectionError,
+    isLoading: collectionLoading,
+  } = useCollectionDetailsQuery(id as string);
+
+  useEffect(() => {
+    dispatch(isLoading(collectionLoading));
+  }, []);
+
   const handleSave = () => {
     if (!id) return;
+    console.log('saving...');
+    dispatch(setModalOpen({ modalType: 'LOADER', closable: false }));
 
     const studentsUpdates = getUpdatedAndDeletedStudents(
       collection.studentsState.initial,
       collection.studentsState.current,
     );
+
+    console.log('studentsUpdates', studentsUpdates);
 
     const promises = [];
 
@@ -89,17 +106,26 @@ const CollectionDetails = () => {
       );
     }
 
-    if (promises.length === 0) return;
+    if (promises.length === 0) {
+      successfulReturn();
+      return;
+    }
 
     Promise.all(promises)
       .then(() => {
-        navigate('/');
-        dispatch(resetCollectionSlice());
-        successToast('Colección modificada exitosamente!');
+        successfulReturn();
       })
       .catch(() => {
         errorToast('Hubo un problema al modificar la colección.');
+        dispatch(closeModal());
       });
+  };
+
+  const successfulReturn = () => {
+    navigate('/');
+    dispatch(closeModal());
+    dispatch(resetCollectionSlice());
+    successToast('Colección modificada exitosamente!');
   };
 
   useEffect(() => {

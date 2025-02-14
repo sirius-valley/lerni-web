@@ -14,6 +14,7 @@ import { useCreateCollectionMutation } from '../redux/service/collection.service
 import { resetCollectionSlice } from '../redux/slices/collection.slice';
 import { api } from '../redux/service/api';
 import { useMeQuery } from '../redux/service/auth.service';
+import { closeModal, setModalOpen } from '../redux/slices/utils.slice';
 
 const CreateCollection = () => {
   const theme = useTheme();
@@ -22,12 +23,15 @@ const CreateCollection = () => {
   const dispatch = useLDispatch();
   const { data: meData, isError: meError } = useMeQuery();
 
-  const [createCollection, { isError, error, data, isSuccess }] = useCreateCollectionMutation();
+  const [createCollection, { isError, error, data, isSuccess, isLoading }] =
+    useCreateCollectionMutation();
 
   const handleSave = () => {
+    dispatch(setModalOpen({ modalType: 'LOADER', closable: false }));
     const allFieldsFilled = Object.values(collection).every((value) => value !== '');
     if (allFieldsFilled) {
       createCollection(transformCreateCollectionRequest(collection)).then((res: any) => {
+        dispatch(closeModal());
         navigate('/');
         dispatch(resetCollectionSlice());
         dispatch(api.util.invalidateTags(['CollectionList', 'Groups']));
@@ -39,12 +43,14 @@ const CreateCollection = () => {
 
   useEffect(() => {
     if (isError) {
+      dispatch(closeModal());
       errorToast('Algo ha salido mal! ');
     }
   }, [isError]);
 
   useEffect(() => {
     return () => {
+      dispatch(closeModal());
       dispatch(resetCollectionSlice());
     };
   }, []);

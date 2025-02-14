@@ -12,10 +12,12 @@ import AddStudentModal from './modals/AddStudentModal';
 import StudentsStatusModal from './modals/StudentsStatusModal';
 import StudentsGroupsModal from './modals/StudentsGroupsModal';
 import { EntityType } from '../utils/permissions';
+import LoaderModal from './modals/LoaderModal';
 
 export const withModal = (Component: FunctionComponent) => (props: any) => {
   const type = useLSelector((state) => state.utils.modalType);
   const open = !!type;
+  const closable = useLSelector((state) => state.utils.closable);
   const dispatch = useLDispatch();
 
   const handleOnClose = () => {
@@ -48,13 +50,15 @@ export const withModal = (Component: FunctionComponent) => (props: any) => {
         return <StudentsStatusModal handleOnClose={handleOnClose}></StudentsStatusModal>;
       case 'STUDENTS_GROUPS':
         return <StudentsGroupsModal handleOnClose={handleOnClose}></StudentsGroupsModal>;
+      case 'LOADER':
+        return <LoaderModal handleOnClose={handleOnClose} />;
       default:
         <></>;
     }
   };
 
   const ModalContainer = () => {
-    return <BlurView onClick={() => handleOnClose()}>{renderModal()}</BlurView>;
+    return <BlurView onClick={() => closable && handleOnClose()}>{renderModal()}</BlurView>;
   };
 
   return (

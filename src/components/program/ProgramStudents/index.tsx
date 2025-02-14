@@ -13,6 +13,7 @@ import { StudentDTO } from '../../../redux/service/types/students.response';
 import { removeStudent, setStudents } from '../../../redux/slices/program.slice';
 import { useStudentsListQuery } from '../../../redux/service/program.service';
 import { EntityType, usePermissions } from '../../../utils/permissions';
+import ProgramStudentsSkeleton from './Skeleton';
 
 interface ProgramStudents {
   programVersionId?: string;
@@ -73,6 +74,8 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
         break;
     }
   };
+
+  if (isLoading) return <ProgramStudentsSkeleton />;
 
   return (
     <Card

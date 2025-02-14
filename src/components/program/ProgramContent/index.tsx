@@ -11,16 +11,17 @@ import { setModalOpen } from '../../../redux/slices/utils.slice';
 import { removePill } from '../../../redux/slices/program.slice';
 import PillRow from './PillRow';
 import { usePermissions } from '../../../utils/permissions';
+import ProgramContentSkeleton from './Skeleton';
 
 const ProgramContent = () => {
   const theme = useTheme();
   const dispatch = useLDispatch();
   const pills = useLSelector((state) => state.program.pills);
   const emptyPills = pills.length === 0;
-  const edit = useLSelector((state) => state.program.edit);
+  const { edit, isLoading } = useLSelector((state) => state.program);
 
-  const { canUpdateProgram } = usePermissions();
-  const canUpdate = canUpdateProgram();
+  const { canEditProgramContent } = usePermissions();
+  const canUpdate = canEditProgramContent();
 
   const handleShowModal = () => {
     dispatch(setModalOpen({ modalType: 'PILL_CREATE' }));
@@ -64,6 +65,8 @@ const ProgramContent = () => {
       )}
     </StyledRow>
   );
+
+  if (isLoading) return <ProgramContentSkeleton />;
 
   return (
     <Card height={'auto'} headerComponent={ProgramHeader}>

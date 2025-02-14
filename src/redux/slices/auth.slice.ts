@@ -16,6 +16,10 @@ const permissionsInitialState: Permissions = {
     general: [],
     specific: [],
   },
+  profile: {
+    general: [],
+    specific: [],
+  },
 };
 
 const initialState: InitialStateAuthType = {
@@ -55,6 +59,10 @@ const mockedPermissions = (
             SpecificAction.EDIT_CONTENT,
           ],
         },
+        profile: {
+          general: [PermissionType.READ, PermissionType.UPDATE],
+          specific: [],
+        },
       };
     case 'readOnly':
       return {
@@ -63,6 +71,10 @@ const mockedPermissions = (
           specific: [],
         },
         programs: {
+          general: [PermissionType.READ],
+          specific: [],
+        },
+        profile: {
           general: [PermissionType.READ],
           specific: [],
         },
@@ -75,6 +87,10 @@ const mockedPermissions = (
         },
         programs: {
           general: [],
+          specific: [],
+        },
+        profile: {
+          general: [PermissionType.READ],
           specific: [],
         },
       };
@@ -96,6 +112,10 @@ const mockedPermissions = (
             SpecificAction.EDIT_CONTENT,
           ],
         },
+        profile: {
+          general: [PermissionType.READ],
+          specific: [],
+        },
       };
     default:
       return {
@@ -104,6 +124,10 @@ const mockedPermissions = (
           specific: [],
         },
         programs: {
+          general: [PermissionType.READ],
+          specific: [],
+        },
+        profile: {
           general: [PermissionType.READ],
           specific: [],
         },

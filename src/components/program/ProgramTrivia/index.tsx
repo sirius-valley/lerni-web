@@ -12,14 +12,16 @@ import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
 import { removeTrivia } from '../../../redux/slices/program.slice';
 import { usePermissions } from '../../../utils/permissions';
+import ProgramContentSkeleton from '../ProgramContent/Skeleton';
 
 export const ProgramTrivia = () => {
   const theme = useTheme();
   const hasPills = useLSelector((state) => state.program.pills)?.length > 0;
   const hasTrivia = useLSelector((state) => state.program.trivia) !== undefined;
+  const { isLoading } = useLSelector((state) => state.program);
 
-  const { canUpdateProgram } = usePermissions();
-  const canUpdate = canUpdateProgram();
+  const { canEditProgramContent } = usePermissions();
+  const canUpdate = canEditProgramContent();
 
   const dispatch = useLDispatch();
   const handleShowModal = () => {
@@ -29,6 +31,8 @@ export const ProgramTrivia = () => {
   const handleShowPreview = () => {
     dispatch(setModalOpen({ modalType: 'PILL_READ', metadata: { type: 'trivia' } }));
   };
+
+  if (isLoading) return <ProgramContentSkeleton />;
 
   return (
     <Card

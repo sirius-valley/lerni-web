@@ -5,12 +5,15 @@ import { TextInput } from '../../styled/TextInput';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { AutocompleteComponent } from '../../Autocomplete';
 import { updateProfile } from '../../../redux/slices/profile.slice';
+import { usePermissions } from '../../../utils/permissions';
 
 const ProfileDetails = () => {
   const profile = useLSelector((state) => state.profile);
 
-  const edit = false;
   const dispatch = useLDispatch();
+
+  const { canUpdateProfile } = usePermissions();
+  const canUpdate = canUpdateProfile();
 
   const imageUrl = 'https://lerni-images-2024.s3.amazonaws.com/default_image_program.jpg';
 
@@ -40,7 +43,7 @@ const ProfileDetails = () => {
             required
             value={profile.fullname}
             onChange={(value) => handleChange('fullname', value)}
-            disabled={!edit}
+            disabled={!canUpdate}
           ></TextInput>
           <TextInput
             placeholder="No se registró email"
@@ -48,7 +51,7 @@ const ProfileDetails = () => {
             required
             value={profile.email}
             onChange={(value) => handleChange('email', value)}
-            disabled={!edit}
+            disabled={!canUpdate}
           ></TextInput>
           <TextInput
             placeholder="Sin profesión"
@@ -56,6 +59,7 @@ const ProfileDetails = () => {
             required
             value={profile.career}
             onChange={(value) => handleChange('career', value)}
+            disabled={!canUpdate}
           ></TextInput>
           <TextInput
             placeholder="No especificado"
@@ -63,6 +67,7 @@ const ProfileDetails = () => {
             required
             value={profile.city}
             onChange={(value) => handleChange('location', value)}
+            disabled={!canUpdate}
           ></TextInput>
           <AutocompleteComponent
             label={'Grupos'}
@@ -71,7 +76,7 @@ const ProfileDetails = () => {
             content={[]}
             value={profile.groups.map((group) => ({ id: group, text: group }))}
             onChange={(value) => handleChange('groups', value)}
-            disabled={!edit}
+            disabled={!canUpdate}
           />
 
           <TextInput
@@ -80,7 +85,7 @@ const ProfileDetails = () => {
             required
             value={profile.points.toString()}
             onChange={(value) => handleChange('points', value)}
-            disabled={!edit}
+            disabled={!canUpdate}
           ></TextInput>
         </StyledColumn>
       </StyledRow>

@@ -4,6 +4,7 @@ import { PermissionType, SpecificAction } from '../redux/service/types/auth.type
 export enum EntityType {
   COLLECTION = 'collection',
   PROGRAM = 'program',
+  PROFILE = 'profile',
 }
 
 export const usePermissions = () => {
@@ -79,6 +80,9 @@ export const usePermissions = () => {
     );
   };
 
+  const canViewProfile = () => hasPermission(PermissionType.READ, EntityType.PROFILE);
+  const canUpdateProfile = () => hasPermission(PermissionType.UPDATE, EntityType.PROFILE);
+
   return {
     canCreateCollection,
     canReadCollection,
@@ -96,6 +100,8 @@ export const usePermissions = () => {
     canEditProgramContent,
     canOnlyReadProgram,
     canOnlyReadCollection,
+    canViewProfile,
+    canUpdateProfile,
     hasPermission,
   };
 };

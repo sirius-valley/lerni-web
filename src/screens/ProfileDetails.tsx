@@ -9,6 +9,7 @@ import { useLDispatch } from '../redux/hooks';
 import { api } from '../redux/service/api';
 import { resetProfileSlice } from '../redux/slices/profile.slice';
 import { useStudentProfileQuery } from '../redux/service/students.service';
+import { usePermissions } from '../utils/permissions';
 
 const ProfileDetails = () => {
   const theme = useTheme();
@@ -20,6 +21,10 @@ const ProfileDetails = () => {
   const handleSave = () => {
     null;
   };
+
+  const { canUpdateProfile } = usePermissions();
+  const canUpdate = canUpdateProfile();
+
   useEffect(() => {
     return () => {
       dispatch(api.util.invalidateTags(['ProfileDetails']));
@@ -46,21 +51,23 @@ const ProfileDetails = () => {
         >
           <ProfileDetailsComponent />
 
-          <Button
-            variant={ComponentVariantType.PRIMARY}
-            onClick={handleSave}
-            labelSize={'body3'}
-            css={{
-              marginTop: '8px',
-              width: 'auto',
-              height: '30px',
-              padding: '8px 16px 8px 16px',
-              fontFamily: 'Roboto-Bold',
-              cursor: 'pointer',
-            }}
-          >
-            Guardar
-          </Button>
+          {canUpdate && (
+            <Button
+              variant={ComponentVariantType.PRIMARY}
+              onClick={handleSave}
+              labelSize={'body3'}
+              css={{
+                marginTop: '8px',
+                width: 'auto',
+                height: '30px',
+                padding: '8px 16px 8px 16px',
+                fontFamily: 'Roboto-Bold',
+                cursor: 'pointer',
+              }}
+            >
+              Guardar
+            </Button>
+          )}
         </StyledColumn>
       </StyledColumn>
     </StyledBox>
