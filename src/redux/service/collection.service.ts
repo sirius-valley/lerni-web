@@ -7,6 +7,7 @@ import {
 } from './types/collection.types';
 import { StudentDTO } from './types/students.response';
 import { BaseQueryArg } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
+import { GroupMetrics, StatsDTO } from './types/groups.types';
 
 export const collectionApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -77,6 +78,18 @@ export const collectionApi = api.injectEndpoints({
         body: emails,
       }),
     }),
+    getMetrics: builder.query<GroupMetrics[], string>({
+      query: (id) => ({
+        url: `colections/groups/metrics/${id}`,
+        method: 'GET',
+      }),
+    }),
+    stats: builder.query<StatsDTO, string>({
+      query: (id) => ({
+        url: `colections/stats/${id}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -89,4 +102,6 @@ export const {
   useVerifyCollectionStudentsMutation,
   useAddStudentsToCollectionMutation,
   useDeleteStudentsFromCollectionMutation,
+  useGetMetricsQuery,
+  useStatsQuery,
 } = collectionApi;

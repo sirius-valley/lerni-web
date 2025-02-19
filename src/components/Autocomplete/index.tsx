@@ -80,11 +80,11 @@ export const AutocompleteComponent = ({
     <StyledColumn css={{ minWidth: '120px', gap: '8px' }}>
       {label && (
         <StyledRow css={{ gap: '4px' }}>
-          <StyledText variant="body2" color="gray950">
+          <StyledText variant="body2" color={disabled ? 'gray400' : 'gray950'}>
             {label}
           </StyledText>
           {required && (
-            <StyledText variant="body2" color="error500">
+            <StyledText variant="body2" color={disabled ? 'gray200' : 'error500'}>
               {' *'}
             </StyledText>
           )}

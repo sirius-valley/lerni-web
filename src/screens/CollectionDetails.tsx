@@ -27,6 +27,7 @@ import { useMeQuery } from '../redux/service/auth.service';
 import { usePermissions } from '../utils/permissions';
 import { closeModal, setModalOpen } from '../redux/slices/utils.slice';
 import { isLoading } from '../redux/slices/collection.slice';
+import CollectionStatistics from '../components/collection/CollectionStatistics';
 
 const CollectionDetails = () => {
   const theme = useTheme();
@@ -173,6 +174,7 @@ const CollectionDetails = () => {
           }}
         >
           <CollectionDetailsComponent />
+          <CollectionStatistics />
           <CollectionPrograms />
           <CollectionStudents collectionId={id} />
           {!canOnlyRead && (

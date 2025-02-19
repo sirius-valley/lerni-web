@@ -1,7 +1,7 @@
 import { useTheme } from 'styled-components';
 import { CircularProgress } from '@mui/material';
 import { StyledBox } from '../../../../../styled/styles';
-import CheckIcon from '../../../../../../assets/icons/CheckIcon';
+import CircleCheckIcon from '../../../../../../assets/icons/CircleCheckIcon';
 import { Tooltip } from 'react-tooltip';
 import React from 'react';
 
@@ -35,7 +35,7 @@ const Progress = React.memo(({ progress = 0 }: ProgressProps) => {
         />
       ) : (
         <StyledBox>
-          <CheckIcon size={20} color={theme.success} />
+          <CircleCheckIcon size={20} color={theme.success} />
         </StyledBox>
       )}
     </StyledBox>

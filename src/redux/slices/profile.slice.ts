@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { studentsApi } from '../service/students.service';
+import { ProgramCardItem } from '../service/types/profile.types';
 
 export interface ProfileState {
   id: string;
@@ -11,6 +12,8 @@ export interface ProfileState {
   city: string;
   groups: string[];
   points: number;
+  assignedPrograms?: ProgramCardItem[];
+  rewards?: string[];
 }
 
 const initialState: ProfileState = {
@@ -20,8 +23,10 @@ const initialState: ProfileState = {
   image: '',
   career: '',
   city: '',
-  groups: ['Nuevos', 'Enfermeros', 'Residentes'],
+  groups: [],
   points: 0,
+  assignedPrograms: [],
+  rewards: [],
 };
 
 export const profileSlice = createSlice({
@@ -47,6 +52,9 @@ export const profileSlice = createSlice({
       state.career = action.payload.career || 'Sin profesión';
       state.city = action.payload.city || 'Sin ciudad';
       state.points = action.payload.points || 0;
+      state.groups = ['Nuevos', 'Enfermeros', 'Residentes'];
+      state.assignedPrograms = [];
+      state.rewards = [];
     });
   },
 });

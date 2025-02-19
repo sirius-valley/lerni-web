@@ -5,7 +5,7 @@ import { useTheme } from 'styled-components';
 import { CSSProperties } from '../../../utils/utils';
 import FileUploadIcon from '../../../assets/icons/FileUploadIcon';
 import FileUploadedIcon from '../../../assets/icons/FileUploadedIcon';
-import CheckIcon from '../../../assets/icons/CheckIcon';
+import CircleCheckIcon from '../../../assets/icons/CircleCheckIcon';
 
 export interface FileUploadProps {
   title?: string;
@@ -113,7 +113,7 @@ const FileUpload = ({
           </StyledRow>
           {hasCorrectValue && (
             <StyledColumn css={{ justifyContent: 'center' }}>
-              <CheckIcon />
+              <CircleCheckIcon />
             </StyledColumn>
           )}
         </StyledRow>

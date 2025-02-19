@@ -10,6 +10,8 @@ import { api } from '../redux/service/api';
 import { resetProfileSlice } from '../redux/slices/profile.slice';
 import { useStudentProfileQuery } from '../redux/service/students.service';
 import { usePermissions } from '../utils/permissions';
+import UserPrograms from '../components/profile/UserPrograms';
+import Rewards from '../components/profile/Rewards';
 
 const ProfileDetails = () => {
   const theme = useTheme();
@@ -50,6 +52,8 @@ const ProfileDetails = () => {
           }}
         >
           <ProfileDetailsComponent />
+          <Rewards />
+          <UserPrograms />
 
           {canUpdate && (
             <Button
