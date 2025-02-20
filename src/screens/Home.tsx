@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ProfessorList from '../components/home/ProfessorList';
 import ProgramsList from '../components/home/ProgramsList';
 import { RootContainer, StyledColumn, StyledRow } from '../components/styled/styles';
@@ -7,6 +7,9 @@ import { StudentsRegisteredChart } from '../components/charts/StudentsRegistered
 import CollectionsList from '../components/home/CollectionsList';
 import { useMeQuery } from '../redux/service/auth.service';
 import { usePermissions } from '../utils/permissions';
+import { useLDispatch } from '../redux/hooks';
+import { api } from '../redux/service/api';
+import { resetCollectionSlice } from '../redux/slices/collection.slice';
 
 const Home = () => {
   const { data, isError } = useMeQuery();
@@ -14,6 +17,12 @@ const Home = () => {
   const { canReadCollection, canReadProgram } = usePermissions();
   const viewPrograms = canReadProgram();
   const viewCollections = canReadCollection();
+  const dispatch = useLDispatch();
+
+  useEffect(() => {
+    dispatch(api.util.invalidateTags(['CollectionDetails', 'CollectionStudentsList']));
+    dispatch(resetCollectionSlice());
+  }, []);
 
   return (
     <RootContainer

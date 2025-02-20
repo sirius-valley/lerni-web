@@ -101,7 +101,7 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
   const students = useLSelector((state) => state.collection.studentsState.current);
 
   useEffect(() => {
-    if (fetchedStudents) {
+    if (fetchedStudents && students.length === 0) {
       dispatch(setStudents(fetchedStudents));
     }
   }, [fetchedStudents, dispatch]);

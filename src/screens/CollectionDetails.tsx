@@ -130,13 +130,6 @@ const CollectionDetails = () => {
   };
 
   useEffect(() => {
-    return () => {
-      dispatch(api.util.invalidateTags(['CollectionDetails', 'CollectionStudentsList']));
-      dispatch(resetCollectionSlice());
-    };
-  }, []);
-
-  useEffect(() => {
     if (collectionError) {
       errorToast('La colección no existe');
       navigate('/');

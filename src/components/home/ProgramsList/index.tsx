@@ -7,11 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import { useProgramListQuery } from '../../../redux/service/program.service';
 import { useTheme } from 'styled-components';
 import { usePermissions } from '../../../utils/permissions';
+import ProgramsListSkeleton from './Skeleton';
 
 const ProgramsList = () => {
   const navigation = useNavigate();
   const theme = useTheme();
-  const { data } = useProgramListQuery();
+  const { data, isLoading } = useProgramListQuery();
 
   const { canCreateProgram } = usePermissions();
   const canCreate = canCreateProgram();
@@ -19,6 +20,8 @@ const ProgramsList = () => {
   const handleAddNewProgram = () => {
     navigation('/create/program');
   };
+
+  if (isLoading) return <ProgramsListSkeleton />;
   return (
     <StyledColumn
       css={{
