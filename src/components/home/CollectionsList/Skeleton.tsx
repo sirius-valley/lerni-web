@@ -2,12 +2,12 @@ import React from 'react';
 import SkeletonList from '../../skeleton/List';
 import ContainerSkeleton from '../../skeleton/Container';
 
-const ProgramsListSkeleton = () => {
+const CollectionsListSkeleton = () => {
   return (
-    <ContainerSkeleton title={'Programas'}>
+    <ContainerSkeleton title={'Colecciones'}>
       <SkeletonList count={10} rowHeight={53} />
     </ContainerSkeleton>
   );
 };
 
-export default ProgramsListSkeleton;
+export default CollectionsListSkeleton;

@@ -7,11 +7,12 @@ import { useTheme } from 'styled-components';
 import { useCollectionListQuery } from '../../../redux/service/collection.service';
 import { CollectionItem } from '../../collection/CollectionItem';
 import { usePermissions } from '../../../utils/permissions';
+import CollectionsListSkeleton from './Skeleton';
 
 const CollectionsList = () => {
   const navigation = useNavigate();
   const theme = useTheme();
-  const { data } = useCollectionListQuery();
+  const { data, isLoading } = useCollectionListQuery();
 
   const { canCreateCollection } = usePermissions();
   const canCreate = canCreateCollection();
@@ -20,6 +21,7 @@ const CollectionsList = () => {
     navigation('/create/collection');
   };
 
+  if (isLoading) return <CollectionsListSkeleton />;
   return (
     <StyledColumn
       css={{

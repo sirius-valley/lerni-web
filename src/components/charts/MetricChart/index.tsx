@@ -9,7 +9,12 @@ interface MetricCardProps {
   isLoading?: boolean;
 }
 
-export const MetricCard: React.FC<MetricCardProps> = ({ title, value, description, isLoading }) => {
+export const MetricChart: React.FC<MetricCardProps> = ({
+  title,
+  value,
+  description,
+  isLoading,
+}) => {
   const cardHeader = (
     <StyledColumn css={{ padding: '0px 14px 7px', gap: '4px' }}>
       <StyledText variant="h2" color="gray900" css={{ fontFamily: 'Roboto' }}>

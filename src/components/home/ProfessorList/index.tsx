@@ -11,6 +11,7 @@ import {
 import { useLDispatch } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
 import { useTheme } from 'styled-components';
+import ProfessorListSkeleton from './Skeleton';
 
 interface Professor {
   name: string;
@@ -49,6 +50,7 @@ const ProfessorList = () => {
     }
   }, [data?.total]);
 
+  if (isLoading) return <ProfessorListSkeleton />;
   return (
     <StyledColumn
       css={{

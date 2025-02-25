@@ -5,11 +5,13 @@ import { Card } from '../Card';
 import Chart from 'react-apexcharts';
 import { useAllProgramsChartQuery } from '../../../redux/service/program.service';
 import Spinner from '../../Spinner/Spinner';
+import MetricChartSkeleton from '../MetricChart/Skeleton';
 
 const AllProgramsChart = () => {
   const { data, isLoading } = useAllProgramsChartQuery();
   const theme = useTheme();
 
+  if (isLoading) return <MetricChartSkeleton height={'274px'} />;
   if (!data) return <></>;
 
   const cardHeader = (
