@@ -85,6 +85,7 @@ export const collectionApi = api.injectEndpoints({
       }),
     }),
     stats: builder.query<StatsDTO, string>({
+      providesTags: ['CollectionDetails'],
       query: (id) => ({
         url: `colections/stats/${id}`,
         method: 'GET',

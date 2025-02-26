@@ -8,25 +8,19 @@ import CollectionStatisticsSkeleton from './Skeleton';
 
 const CollectionStatistics = () => {
   const { id } = useParams();
-  const collection = useLSelector((state) => state.collection);
-  const { data: groups, isLoading } = useGetMetricsQuery(id as string);
-  const { data: stats, isLoading: statsLoading } = useStatsQuery(id as string);
+  const { data: stats, isLoading } = useStatsQuery(id as string);
 
-  const totalFinished = groups?.reduce((sum, group) => sum + group.finished, 0) || 0;
-  const totalStudents = groups?.reduce((sum, group) => sum + group.total, 0) || 0;
-  const totalGroups = groups?.length || 0;
+  const finished = stats?.finished ?? 0;
+  const total = stats?.total ?? 0;
+  const inProgress = total - finished;
 
   if (isLoading) return <CollectionStatisticsSkeleton />;
 
   return (
     <StyledRow style={{ justifyContent: 'space-between', width: '832px', gap: 12 }}>
-      <MetricChart title={'Finalizaron'} value={stats?.finished ?? 0} description={'Estudiantes'} />
-      <MetricChart
-        title={'Total de estudiantes'}
-        value={stats?.total ?? 0}
-        description={'Estudiantes'}
-      />
-      <MetricChart title={'Total de grupos'} value={totalGroups} description={'Grupos'} />
+      <MetricChart title={'Finalizaron'} value={finished} description={'Estudiantes'} />
+      <MetricChart title={'En curso'} value={inProgress} description={'Estudiantes'} />
+      <MetricChart title={'Total de estudiantes'} value={total} description={'Estudiantes'} />
     </StyledRow>
   );
 };
