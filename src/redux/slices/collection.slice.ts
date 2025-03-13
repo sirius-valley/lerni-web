@@ -50,6 +50,12 @@ export const collectionSlice = createSlice({
     addStudents: (state, action: PayloadAction<StudentDTO[]>) => {
       state.studentsState.current = [...action.payload, ...state.studentsState.current];
     },
+    updateStudents: (state, action: PayloadAction<StudentDTO[]>) => {
+      state.studentsState.current = state.studentsState.current.map((student) => {
+        const updatedStudent = action.payload.find((s) => s.email === student.email);
+        return updatedStudent ? updatedStudent : student;
+      });
+    },
     setStudents: (state, action: PayloadAction<StudentDTO[]>) => {
       state.studentsState = {
         current: action.payload,
@@ -89,6 +95,7 @@ export const {
   updateCollectionStudentsState,
   removeStudent,
   addStudents,
+  updateStudents,
   setStudents,
   isLoading,
   resetCollectionSlice,

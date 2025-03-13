@@ -12,9 +12,12 @@ import { errorToast, successToast } from '../../../components/Toasts';
 import { useTheme } from 'styled-components';
 import {
   addStudents as addStudentsCollection,
-  updateCollectionInfo,
+  updateStudents as updateStudentsCollection,
 } from '../../../redux/slices/collection.slice';
-import { addStudents as addStudentsProgram } from '../../../redux/slices/program.slice';
+import {
+  addStudents as addStudentsProgram,
+  updateStudents as updateStudentsProgram,
+} from '../../../redux/slices/program.slice';
 
 import { StudentDTO } from '../../../redux/service/types/students.response';
 import { useVerifyCollectionStudentsMutation } from '../../../redux/service/collection.service';
@@ -62,6 +65,9 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
   const addStudents =
     entityType === EntityType.COLLECTION ? addStudentsCollection : addStudentsProgram;
 
+  const updateStudents =
+    entityType === EntityType.COLLECTION ? updateStudentsCollection : updateStudentsProgram;
+
   const [uploadedStudents, setUploadedStudents] = useState<EmailObject[]>([]);
 
   const dispatch = useLDispatch();
@@ -88,6 +94,10 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
     reader.onload = (event: any) => {
       const result = event.target.result;
       const emailsWithGroups = parseCSV(result);
+      console.log(
+        'aparisotto',
+        emailsWithGroups.find((e) => e.email === 'aparisotto@cas.austral.edu.ar'),
+      );
 
       setUploadedStudents(emailsWithGroups);
       verifyStudents(emailsWithGroups.map((entry) => entry.email));
@@ -160,17 +170,44 @@ const CreateStudentsModal = ({ entityType, handleOnClose }: CreateStudentsModal)
       return;
     }
 
-    const newStudents = getNewStudents(studentsData, currentStudents);
-    const mergedStudents = mergeStudentsWithGroups(newStudents, uploadedStudents);
+    const transformedStudents = transformStudentData(studentsData);
+    const mergedStudents = mergeStudentsWithGroups(transformedStudents, uploadedStudents);
+    console.log('mergedStudents', mergedStudents);
 
-    dispatch(addStudents(mergedStudents));
+    const classifiedStudents = classifyStudents(mergedStudents, currentStudents);
+    console.log('clasifiedStudents', classifiedStudents);
+
+    dispatch(addStudents(classifiedStudents.news));
+    dispatch(updateStudents(classifiedStudents.updated));
     successToast('Estudiantes cargados con exito!');
     handleOnClose();
   };
 
-  const getNewStudents = (students: StudentDTO[], currentStudents: StudentDTO[]) => {
-    const existingEmails = new Set(currentStudents.map((student) => student.email));
-    return transformStudentData(students).filter((student) => !existingEmails.has(student.email));
+  const classifyStudents = (students: StudentDTO[], currentStudents: StudentDTO[]) => {
+    const updated: StudentDTO[] = [];
+    const news: StudentDTO[] = [];
+
+    students.forEach((student) => {
+      const existingStudent = currentStudents.find((s) => s.email === student.email);
+
+      if (existingStudent) {
+        const existingGroups = existingStudent.group?.map((g) => g.name) || [];
+        const newGroups = student.group?.map((g) => g.name) || [];
+
+        const mergedGroups = Array.from(new Set([...existingGroups, ...newGroups]));
+
+        if (mergedGroups.length !== existingGroups.length) {
+          updated.push({
+            ...existingStudent,
+            group: mergedGroups.map((name) => ({ name })),
+          });
+        }
+      } else {
+        news.push(student);
+      }
+    });
+
+    return { news, updated };
   };
 
   const mergeStudentsWithGroups = (
