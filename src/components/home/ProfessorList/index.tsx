@@ -54,13 +54,14 @@ const ProfessorList = () => {
   return (
     <StyledColumn
       css={{
-        display: 'flex',
         overflow: 'hidden',
         height: '100%',
         backgroundColor: theme.white,
         borderRadius: '20px',
         padding: '24px 16px',
         gap: '16px',
+        flex: 1,
+        minHeight: 0,
       }}
     >
       <StyledRow css={{ justifyContent: 'space-between', alignItems: 'center' }}>

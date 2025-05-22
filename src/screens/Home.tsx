@@ -34,14 +34,26 @@ const Home = () => {
         paddingLeft: '72px',
       }}
     >
-      <StyledRow css={{ width: '1280px', height: '100vh', gap: '40px', padding: '30px 65px' }}>
+      <StyledRow
+        css={{
+          width: '100%',
+          height: '100vh',
+          gap: '40px',
+          padding: '30px 65px',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <StyledColumn
           css={{
             overflow: 'hidden',
             height: '100%',
-            width: '100%',
+            flex: '1 1 400px',
             justifyContent: 'space-between',
             gap: '12px',
+            minWidth: '400px',
+            maxWidth: '560px',
           }}
         >
           {viewPrograms && <ProgramsList />}
@@ -51,12 +63,23 @@ const Home = () => {
           css={{
             overflow: 'hidden',
             height: '100%',
-            width: '100%',
+            flex: '1 1 400px',
             justifyContent: 'space-between',
             gap: '12px',
+            minWidth: '400px',
+            display: 'flex',
+            flexDirection: 'column',
+            maxWidth: '560px',
           }}
         >
-          <StyledRow css={{ gap: '30px' }}>
+          <StyledRow
+            css={{
+              gap: '30px',
+              flexWrap: 'wrap',
+              minWidth: 'fit-content',
+              alignItems: 'flex-start',
+            }}
+          >
             <AllProgramsChart />
             <StudentsRegisteredChart />
           </StyledRow>
