@@ -138,6 +138,7 @@ export const programSlice = createSlice({
       state.endDate = action.payload.endDate;
       state.pills = action.payload.pills.map((pill: any) => ({
         ...pill,
+        id: pill.pillId,
         lerniPill: JSON.parse(pill.block),
         title: pill.name,
       }));
