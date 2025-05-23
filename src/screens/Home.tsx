@@ -75,9 +75,11 @@ const Home = () => {
           <StyledRow
             css={{
               gap: '30px',
-              flexWrap: 'wrap',
-              minWidth: 'fit-content',
+              width: 'fit-content',
+              maxWidth: '100%',
               alignItems: 'flex-start',
+              overflowX: 'scroll',
+              overflowY: 'hidden',
             }}
           >
             <AllProgramsChart />

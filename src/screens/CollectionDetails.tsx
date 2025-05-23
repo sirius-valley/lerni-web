@@ -78,7 +78,6 @@ const CollectionDetails = () => {
   const handleSave = () => {
     if (!id) return;
     console.log('saving...');
-    dispatch(setModalOpen({ modalType: 'LOADER', closable: false }));
 
     const studentsUpdates = getUpdatedAndDeletedStudents(
       collection.studentsState.initial,
@@ -87,6 +86,31 @@ const CollectionDetails = () => {
 
     console.log('studentsUpdates', studentsUpdates);
 
+    // If there are student changes, show confirmation modal
+    if (studentsUpdates.updated.length > 0 || studentsUpdates.deleted.length > 0) {
+      dispatch(
+        setModalOpen({
+          modalType: 'CONFIRM_STUDENTS_CHANGES',
+          closable: true,
+          metadata: {
+            addedStudents: studentsUpdates.updated,
+            deletedStudents: studentsUpdates.deleted,
+            onConfirm: () => {
+              dispatch(setModalOpen({ modalType: 'LOADER', closable: false }));
+              saveChanges(id, studentsUpdates);
+            },
+          },
+        }),
+      );
+      return;
+    }
+
+    // If no student changes, proceed with saving
+    dispatch(setModalOpen({ modalType: 'LOADER', closable: false }));
+    saveChanges(id, studentsUpdates);
+  };
+
+  const saveChanges = (id: string, studentsUpdates: any) => {
     const promises = [];
 
     if (studentsUpdates.updated.length > 0) {
@@ -123,8 +147,8 @@ const CollectionDetails = () => {
   };
 
   const successfulReturn = () => {
-    navigate('/');
     dispatch(closeModal());
+    navigate('/');
     dispatch(resetCollectionSlice());
     successToast('Colección modificada exitosamente!');
   };

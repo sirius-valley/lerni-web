@@ -13,11 +13,13 @@ import StudentsStatusModal from './modals/StudentsStatusModal';
 import StudentsGroupsModal from './modals/StudentsGroupsModal';
 import { EntityType } from '../utils/permissions';
 import LoaderModal from './modals/LoaderModal';
+import ConfirmStudentsChangesModal from './modals/ConfirmStudentsChangesModal';
 
 export const withModal = (Component: FunctionComponent) => (props: any) => {
   const type = useLSelector((state) => state.utils.modalType);
   const open = !!type;
   const closable = useLSelector((state) => state.utils.closable);
+  const metadata = useLSelector((state) => state.utils.metadata);
   const dispatch = useLDispatch();
 
   const handleOnClose = () => {
@@ -52,8 +54,17 @@ export const withModal = (Component: FunctionComponent) => (props: any) => {
         return <StudentsGroupsModal handleOnClose={handleOnClose}></StudentsGroupsModal>;
       case 'LOADER':
         return <LoaderModal handleOnClose={handleOnClose} />;
+      case 'CONFIRM_STUDENTS_CHANGES':
+        return (
+          <ConfirmStudentsChangesModal
+            handleOnClose={handleOnClose}
+            addedStudents={metadata?.addedStudents || []}
+            deletedStudents={metadata?.deletedStudents || []}
+            onConfirm={metadata?.onConfirm}
+          />
+        );
       default:
-        <></>;
+        return <></>;
     }
   };
 

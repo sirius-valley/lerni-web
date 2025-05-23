@@ -12,7 +12,8 @@ export interface initialStateUtilsType {
     | 'ADD_STUDENT'
     | 'STUDENTS_STATUS'
     | 'STUDENTS_GROUPS'
-    | 'LOADER';
+    | 'LOADER'
+    | 'CONFIRM_STUDENTS_CHANGES';
   metadata?: any;
   closable?: boolean;
 }
