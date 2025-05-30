@@ -49,6 +49,14 @@ const CollectionsList = () => {
       </StyledRow>
       <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
         {data?.map((item, key) => <CollectionItem key={key} {...item} />)}
+        {data?.length === 0 && (
+          <StyledText
+            variant="body2"
+            css={{ textAlign: 'center', marginTop: '24px', color: theme.gray500 }}
+          >
+            No hay colecciones disponibles por el momento.
+          </StyledText>
+        )}
       </StyledColumn>
     </StyledColumn>
   );

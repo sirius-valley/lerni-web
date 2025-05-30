@@ -135,6 +135,19 @@ const mockedPermissions = (
   }
 };
 
+const isPermissions = (permissions: any): permissions is Permissions => {
+  if (
+    permissions &&
+    typeof permissions === 'object' &&
+    'collections' in permissions &&
+    'programs' in permissions &&
+    'profile' in permissions
+  ) {
+    return true;
+  }
+  return false;
+};
+
 export const authSlice = createSlice({
   name: 'authSlice',
   initialState,
@@ -168,6 +181,15 @@ export const authSlice = createSlice({
     );
     builder.addMatcher(authApi.endpoints.me.matchRejected, (state, action) => {
       state.permissions = mockedPermissions('admin');
+    });
+    builder.addMatcher(authApi.endpoints.me.matchFulfilled, (state, action) => {
+      const permissions = action.payload.permissions;
+      if (isPermissions(permissions)) {
+        state.permissions = permissions;
+      } else {
+        console.warn('Invalid permissions format received:', permissions);
+        state.permissions = mockedPermissions('readOnly');
+      }
     });
   },
 });
