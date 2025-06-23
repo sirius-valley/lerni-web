@@ -15,6 +15,7 @@ import { removeStudent, setStudents } from '../../../redux/slices/collection.sli
 import { useNavigate } from 'react-router-dom';
 import { EntityType, usePermissions } from '../../../utils/permissions';
 import CollectionStudentsSkeleton from './Skeleton';
+import { useIsAdmin } from '../../../hooks/useIsAdmin';
 
 const mockedStudents: StudentDTO[] = [
   ...Array.from({ length: 3000 }, () => ({
@@ -89,8 +90,10 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
   const collection = useLSelector((state) => state.collection);
   const { edit } = collection;
 
+  const { isAdmin } = useIsAdmin();
+
   const { canAddStudentToCollection } = usePermissions();
-  const canAdd = canAddStudentToCollection();
+  const canAdd = canAddStudentToCollection() && isAdmin;
 
   const groups = useGetGroupsQuery();
 

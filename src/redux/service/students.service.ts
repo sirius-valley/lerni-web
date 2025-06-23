@@ -1,5 +1,9 @@
 import { api } from './api';
-import { StudentDetailsResponse, StudentsRegisteredResponse } from './types/students.response';
+import {
+  StudentDetailsResponse,
+  StudentsRegisteredResponse,
+  CollectionStudentsResponse,
+} from './types/students.response';
 
 export const studentsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -22,8 +26,31 @@ export const studentsApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    collectionStudents: builder.query<
+      CollectionStudentsResponse,
+      {
+        collectionId: string;
+        limit?: number;
+        offset?: number;
+        search?: string;
+      }
+    >({
+      query: ({ collectionId, limit = 10, offset = 0, search }) => ({
+        url: `colections/students/${collectionId}`,
+        method: 'GET',
+        params: {
+          limit,
+          offset,
+          ...(search && { search }),
+        },
+      }),
+    }),
   }),
 });
 
-export const { useStudentsRegisteredQuery, useStudentsListQuery, useStudentProfileQuery } =
-  studentsApi;
+export const {
+  useStudentsRegisteredQuery,
+  useStudentsListQuery,
+  useStudentProfileQuery,
+  useCollectionStudentsQuery,
+} = studentsApi;

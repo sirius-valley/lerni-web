@@ -3,6 +3,7 @@ import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/sty
 import Card from '../../Card';
 import { useTheme } from 'styled-components';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AutocompleteComponent } from '../../Autocomplete';
 import { useProgramListQuery } from '../../../redux/service/program.service';
 import ProgramRow from './List/ProgramRow';
@@ -11,15 +12,25 @@ import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
 import List from './List';
 import Table from './Table';
 import CollectionProgramsSkeleton from './Skeleton';
+import { useIsAdmin } from '../../../hooks/useIsAdmin';
+import Button from '../../styled/Button';
+import { ComponentVariantType } from '../../../utils/constants';
 
-const CollectionPrograms = () => {
+interface CollectionProgramsProps {
+  collectionId?: string;
+}
+
+const CollectionPrograms = ({ collectionId }: CollectionProgramsProps = {}) => {
   const theme = useTheme();
+  const navigate = useNavigate();
+  const { id } = useParams();
   const collection = useLSelector((state) => state.collection);
   const { edit, isLoading } = collection;
 
   const dispatch = useLDispatch();
 
   const { data } = useProgramListQuery();
+  const { isAdmin } = useIsAdmin();
 
   const availablePrograms =
     data?.results.map((program) => {
@@ -50,6 +61,13 @@ const CollectionPrograms = () => {
     dispatch(updateCollectionInfo({ ...collection, [name]: value }));
   };
 
+  const handleViewProgress = () => {
+    const targetId = collectionId || id;
+    if (targetId) {
+      navigate(`/student-progress/${targetId}`);
+    }
+  };
+
   if (isLoading) return <CollectionProgramsSkeleton />;
 
   return (
@@ -62,12 +80,11 @@ const CollectionPrograms = () => {
             justifyContent: 'space-between',
             width: '100%',
             alignItems: 'center',
+            paddingBottom: '12px',
             borderBottom: `1px solid ${theme.gray200}`,
           }}
         >
-          <StyledText variant="h2" style={{ marginBottom: '6px' }}>
-            {'Programas'}
-          </StyledText>
+          <StyledText variant="h2">{'Programas'}</StyledText>
           {edit && (
             <StyledBox style={{ marginBottom: '6px', width: '250px' }}>
               <AutocompleteComponent
@@ -79,6 +96,15 @@ const CollectionPrograms = () => {
               />
             </StyledBox>
           )}
+
+          <Button
+            variant={ComponentVariantType.PRIMARY}
+            labelSize={'body2'}
+            onClick={handleViewProgress}
+            css={{ width: '150px' }}
+          >
+            Ver progreso
+          </Button>
         </StyledRow>
       }
     >

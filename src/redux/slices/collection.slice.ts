@@ -74,8 +74,8 @@ export const collectionSlice = createSlice({
       collectionApi.endpoints.collectionDetails.matchFulfilled,
       (state, action) => {
         state.edit = false;
-        state.title = action.payload.name;
-        state.programs = action.payload.programs.map((program) => {
+        state.title = action.payload?.name;
+        state.programs = action.payload?.programs?.map((program) => {
           return {
             icon: program.program.icon,
             name: program.program.name,

@@ -6,9 +6,14 @@ import { MetricChart } from '../../charts/MetricChart';
 import { StyledRow } from '../../styled/styles';
 import CollectionStatisticsSkeleton from './Skeleton';
 
-const CollectionStatistics = () => {
+interface CollectionStatisticsProps {
+  collectionId?: string;
+}
+
+const CollectionStatistics = ({ collectionId }: CollectionStatisticsProps) => {
   const { id } = useParams();
-  const { data: stats, isLoading } = useStatsQuery(id as string);
+  const actualId = collectionId || id;
+  const { data: stats, isLoading } = useStatsQuery(actualId as string);
 
   const finished = stats?.finished ?? 0;
   const total = stats?.total ?? 0;

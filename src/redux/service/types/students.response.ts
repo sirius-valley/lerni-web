@@ -34,3 +34,33 @@ export interface StudentDetailsResponse {
   points?: number;
   ranking?: number;
 }
+
+export interface CollectionStudentProgram {
+  programId: string;
+  programName: string;
+  progress: number;
+  status: 'completed' | 'in_progress' | 'not_started' | 'not_assigned';
+  grade: number;
+  passed: boolean;
+  teacherName: string;
+}
+
+export interface CollectionStudent {
+  id: string;
+  name: string;
+  lastname: string;
+  email: string;
+  pointCount: number;
+  overallProgress: number;
+  overallGrade: number;
+  overallStatus: 'completed' | 'in_progress' | 'not_started';
+  groups: string[];
+  programs: CollectionStudentProgram[];
+  certificateId: string;
+}
+
+export interface CollectionStudentsResponse {
+  students: CollectionStudent[];
+  total: number;
+  maxPage: number;
+}
