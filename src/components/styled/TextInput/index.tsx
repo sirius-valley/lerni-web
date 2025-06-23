@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { useTheme } from 'styled-components';
 import { StyledColumn, StyledRow, StyledText } from '../styles';
 import { ShowIcon } from '../../../assets/icons/ShowIcon';
@@ -14,10 +14,13 @@ export interface TextInputProps {
   error?: boolean;
   onChange: (value: string) => void;
   onBlur?: () => void;
+  onFocus?: () => void;
   value: string;
   css?: { [key in string]: string | number | boolean };
   multiline?: boolean;
   maxLength?: number;
+  preText?: ReactNode;
+  postText?: ReactNode;
 }
 
 type PasswordType = 'text' | 'password';
@@ -42,10 +45,13 @@ export const TextInput = ({
   error = false,
   onChange,
   onBlur,
+  onFocus,
   value,
   css,
   multiline = false,
   maxLength = 400,
+  preText,
+  postText,
 }: TextInputProps) => {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
@@ -55,6 +61,7 @@ export const TextInput = ({
 
   const handleFocus = () => {
     setFocused(true);
+    onFocus && onFocus();
   };
   const handleBlur = () => {
     setFocused(false);
@@ -90,6 +97,7 @@ export const TextInput = ({
         onBlur={handleBlur}
         focused={focused.toString()}
       >
+        {preText && <StyledRow>{preText}</StyledRow>}
         {multiline ? (
           <StyledTextArea
             onChange={(event) => onChange(event.target.value)}
@@ -109,6 +117,7 @@ export const TextInput = ({
             maxLength={maxLength}
           />
         )}
+        {postText && <StyledRow style={{ marginLeft: 8 }}>{postText}</StyledRow>}
         <StyledRow
           css={{
             display: 'flex',

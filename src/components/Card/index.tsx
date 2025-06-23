@@ -44,7 +44,7 @@ const Card = ({
           </StyledText>
         </StyledRow>
       )}
-      <StyledBox>{children}</StyledBox>
+      <StyledBox style={{ height: height }}>{children}</StyledBox>
     </StyledColumn>
   );
 };

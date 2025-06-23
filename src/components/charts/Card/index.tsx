@@ -15,6 +15,7 @@ export const Card = ({ header, children }: CardProps) => {
         gap: '7px',
         padding: '21px 0px',
         width: '264px',
+        minWidth: '264px',
         height: '274px',
         borderRadius: '19px',
         elevation: 5,

@@ -2,6 +2,7 @@ import React from 'react';
 import { useStudentsRegisteredQuery } from '../../../redux/service/students.service';
 import { StyledBox, StyledColumn, StyledText } from '../../styled/styles';
 import { Card } from '../Card';
+import MetricChartSkeleton from '../MetricChart/Skeleton';
 
 export const StudentsRegisteredChart = () => {
   const { data, isLoading } = useStudentsRegisteredQuery();
@@ -14,6 +15,7 @@ export const StudentsRegisteredChart = () => {
     </StyledColumn>
   );
 
+  if (isLoading) return <MetricChartSkeleton />;
   return (
     <Card header={cardHeader}>
       <StyledBox

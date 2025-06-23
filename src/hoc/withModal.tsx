@@ -10,10 +10,16 @@ import CreateProfessorModal from './modals/CreateProfessorModal';
 import ReadPillModal from './modals/ReadPillModal';
 import AddStudentModal from './modals/AddStudentModal';
 import StudentsStatusModal from './modals/StudentsStatusModal';
+import StudentsGroupsModal from './modals/StudentsGroupsModal';
+import { EntityType } from '../utils/permissions';
+import LoaderModal from './modals/LoaderModal';
+import ConfirmStudentsChangesModal from './modals/ConfirmStudentsChangesModal';
 
 export const withModal = (Component: FunctionComponent) => (props: any) => {
   const type = useLSelector((state) => state.utils.modalType);
   const open = !!type;
+  const closable = useLSelector((state) => state.utils.closable);
+  const metadata = useLSelector((state) => state.utils.metadata);
   const dispatch = useLDispatch();
 
   const handleOnClose = () => {
@@ -30,21 +36,40 @@ export const withModal = (Component: FunctionComponent) => (props: any) => {
         return <CreateQuestionnaireModal handleOnClose={handleOnClose} />;
       case 'TRIVIA_CREATE':
         return <CreateTriviaModal handleOnClose={handleOnClose} />;
-      case 'STUDENTS_CREATE':
-        return <CreateStudentsModal handleOnClose={handleOnClose} />;
+      case 'PROGRAM_STUDENTS_CREATE':
+        return (
+          <CreateStudentsModal handleOnClose={handleOnClose} entityType={EntityType.PROGRAM} />
+        );
+      case 'COLLECTION_STUDENTS_CREATE':
+        return (
+          <CreateStudentsModal handleOnClose={handleOnClose} entityType={EntityType.COLLECTION} />
+        );
       case 'PROFESSOR_CREATE':
         return <CreateProfessorModal handleOnClose={handleOnClose} />;
       case 'ADD_STUDENT':
         return <AddStudentModal handleOnClose={handleOnClose} />;
       case 'STUDENTS_STATUS':
         return <StudentsStatusModal handleOnClose={handleOnClose}></StudentsStatusModal>;
+      case 'STUDENTS_GROUPS':
+        return <StudentsGroupsModal handleOnClose={handleOnClose}></StudentsGroupsModal>;
+      case 'LOADER':
+        return <LoaderModal handleOnClose={handleOnClose} />;
+      case 'CONFIRM_STUDENTS_CHANGES':
+        return (
+          <ConfirmStudentsChangesModal
+            handleOnClose={handleOnClose}
+            addedStudents={metadata?.addedStudents || []}
+            deletedStudents={metadata?.deletedStudents || []}
+            onConfirm={metadata?.onConfirm}
+          />
+        );
       default:
-        <></>;
+        return <></>;
     }
   };
 
   const ModalContainer = () => {
-    return <BlurView onClick={() => handleOnClose()}>{renderModal()}</BlurView>;
+    return <BlurView onClick={() => closable && handleOnClose()}>{renderModal()}</BlurView>;
   };
 
   return (

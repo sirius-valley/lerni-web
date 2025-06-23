@@ -9,31 +9,46 @@ import { ComponentVariantType } from '../../../utils/constants';
 import FileUpload from '../../../components/styled/FileUpload';
 import { fileToJSONText } from '../../../utils/utils';
 import { useConvertToLerniPillMutation } from '../../../redux/service/program.service';
-import { useLDispatch, useLSelector } from '../../../redux/hooks';
+import { useLDispatch } from '../../../redux/hooks';
 import { addNewPill } from '../../../redux/slices/program.slice';
-import { ConvertTypeResponse } from '../../../redux/service/types/program.types';
 import { nanoid } from '@reduxjs/toolkit';
 import { errorToast, successToast } from '../../../components/Toasts';
-import { Dropdown } from '../../../components/Dropdown';
 import {
   useGetProfessorsQuery,
   useLazyGetProfessorsQuery,
 } from '../../../redux/service/professor.service';
+import { AutocompleteComponent, Option } from '../../../components/Autocomplete';
+import { useGetGroupsQuery } from '../../../redux/service/groups.service';
+import { GroupDTO } from '../../../redux/service/types/groups.types';
 
 interface CreatePillModalProps extends ModalProps {
   openModal?: boolean;
 }
-interface Professor {
-  name: string;
-  lastname: string;
-  profession: string;
-  description: string;
-  image: string;
-}
+
+const mockedGroups = [
+  { id: 'g1', text: 'Frontend Masters' },
+  { id: 'g2', text: 'Backend Gurus' },
+  { id: 'g3', text: 'UI Designers' },
+  { id: 'g4', text: 'Chess Club' },
+  { id: 'g5', text: 'Science Club' },
+  { id: 'g6', text: 'Robotics Team' },
+  { id: 'g7', text: 'Art Enthusiasts' },
+  { id: 'g8', text: 'Sports Club' },
+  { id: 'g9', text: 'Music Band' },
+  { id: 'g10', text: 'Debate Team' },
+  { id: 'g11', text: 'Literature Club' },
+  { id: 'g12', text: 'Gaming Club' },
+];
 
 const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
   const [convertQuery, { data, isLoading, error: convertError, isSuccess }] =
     useConvertToLerniPillMutation();
+  const { data: groups } = useGetGroupsQuery();
+  const groupsOptions =
+    groups?.map((group) => {
+      return { id: group.id, text: group.name };
+    }) || [];
+  const [selectedGroups, setSelectedGroups] = useState<{ id: string; text: string }[]>([]);
   const [professor, setProfessor] = useState<string>('');
   const [inputValues, setInputValues] = useState<{
     name: string;
@@ -108,9 +123,13 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
   const isConfirmButtonDisabled =
     errors.name ||
     errors.description ||
+    errors.completionTimeMinutes ||
     errors.file ||
+    professor === '' ||
+    selectedGroups.length === 0 ||
     !inputValues.name ||
     !inputValues.description ||
+    !inputValues.completionTimeMinutes ||
     !inputValues.file;
 
   const handleChange = (att: keyof typeof inputValues, value: string) => {
@@ -129,6 +148,21 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
     }));
   };
 
+  const handleChangeGroups = (values: Option[]) => {
+    const uniqueValues = values.filter(
+      (value, index, self) => index === self.findIndex((v) => v.id === value.id),
+    );
+    setSelectedGroups(uniqueValues);
+  };
+
+  const matchGroups = (selectedGroups: { id: string; text: string }[]): GroupDTO[] => {
+    return selectedGroups.map((group) => {
+      const groupMatch = groups?.find((g) => g.id === group.id);
+      if (groupMatch) return groupMatch;
+      return { id: '', name: group.text, institutionId: null, createdAt: '' };
+    });
+  };
+
   const handleSavePill = async () => {
     const JSON = await fileToJSONText(inputValues.file);
     // const response = (await convertQuery({ thread: JSON })) as { data: ConvertTypeResponse };
@@ -141,6 +175,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
         teacherId: professor,
         lerniPill: JSON,
         completionTimeMinutes: Number(inputValues.completionTimeMinutes),
+        groups: matchGroups(selectedGroups),
       }),
     );
     handleOnClose();
@@ -182,7 +217,7 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
         zIndex: 30,
       }}
     >
-      <StyledColumn css={{ height: '580px', width: '100%', gap: '16px' }}>
+      <StyledColumn css={{ height: 'fit-content', width: '100%', gap: '16px' }}>
         <StyledRow
           css={{
             width: '100%',
@@ -200,12 +235,13 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
             disabled={isLoading}
           />
         </StyledRow>
-        <Dropdown
+        <AutocompleteComponent
           label={'Profesor'}
-          value={professor}
+          value={professorsList?.find((prof) => prof.id === professor) ?? null}
           placeholder={'Profesor del programa'}
           content={professorsList ?? []}
-          onChange={(val) => {
+          multiple={false}
+          onChange={(val: string) => {
             setProfessor(val);
           }}
           css={{ fontSize: 14 }}
@@ -230,6 +266,17 @@ const CreatePillModal = ({ handleOnClose }: CreatePillModalProps) => {
           disabled={isLoading}
           required
         />
+        <AutocompleteComponent
+          label={'Grupos'}
+          value={selectedGroups}
+          placeholder={'Seleccione grupo objetivo'}
+          content={groupsOptions}
+          multiple
+          allowNewOptions
+          setMultipleValues={handleChangeGroups}
+          css={{ fontSize: 14 }}
+        />
+
         <FileUpload
           title="Cargar JSON"
           value={inputValues.file}

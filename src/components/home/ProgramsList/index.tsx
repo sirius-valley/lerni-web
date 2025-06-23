@@ -1,24 +1,34 @@
 import React from 'react';
-import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
+import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import Button from '../../styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import { ProgramItem } from '../../program/ProgramItem';
 import { useNavigate } from 'react-router-dom';
 import { useProgramListQuery } from '../../../redux/service/program.service';
+import { useTheme } from 'styled-components';
+import { usePermissions } from '../../../utils/permissions';
+import ProgramsListSkeleton from './Skeleton';
 
 const ProgramsList = () => {
   const navigation = useNavigate();
-  const { data } = useProgramListQuery();
+  const theme = useTheme();
+  const { data, isLoading } = useProgramListQuery();
+
+  const { canCreateProgram } = usePermissions();
+  const canCreate = canCreateProgram();
 
   const handleAddNewProgram = () => {
     navigation('/create/program');
   };
+
+  if (isLoading) return <ProgramsListSkeleton />;
   return (
     <StyledColumn
       css={{
-        maxHeight: '850px',
-        width: '100%',
-        backgroundColor: 'white',
+        display: 'flex',
+        overflow: 'hidden',
+        height: '100%',
+        backgroundColor: theme.white,
         borderRadius: '20px',
         padding: '24px 16px',
         gap: '16px',
@@ -26,14 +36,16 @@ const ProgramsList = () => {
     >
       <StyledRow css={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <StyledText variant={'h2'}>Programas</StyledText>
-        <Button
-          onClick={handleAddNewProgram}
-          variant={ComponentVariantType.PRIMARY}
-          labelSize={'body3'}
-          css={{ padding: '16px 8px', height: '30px' }}
-        >
-          Agregar
-        </Button>
+        {canCreate && (
+          <Button
+            onClick={handleAddNewProgram}
+            variant={ComponentVariantType.PRIMARY}
+            labelSize={'body3'}
+            css={{ padding: '16px 8px', height: '30px' }}
+          >
+            Agregar
+          </Button>
+        )}
       </StyledRow>
       <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
         {data?.results.map((item, key) => <ProgramItem key={key} {...item} />)}

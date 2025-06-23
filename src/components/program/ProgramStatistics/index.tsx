@@ -6,9 +6,15 @@ import { AttendanceChart } from '../../charts/AttendanceChart';
 import { LikesChart } from '../../charts/LikesChart';
 import { useParams } from 'react-router-dom';
 import { QuestionnaireAttemptsChart } from '../../charts/QuestionnaireAttemptsChart';
+import { useLSelector } from '../../../redux/hooks';
+import ProgramStatisticsSkeleton from './Skeleton';
 export const ProgramStatistics = () => {
   const theme = useTheme();
   const { id } = useParams();
+
+  const { isLoading } = useLSelector((state) => state.program);
+
+  if (isLoading) return <ProgramStatisticsSkeleton />;
 
   return (
     <Card
