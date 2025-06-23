@@ -27,7 +27,7 @@
     "formik": "^2.4.5",
     "polished": "^4.3.1",
     "react": "^18.2.0",
-    "react-apexcharts": "1.4.1",
+    "react-apexcharts": "^1.4.2",
     "react-circular-progressbar": "^2.1.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.0.4",
@@ -72,6 +72,8 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "ajv": "^6.12.6",
+    "ajv-keywords": "^3.5.2",
     "babel-plugin-styled-components": "^2.1.4",
     "eslint-config-prettier": "^9.1.0",
     "husky": "^8.0.3",
@@ -82,6 +84,10 @@
     "*.{js,css,md,ts,tsx}": "prettier --write --ignore-unknown"
   },
   "resolutions": {
-    "styled-components": "^5"
+    "styled-components": "^5",
+    "ajv": "^6.12.6",
+    "ajv-keywords": "^3.5.2",
+    "schema-utils": "^3.1.1",
+    "terser-webpack-plugin": "^4.2.3"
   }
 }

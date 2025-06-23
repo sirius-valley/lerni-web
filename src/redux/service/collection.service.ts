@@ -6,7 +6,6 @@ import {
   StudentCollectionRequestDto,
 } from './types/collection.types';
 import { StudentDTO } from './types/students.response';
-import { BaseQueryArg } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
 import { GroupMetrics, StatsDTO } from './types/groups.types';
 
 export const collectionApi = api.injectEndpoints({

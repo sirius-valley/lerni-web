@@ -137,7 +137,7 @@ const StudentsGroupsModal = ({ handleOnClose }: StudentsGroupsModalProps) => {
                   borderColor: theme.primary500,
                   color: theme.primary500,
                   '& .MuiChip-deleteIcon': {
-                    color: theme.primaty500,
+                    color: theme.primary500,
                   },
                   '&.MuiChip-outlinedPrimary': {
                     borderColor: theme.primary500,

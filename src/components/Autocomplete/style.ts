@@ -5,7 +5,7 @@ export const StyledTextField = styled(TextField)`
   & .MuiOutlinedInput-root {
     border-radius: 8px;
     padding: 4px 8px !important;
-    color: ${({ theme }) => theme.black};
+    color: ${({ theme }) => theme.gray950};
     font-size: 14px;
     transition: all 0.2s ease-in-out;
 

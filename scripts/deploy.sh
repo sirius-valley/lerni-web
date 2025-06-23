@@ -17,7 +17,7 @@ if [ -z "$AWS_REGION" ]; then
 fi
 
 echo "📦 Installing dependencies..."
-npm ci
+npm ci --legacy-peer-deps
 
 echo "🔍 Running linter..."
 npm run lint
