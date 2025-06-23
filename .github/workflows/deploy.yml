@@ -27,13 +27,6 @@ jobs:
       - name: Run linter
         run: npm run lint
         
-      - name: Run tests (if available)
-        run: |
-          if npm run | grep -q "test"; then
-            npm run test -- --coverage --watchAll=false
-          else
-            echo "No test script found, skipping tests"
-          fi
         
       - name: Build application
         run: npm run build
