@@ -2,7 +2,6 @@ import React from 'react';
 import useCounter from '../../hooks/useCounter';
 import styled, { useTheme, DefaultTheme } from 'styled-components';
 import { Button } from './styles';
-import { MyTheme } from '../../utils/theme';
 
 const Counter = () => {
   const { counter, increment } = useCounter();
