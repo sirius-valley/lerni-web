@@ -14,21 +14,28 @@ import { useCreateProgramMutation } from '../redux/service/program.service';
 import { errorToast, successToast } from '../components/Toasts';
 import { transformedValues } from '../utils/transformBody';
 import { resetProgramSlice } from '../redux/slices/program.slice';
+import { api } from '../redux/service/api';
+import { useMeQuery } from '../redux/service/auth.service';
+import { closeModal, setModalOpen } from '../redux/slices/utils.slice';
 
 const CreateProgram = () => {
   const theme = useTheme();
   const program = useLSelector((state) => state.program);
   const navigate = useNavigate();
   const dispatch = useLDispatch();
+  const { data: meData, isError: meError } = useMeQuery();
 
   const [createProgram, { isError, error, data, isSuccess }] = useCreateProgramMutation();
 
   const handleSave = () => {
     const allFieldsFilled = Object.values(program).every((value) => value !== '');
     if (allFieldsFilled) {
+      dispatch(setModalOpen({ modalType: 'LOADER', closable: false }));
       createProgram(transformedValues(program)).then((res: any) => {
+        dispatch(closeModal());
         navigate('/');
         dispatch(resetProgramSlice());
+        dispatch(api.util.invalidateTags(['Groups']));
         successToast('Programa creado exitosamente!');
       });
     }
@@ -36,9 +43,17 @@ const CreateProgram = () => {
 
   useEffect(() => {
     if (isError) {
+      dispatch(closeModal());
       errorToast('Algo ha salido mal! ');
     }
   }, [isError]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(closeModal());
+      dispatch(resetProgramSlice());
+    };
+  }, []);
 
   return (
     <StyledBox css={{ height: '100%' }}>

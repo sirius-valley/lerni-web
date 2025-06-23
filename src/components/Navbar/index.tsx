@@ -9,6 +9,7 @@ import { useLDispatch } from '../../redux/hooks';
 import { resetAllStates } from '../../redux/store';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavBarItems } from './utils';
+import { usePermissions } from '../../utils/permissions';
 
 export const NavBar = () => {
   const theme = useTheme();
@@ -17,6 +18,8 @@ export const NavBar = () => {
 
   const handleLogout = () => dispatch(resetAllStates());
   const { pathname } = useLocation();
+
+  const { hasPermission } = usePermissions();
 
   return (
     <StyledColumn
@@ -72,7 +75,11 @@ export const NavBar = () => {
           </StyledBox> */}
         </StyledColumn>
         <StyledColumn style={{ padding: '28px 12px 0px 12px', gap: 6 }}>
-          {NavBarItems.map((item, idx) => (
+          {NavBarItems.filter((item) =>
+            item.permissionsRequired.every((permission) =>
+              item.entityForPermissions.every((entity) => hasPermission(permission, entity)),
+            ),
+          ).map((item, idx) => (
             <NavbarItem
               key={idx}
               name={item.name}

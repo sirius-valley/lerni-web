@@ -11,11 +11,17 @@ import { RemoveIcon } from '../../../assets/icons/RemoveIcon';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
 import { removeTrivia } from '../../../redux/slices/program.slice';
+import { usePermissions } from '../../../utils/permissions';
+import ProgramContentSkeleton from '../ProgramContent/Skeleton';
 
 export const ProgramTrivia = () => {
   const theme = useTheme();
   const hasPills = useLSelector((state) => state.program.pills)?.length > 0;
   const hasTrivia = useLSelector((state) => state.program.trivia) !== undefined;
+  const { isLoading } = useLSelector((state) => state.program);
+
+  const { canEditProgramContent } = usePermissions();
+  const canUpdate = canEditProgramContent();
 
   const dispatch = useLDispatch();
   const handleShowModal = () => {
@@ -25,6 +31,8 @@ export const ProgramTrivia = () => {
   const handleShowPreview = () => {
     dispatch(setModalOpen({ modalType: 'PILL_READ', metadata: { type: 'trivia' } }));
   };
+
+  if (isLoading) return <ProgramContentSkeleton />;
 
   return (
     <Card
@@ -41,23 +49,25 @@ export const ProgramTrivia = () => {
           <StyledText variant="h2" style={{ marginBottom: '6px' }}>
             {'Trivia'}
           </StyledText>
-          <StyledBox style={{ marginBottom: '6px' }}>
-            <Button
-              variant={ComponentVariantType.PRIMARY}
-              onClick={handleShowModal}
-              labelSize={ButtonLabelSize.BODY3}
-              disabled={!(!hasTrivia && hasPills)}
-              css={{
-                width: 'auto',
-                height: '30px',
-                padding: '8px 16px 8px 16px',
-                fontFamily: 'Roboto-Bold',
-                cursor: !hasTrivia ? 'pointer' : '',
-              }}
-            >
-              {'Agregar trivia'}
-            </Button>
-          </StyledBox>
+          {canUpdate && (
+            <StyledBox style={{ marginBottom: '6px' }}>
+              <Button
+                variant={ComponentVariantType.PRIMARY}
+                onClick={handleShowModal}
+                labelSize={ButtonLabelSize.BODY3}
+                disabled={!(!hasTrivia && hasPills)}
+                css={{
+                  width: 'auto',
+                  height: '30px',
+                  padding: '8px 16px 8px 16px',
+                  fontFamily: 'Roboto-Bold',
+                  cursor: !hasTrivia ? 'pointer' : '',
+                }}
+              >
+                {'Agregar trivia'}
+              </Button>
+            </StyledBox>
+          )}
         </StyledRow>
       }
     >

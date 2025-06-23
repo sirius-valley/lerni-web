@@ -1,173 +1,216 @@
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+  getFilteredRowModel,
+  Row,
+} from '@tanstack/react-table';
 import { useTheme } from 'styled-components';
-import { RemoveIcon } from '../../../../assets/icons/RemoveIcon';
-import { StyledAvatar, StyledBox, StyledRow, StyledText } from '../../../styled/styles';
-import { StyledTable } from './styles';
+import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../styled/styles';
+import { useLDispatch } from '../../../../redux/hooks';
+import { TextInput } from '../../../styled/TextInput';
+import { UpArrowIcon } from '../../../../assets/icons/UpArrowIcon';
+import { DownArrowIcon } from '../../../../assets/icons/DownArrowIcon';
+import { Chip } from '@mui/material';
+import Email from './columns/Email';
+import Fullname from './columns/Fullname';
+import Status from './columns/Status';
+import Progress from './columns/Progress';
+import Groups from './columns/Groups';
+import Actions from './columns/Actions';
+import { StudentDTO } from '../../../../redux/service/types/students.response';
+import { GroupDTO } from '../../../../redux/service/types/groups.types';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { Tooltip } from 'react-tooltip';
-import React from 'react';
-import { useLDispatch, useLSelector } from '../../../../redux/hooks';
-import { removeStudent } from '../../../../redux/slices/program.slice';
-import { setModalOpen } from '../../../../redux/slices/utils.slice';
-import { transformFirstLetterToLowerCase } from '../../../../utils/utils';
+import TableMenu from './Menu';
+import Table from '../../../Table';
+import { EntityType, usePermissions } from '../../../../utils/permissions';
 
 interface StudentsTableProps {
-  students: {
-    authId: string;
-    email: string;
-    name?: string;
-    lastname?: string;
-    status?: boolean;
-    image?: string;
-    id: string;
-  }[];
+  students: StudentDTO[];
+  groups: GroupDTO[];
   programVersionId: string;
+  entityType: EntityType;
+  onMenuClick: (action: 'view' | 'delete' | 'edit', student: StudentDTO) => void;
 }
 
-export const StudentsTable = ({ students, programVersionId }: StudentsTableProps) => {
+export const StudentsTable = ({
+  students,
+  groups,
+  programVersionId,
+  entityType,
+  onMenuClick,
+}: StudentsTableProps) => {
   const theme = useTheme();
-  const dispatch = useLDispatch();
-  const edit = useLSelector((state) => state.program.edit);
+
+  const { canEditStudentsListFromCollection, canEditStudentsListFromProgram } = usePermissions();
+  const canEdit =
+    entityType === EntityType.COLLECTION
+      ? canEditStudentsListFromCollection()
+      : canEditStudentsListFromProgram();
+
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<StudentDTO | null>(null);
+
+  const handleMenuOpen = useCallback(
+    (event: React.MouseEvent<HTMLElement>, student: StudentDTO) => {
+      setMenuAnchor(event.currentTarget);
+      setSelectedStudent(student);
+    },
+    [],
+  );
+
+  const handleMenuClose = useCallback(() => {
+    setMenuAnchor(null);
+    setSelectedStudent(null);
+  }, []);
+
+  const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: StudentDTO | null) => {
+    student && onMenuClick(action, student);
+  };
+
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+
+  const handleExpandGroups = useCallback((id: string) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  }, []);
+
+  const isRegistered = (student: StudentDTO) => {
+    const hasName = student.name != null;
+    const hasLastName = student.lastname != null;
+    return hasName && hasLastName;
+  };
+  const columns = React.useMemo<ColumnDef<StudentDTO, any>[]>(
+    () => [
+      {
+        accessorKey: 'email',
+        header: 'Email',
+        cell: (info) => {
+          const email = info.getValue();
+          const image = info.row.original.image;
+          return <Email email={email} image={image} />;
+        },
+      },
+      {
+        accessorFn: (row) => `${row.name ?? ''} ${row.lastname ?? '...'}`,
+        id: 'fullname',
+        header: 'Nombre',
+        cell: (info) => {
+          const fullname = info.getValue();
+          return <Fullname fullname={fullname} />;
+        },
+      },
+      {
+        accessorKey: 'status',
+        header: 'Estado',
+        cell: (info) => {
+          const status = isRegistered(info.row.original);
+          return <Status status={status} />;
+        },
+        meta: {
+          filterVariant: 'select',
+        },
+        filterFn: (row, columnId, value) => {
+          const status = row.getValue(columnId);
+          if (value === 'true') {
+            return status === true;
+          }
+          if (value === 'false') {
+            return status === false;
+          }
+          return true;
+        },
+        sortingFn: (a, b) => {
+          const statusA = isRegistered(a.original);
+          const statusB = isRegistered(b.original);
+          // Esto ordena los valores `true` antes que los `false`
+          return statusA === statusB ? 0 : statusA ? 1 : -1;
+        },
+      },
+      {
+        accessorKey: 'progress',
+        header: 'Progreso',
+        cell: (info) => {
+          const progress = info.row.original.progress ?? 0;
+          return <Progress progress={progress} />;
+        },
+      },
+      {
+        accessorKey: 'group',
+        header: 'Grupos',
+        cell: (info) => {
+          const groups = info.getValue() ?? [];
+          const studentId = info.row.original.id;
+          const expanded = expandedGroups[studentId] ?? false;
+          const maxGroups = 1;
+          const visibleGroups = groups.slice(0, maxGroups);
+          const extraGroups = groups.length - maxGroups;
+
+          return (
+            <Groups
+              studentId={studentId}
+              groups={groups}
+              maxGroups={maxGroups}
+              visibleGroups={visibleGroups}
+              extraGroups={extraGroups}
+              expanded={expanded}
+              onExpand={() => handleExpandGroups(studentId)}
+            />
+          );
+        },
+        meta: {
+          filterVariant: 'select',
+        },
+        filterFn: 'arrIncludesAll',
+      },
+      {
+        id: 'actions',
+        cell: (info) => {
+          const student = info.row.original;
+          return (
+            <Actions
+              onMenuOpen={(event, student) => handleMenuOpen(event, student)}
+              student={student}
+            />
+          );
+        },
+      },
+    ],
+    [expandedGroups],
+  );
 
   return (
-    <StyledBox style={{ maxWidth: '100%', overflowX: 'auto' }}>
-      <StyledTable>
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'left', padding: '14px 10px 14px 0px', width: '35%' }}>
-              {'Email'}
-            </th>
-            <th style={{ padding: '14px 10px 14px 10px', width: '35%' }}>{'Nombre'}</th>
-            <th style={{ padding: '14px 10px 14px 10px', width: '20%' }}>{'Status'}</th>
-            <th style={{ textAlign: 'right', padding: '14px 0px 14px 10px', width: '15%' }}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((student, idx) => {
-            const fullname = `${student.name} ${student.lastname}`;
-            const isRegistered = student.name !== undefined;
-
-            return (
-              <tr
-                key={idx}
-                style={{ borderBottom: `1px solid ${theme.gray200}`, cursor: 'pointer' }}
-                onClick={() =>
-                  dispatch(
-                    setModalOpen({
-                      modalType: 'STUDENTS_STATUS',
-                      metadata: { studentId: student.id, programVersionId },
-                    }),
-                  )
-                }
-              >
-                <td style={{ padding: '12px 10px 12px 0px' }}>
-                  <StyledRow
-                    style={{ justifyContent: 'flex-start', alignItems: 'center', gap: 12 }}
-                  >
-                    <StyledAvatar src={transformFirstLetterToLowerCase(student.image ?? '')} />
-                    <StyledText
-                      variant="body1"
-                      style={{
-                        textAlign: 'center',
-                        fontSize: 14,
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                      }}
-                      data-tooltip-content={student?.email}
-                      data-tooltip-id={student?.email?.length > 30 ? 'email' : undefined}
-                    >
-                      {student?.email}
-                    </StyledText>
-                    <Tooltip
-                      style={{
-                        padding: '8px 12px 8px 12px',
-                        borderRadius: 8,
-                        gap: 10,
-                        backgroundColor: theme.gray600,
-                        color: 'white',
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        textAlign: 'center',
-                        whiteSpace: 'normal',
-                        width: '20%',
-                      }}
-                      place="right"
-                      id="email"
-                    />
-                  </StyledRow>
-                </td>
-                <td style={{ padding: '12px 10px 12px 10px' }}>
-                  <StyledText
-                    variant="body1"
-                    style={{
-                      textAlign: 'center',
-                      fontSize: 14,
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-                    }}
-                    data-tooltip-content={fullname}
-                    data-tooltip-id={fullname && fullname.length > 20 ? 'name' : undefined}
-                  >
-                    {`${student.name ?? ''} ${student.lastname ?? '...'}`}
-                  </StyledText>
-                  <Tooltip
-                    style={{
-                      padding: '8px 12px 8px 12px',
-                      borderRadius: 8,
-                      gap: 10,
-                      backgroundColor: theme.gray600,
-                      color: 'white',
-                      fontSize: 14,
-                      fontFamily: 'Roboto',
-                      textAlign: 'center',
-                      whiteSpace: 'normal',
-                      width: '20%',
-                    }}
-                    place="right"
-                    id="name"
-                  />
-                </td>
-                <td
-                  style={{
-                    padding: '12px 10px 12px 10px',
-                    fontSize: 14,
-                    color: isRegistered ? theme.gray900 : theme.red500,
-                  }}
-                >
-                  {isRegistered ? 'Registrado' : 'Sin registrar'}
-                </td>
-                <td
-                  style={{
-                    fontSize: 14,
-                    padding: '12px 0px 12px 10px',
-                  }}
-                >
-                  <StyledBox
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      justifyContent: 'flex-end',
-                      alignContent: 'flex-end',
-                    }}
-                  >
-                    <StyledBox
-                      style={{
-                        cursor: 'pointer',
-                        width: 'auto',
-                        // opacity: edit ? 1 : 0,
-                        pointerEvents: edit ? 'visible' : 'none',
-                      }}
-                      onClick={() => dispatch(removeStudent({ email: student.email }))}
-                    >
-                      <RemoveIcon size={18} color={theme.gray400} />
-                    </StyledBox>
-                  </StyledBox>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </StyledTable>
-    </StyledBox>
+    <>
+      <Table
+        data={students}
+        columns={columns}
+        entityName={'estudiante'}
+        onRowClick={(student: StudentDTO) => handleMenuClick('view', student)}
+      />
+      <Tooltip
+        id="table-tooltip"
+        style={{
+          padding: '8px 12px',
+          borderRadius: 8,
+          backgroundColor: theme.gray600,
+          color: 'white',
+          fontSize: 14,
+          fontFamily: 'Roboto',
+        }}
+        place="top"
+      />
+      <TableMenu
+        onClick={(action) => handleMenuClick(action, selectedStudent)}
+        onClose={handleMenuClose}
+        menuAnchor={menuAnchor}
+        canEdit={canEdit}
+      />
+    </>
   );
 };

@@ -24,7 +24,7 @@ const AddStudentModal = ({ handleOnClose }: AddStudentModal) => {
   const [studentEmail, setStudentEmail] = useState<string>('');
 
   const dispatch = useLDispatch();
-  const students = useLSelector((state) => state.program.students);
+  const students = useLSelector((state) => state.program.studentsState.current);
 
   const isValidEmail = (email: string) => {
     const regex = /^[a-zA-Z0–9._-]+@[a-zA-Z0–9.-]+\.[a-zA-Z]{2,4}$/;

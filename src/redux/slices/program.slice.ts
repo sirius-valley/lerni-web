@@ -2,6 +2,8 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { programApi } from '../service/program.service';
 import { RootState } from '../store';
 import dayjs from 'dayjs';
+import { GroupDTO } from '../service/types/groups.types';
+import { StudentDTO } from '../service/types/students.response';
 
 type Pill = {
   id: string;
@@ -12,7 +14,9 @@ type Pill = {
   completionTimeMinutes: number;
   lerniPill: any;
   teacherId?: string;
+  groups: GroupDTO[];
 };
+
 interface Questionnaire {
   id: string;
   type: string;
@@ -34,22 +38,16 @@ export interface CreateProgramState {
     questionnaire: Questionnaire;
   };
   trivia?: any;
-  students: {
-    authId: string;
-    career: string;
-    city: string;
-    email: string;
-    id: string;
-    image?: string;
-    lastname: string;
-    name: string;
-    profession?: string;
-  }[];
+  studentsState: {
+    initial: StudentDTO[];
+    current: StudentDTO[];
+  };
   hoursToComplete: number;
   pointsReward: number;
   startDate: string;
   endDate: string;
   edit: boolean;
+  isLoading: boolean;
 }
 
 const initialState: CreateProgramState = {
@@ -60,439 +58,16 @@ const initialState: CreateProgramState = {
   pills: [],
   questionnaire: undefined,
   trivia: undefined,
-  // trivia: {
-  //   id: '',
-  //   type: 'RANDOM',
-  //   seed: 0,
-  //   elements: [
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e2900',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 0',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 1 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Verdadera',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e2911',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 1',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 2 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Verdadera',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e2922',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 2',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 3 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 Verdadera',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e2933',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 3',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 4 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Verdadera',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e2944',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 4',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 1 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Verdadera',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e2955',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 5',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 2 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Verdadera',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e2966',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 6',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 3 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 Verdadera',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e2977',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 7',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 4 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Verdadera',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e2988',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 8',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 1 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Verdadera',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e2999',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 9',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 2 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Verdadera',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e291010',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 10',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 3 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 Verdadera',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e291111',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 11',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 4 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Verdadera',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e291212',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 12',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 1 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Verdadera',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e291313',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 13',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 2 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Verdadera',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e291414',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 14',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 3 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 Verdadera',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e291515',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 15',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 4 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Verdadera',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e291616',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 16',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 1 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Verdadera',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e291717',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 17',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 2 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Verdadera',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e291818',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 18',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 3 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 Verdadera',
-  //           'Opcion 4 Falsa',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: '3fa64704-3377-4238-8b22-e64c06772e291919',
-  //       type: 'QUESTION',
-  //       name: 'Pregunta 19',
-  //       question_type: 'SINGLECHOICE',
-  //       metadata: {
-  //         metadata: {
-  //           lerni_question_type: 'single-choice',
-  //           seconds_to_answer: 30,
-  //           correct_answer: 'Opcion 4 Verdadera',
-  //         },
-  //         options: [
-  //           'Opcion 1 Falsa',
-  //           'Opcion 2 Falsa',
-  //           'Opcion 3 falsa',
-  //           'Opcion 4 Verdadera',
-  //           'timeout',
-  //           'left',
-  //         ],
-  //       },
-  //     },
-  //   ],
-  // },
-  students: [],
+  studentsState: {
+    initial: [],
+    current: [],
+  },
   hoursToComplete: 0,
   pointsReward: 0,
   startDate: dayjs().toISOString(),
   endDate: dayjs(new Date(new Date().setFullYear(new Date().getFullYear() + 1))).toISOString(),
   edit: true,
+  isLoading: false,
 };
 // just to have it mocked, then we can remove field values
 
@@ -518,8 +93,34 @@ export const programSlice = createSlice({
     removeTrivia: (state, action: PayloadAction<void>) => {
       state.trivia = undefined;
     },
+    updateProgramStudentsState: (state, action) => {
+      state.studentsState = {
+        ...state.studentsState,
+        ...action.payload,
+      };
+    },
     removeStudent: (state, action: PayloadAction<{ email: string }>) => {
-      state.students = state.students.filter((user) => user.email !== action.payload.email);
+      state.studentsState.current = state.studentsState.current.filter(
+        (user) => user.email !== action.payload.email,
+      );
+    },
+    updateStudents: (state, action: PayloadAction<StudentDTO[]>) => {
+      state.studentsState.current = state.studentsState.current.map((student) => {
+        const updatedStudent = action.payload.find((s) => s.email === student.email);
+        return updatedStudent ? updatedStudent : student;
+      });
+    },
+    addStudents: (state, action: PayloadAction<StudentDTO[]>) => {
+      state.studentsState.current = [...action.payload, ...state.studentsState.current];
+    },
+    setStudents: (state, action: PayloadAction<StudentDTO[]>) => {
+      state.studentsState = {
+        current: action.payload,
+        initial: action.payload,
+      };
+    },
+    isLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
     },
     resetProgramSlice: (state, action: PayloadAction<void>) => {
       return initialState;
@@ -535,9 +136,9 @@ export const programSlice = createSlice({
       state.description = action.payload.programDescription;
       state.startDate = action.payload.startDate;
       state.endDate = action.payload.endDate;
-      state.students = action.payload.students ?? [];
       state.pills = action.payload.pills.map((pill: any) => ({
         ...pill,
+        id: pill.pillId,
         lerniPill: JSON.parse(pill.block),
         title: pill.name,
       }));
@@ -549,6 +150,7 @@ export const programSlice = createSlice({
         action.payload?.trivias?.[0]?.block !== undefined
           ? JSON.parse(action.payload?.trivias?.[0].block)
           : undefined;
+      state.isLoading = false;
     });
   },
 });
@@ -572,7 +174,12 @@ export const getBlockByType = createSelector(
 export const {
   resetProgramSlice,
   addNewPill,
+  updateProgramStudentsState,
   removeStudent,
+  addStudents,
+  updateStudents,
+  setStudents,
+  isLoading,
   removeQuestionnaire,
   removeTrivia,
   removePill,

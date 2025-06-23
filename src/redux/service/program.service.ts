@@ -10,6 +10,7 @@ import {
   AllProgramsChartResponse,
   StudentsStatusResponse,
 } from './types/program.types';
+import { StudentDTO } from './types/students.response';
 
 // interface Pill {
 //   name: string;
@@ -60,7 +61,7 @@ export const programApi = api.injectEndpoints({
         body: body,
       }),
     }),
-    verifyStudents: builder.mutation<any, any>({
+    verifyStudents: builder.mutation<StudentDTO[], any>({
       query: (body) => ({
         url: 'api/student/check',
         method: 'POST',
@@ -71,7 +72,7 @@ export const programApi = api.injectEndpoints({
       query: () => ({
         url: 'api/program/list',
         method: 'GET',
-        params: { limit: 50 },
+        params: { limit: 500 },
       }),
     }),
     programDetails: builder.query<any, string>({
@@ -122,6 +123,13 @@ export const programApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    studentsList: builder.query<StudentDTO[], string>({
+      providesTags: ['ProgramDetails'],
+      query: (programVersionId) => ({
+        url: `api/program/students/in-progress/${programVersionId}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -137,4 +145,5 @@ export const {
   useProgramDetailsQuery,
   useAllProgramsChartQuery,
   useStudentsProgressQuery,
+  useStudentsListQuery,
 } = programApi;

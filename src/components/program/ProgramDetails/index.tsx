@@ -11,11 +11,17 @@ import {
 import { Dropdown } from '../../Dropdown';
 import { DateTimePicker } from './DateTimePicker';
 import dayjs from 'dayjs';
+import { AutocompleteComponent } from '../../Autocomplete';
+import { usePermissions } from '../../../utils/permissions';
+import ProgramDetailsSkeleton from './Skeleton';
 
 const ProgramDetails = () => {
   const program = useLSelector((state) => state.program);
-  const { edit } = program;
+  const { edit, isLoading } = program;
   const dispatch = useLDispatch();
+
+  const { canUpdateProgram } = usePermissions();
+  const canUpdate = canUpdateProgram() || edit;
 
   const [refetch, { data: profData, isLoading: isLoadingProf }] = useLazyGetProfessorsQuery();
   const [professors, setProfessorsList] = useState<{ id: string; text: string }[]>([]);
@@ -54,6 +60,8 @@ const ProgramDetails = () => {
 
   const imageUrl = 'https://lerni-images-2024.s3.amazonaws.com/default_image_program.jpg';
 
+  if (isLoading) return <ProgramDetailsSkeleton />;
+
   return (
     <Card title={'Detalles del programa'} height={'100%'}>
       <StyledRow style={{ gap: '24px', marginTop: '12px' }}>
@@ -76,7 +84,7 @@ const ProgramDetails = () => {
             required
             value={program.title}
             onChange={(value) => handleChange('title', value)}
-            disabled={!edit}
+            disabled={!canUpdate}
           ></TextInput>
           <TextInput
             placeholder="https://www.pixels.com/321423534ng43g432g4f443f4545"
@@ -84,35 +92,37 @@ const ProgramDetails = () => {
             required
             value={program.image}
             onChange={(value) => handleChange('image', value)}
-            disabled={!edit}
+            disabled={!canUpdate}
           ></TextInput>
-          <Dropdown
+          <AutocompleteComponent
             label={'Profesor'}
-            value={program.professor}
+            value={professors.find((prof) => prof.id === program.professor) ?? null}
             placeholder={'Profesor del programa'}
             content={professors ?? []}
+            multiple={false}
             onChange={(val) => {
               handleChange('professor', val);
             }}
             css={{ fontSize: 14 }}
+            disabled={!canUpdate}
           />
           <TextInput
             css={{ height: '120px' }}
-            placeholder="Descripcion del programa..."
-            title="Descripcion"
+            placeholder="Descripción del programa..."
+            title="Descripción"
             required
             value={program.description}
             onChange={(value) => handleChange('description', value)}
             multiline
             maxLength={2000}
-            disabled={!edit}
+            disabled={!canUpdate}
           ></TextInput>
           <StyledRow css={{ gap: '16px' }}>
             <DateTimePicker
               label="Comienzo"
               value={dayjs(program.startDate)}
               handleChange={(date) => handleChange('startDate', date.toISOString())}
-              disable={!program.edit}
+              disable={!canUpdate}
               defaultValue={dayjs(program.startDate)}
               minDate={dayjs()}
             />
@@ -120,7 +130,7 @@ const ProgramDetails = () => {
               label="Finalización"
               value={dayjs(program.endDate)}
               handleChange={(date) => handleChange('endDate', date.toISOString())}
-              disable={!program.edit}
+              disable={!canUpdate}
               defaultValue={dayjs(program.endDate)}
               minDate={dayjs(program.startDate)}
             />

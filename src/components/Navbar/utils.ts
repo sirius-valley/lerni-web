@@ -4,6 +4,8 @@ import { PeopleIcon } from '../../assets/icons/PeopleIcon';
 import { LibraryIcon } from '../../assets/icons/LibraryIcon';
 import { TriviaIcon } from '../../assets/icons/TriviaIcon';
 import { ClassIcon } from '../../assets/icons/ClassIcon';
+import { PermissionType } from '../../redux/service/types/auth.types';
+import { EntityType } from '../../utils/permissions';
 
 export const NavBarItems = [
   {
@@ -13,6 +15,8 @@ export const NavBarItems = [
     icon: HomeIcon,
     redirect: '/',
     activeRoutes: ['/'],
+    permissionsRequired: [],
+    entityForPermissions: [],
   },
   {
     id: 'Library',
@@ -20,7 +24,9 @@ export const NavBarItems = [
     screen: 'library',
     icon: LibraryIcon,
     redirect: '/create/program',
-    activeRoutes: ['/create/program'],
+    activeRoutes: ['/create/program', '/create/collection'],
+    permissionsRequired: [PermissionType.CREATE],
+    entityForPermissions: [EntityType.PROGRAM],
   },
   // {
   //   id: 'Pill',
