@@ -38,16 +38,16 @@ En Permissions > Bucket policy:
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "PublicReadGetObject",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::lerni-web-dev/*"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::lerni-web-dev/*"
+    }
+  ]
 }
 ```
 
@@ -58,30 +58,25 @@ En Permissions > Bucket policy:
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:PutObject",
-                "s3:PutObjectAcl",
-                "s3:GetObject",
-                "s3:DeleteObject",
-                "s3:ListBucket"
-            ],
-            "Resource": [
-                "arn:aws:s3:::lerni-web-dev",
-                "arn:aws:s3:::lerni-web-dev/*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "cloudfront:CreateInvalidation"
-            ],
-            "Resource": "*"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:PutObjectAcl",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:ListBucket"
+      ],
+      "Resource": ["arn:aws:s3:::lerni-web-dev", "arn:aws:s3:::lerni-web-dev/*"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["cloudfront:CreateInvalidation"],
+      "Resource": "*"
+    }
+  ]
 }
 ```
 
@@ -107,6 +102,7 @@ Si quieres CDN global y HTTPS:
 
 1. CloudFront > Create distribution
 2. Configuración:
+
    ```
    Origin domain: lerni-web-dev.s3-website-us-east-1.amazonaws.com
    Protocol: HTTP only
@@ -124,6 +120,7 @@ Si quieres CDN global y HTTPS:
 ### Automático (GitHub Actions)
 
 1. Push a rama `dev`:
+
    ```bash
    git add .
    git commit -m "Deploy changes"
@@ -159,6 +156,7 @@ chmod +x scripts/deploy.sh
 **Problema:** Conflictos de dependencias entre apexcharts y react-apexcharts
 
 **Solución:**
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install --legacy-peer-deps
@@ -182,6 +180,7 @@ npm install --legacy-peer-deps
 **Causa:** Diferencias de versión Node.js
 
 **Solución:** Usar nvm para cambiar a Node 18:
+
 ```bash
 nvm install 18
 nvm use 18
@@ -194,6 +193,7 @@ npm run build
 **Problema:** Cache del navegador o CloudFront
 
 **Soluciones:**
+
 1. Hacer hard refresh (Ctrl+F5)
 2. Verificar que CloudFront invalidation se ejecutó
 3. Verificar archivos en S3 bucket
@@ -213,6 +213,7 @@ npm run build
 ## ⚡ Optimizaciones
 
 El workflow está configurado para:
+
 - ✅ Cache de npm para builds más rápidos
 - ✅ Source maps deshabilitados en producción
 - ✅ Cache headers optimizados (1 año para assets, no-cache para HTML)
@@ -222,7 +223,8 @@ El workflow está configurado para:
 ## 📞 Soporte
 
 Si tienes problemas con el deployment:
+
 1. Revisa los logs en GitHub Actions
 2. Verifica las credenciales AWS
 3. Confirma que el bucket existe y es público
-4. Asegúrate que todas las variables de entorno están configuradas 
+4. Asegúrate que todas las variables de entorno están configuradas
