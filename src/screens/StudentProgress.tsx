@@ -75,9 +75,6 @@ const StudentProgress = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Log para ver cuando cambia el debouncedSearchTerm
-  useEffect(() => {}, [debouncedSearchTerm]);
-
   const {
     data: collectionData,
     isError: collectionError,
@@ -89,7 +86,7 @@ const StudentProgress = () => {
     collectionId: collectionId as string,
     limit: batchSize,
     offset: currentOffset,
-    ...(debouncedSearchTerm.trim() && { search: debouncedSearchTerm.trim() }),
+    ...(debouncedSearchTerm.trim() && { search: debouncedSearchTerm.trim().toLowerCase() }),
   };
 
   const shouldSkipQuery = !collectionId || globalQueryLockRef.current;
@@ -587,7 +584,7 @@ const StudentProgress = () => {
             collectionId: collectionId as string,
             limit: batchSize,
             offset: offset,
-            ...(debouncedSearchTerm.trim() && { search: debouncedSearchTerm.trim() }),
+            ...(debouncedSearchTerm.trim() && { search: debouncedSearchTerm.trim().toLowerCase() }),
           };
           // Use RTK Query service directly to fetch this batch
           const result = await store.dispatch(

@@ -331,17 +331,23 @@ export const exportGradesToCsv = async (
           );
 
           if (program) {
-            const programProgress = studentData.programs[program.id];
+            const programProgress = studentData.programs.find(
+              (p: any) => p.programId === program.programId,
+            );
 
             if (programProgress) {
               // Solo columna de nota
-              if (programProgress.status === 'Terminado' && programProgress.grade !== undefined) {
+              if (programProgress.status === 'completed' && programProgress.grade !== undefined) {
                 // Formatear nota según el programa
                 let formattedGrade = '';
                 if (columnTitle === 'Ciberseguridad') {
                   // Para ciberseguridad: (NOTA*2)/20
                   const multipliedGrade = programProgress.grade * 2;
                   formattedGrade = `"${multipliedGrade}/20"`;
+                } else if (columnTitle === 'RCP') {
+                  // Para RCP: convertir de escala 1-10 a escala 1-9
+                  const rcpGrade = Math.round((programProgress.grade * 9) / 10);
+                  formattedGrade = `"${rcpGrade}/9"`;
                 } else {
                   // Para otros programas: [NOTA]/10
                   formattedGrade = `"${programProgress.grade}/10"`;
@@ -352,6 +358,8 @@ export const exportGradesToCsv = async (
                 // Formatear el 0 según el programa
                 if (columnTitle === 'Ciberseguridad') {
                   row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '"0/20"';
+                } else if (columnTitle === 'RCP') {
+                  row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '"0/9"';
                 } else {
                   row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '"0/10"';
                 }
@@ -435,14 +443,11 @@ export const mergeStudentData = (existingStudents: any[], csvStudents: StudentCs
         matchedCount++;
         return {
           ...studentData,
-          student: {
-            ...studentData,
-            // Actualizar con datos del CSV si están disponibles
-            id: csvStudent.legajo || studentData.id,
-            name: csvStudent.nombre.split(' ')[0] || studentData.name,
-            lastname: csvStudent.nombre.split(' ').slice(1).join(' ') || studentData.lastname,
-            // Mantener email original
-          },
+          // Actualizar con datos del CSV si están disponibles
+          id: csvStudent.legajo || studentData.id,
+          name: csvStudent.nombre.split(' ')[0] || studentData.name,
+          lastname: csvStudent.nombre.split(' ').slice(1).join(' ') || studentData.lastname,
+          // Mantener email original
         };
       } else {
         unmatchedCount++;
