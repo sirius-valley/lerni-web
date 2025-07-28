@@ -5,6 +5,7 @@ import { Permissions, PermissionType, SpecificAction } from '../service/types/au
 interface InitialStateAuthType {
   token: string;
   permissions: Permissions;
+  institutionIds: string[];
 }
 
 const permissionsInitialState: Permissions = {
@@ -25,6 +26,7 @@ const permissionsInitialState: Permissions = {
 const initialState: InitialStateAuthType = {
   token: '',
   permissions: permissionsInitialState,
+  institutionIds: [],
 };
 
 const mockedPermissions = (
@@ -184,12 +186,14 @@ export const authSlice = createSlice({
     });
     builder.addMatcher(authApi.endpoints.me.matchFulfilled, (state, action) => {
       const permissions = action.payload.permissions;
+      const institutionIds = action.payload.institutionIds || [];
       if (isPermissions(permissions)) {
         state.permissions = permissions;
       } else {
         console.warn('Invalid permissions format received:', permissions);
         state.permissions = mockedPermissions('readOnly');
       }
+      state.institutionIds = institutionIds;
     });
   },
 });

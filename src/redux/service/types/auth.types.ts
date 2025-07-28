@@ -1,5 +1,6 @@
 export type PermissionsResponseDTO = {
   permissions: Permissions;
+  institutionIds: string[];
 };
 
 export enum PermissionType {

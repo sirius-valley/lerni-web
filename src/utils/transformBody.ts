@@ -79,6 +79,7 @@ export const transformCreateCollectionRequest = (
       email: student.email,
       group: student.group.map((group) => group.name),
     })),
+    institutionId: values.institutionId || undefined,
   };
 };
 

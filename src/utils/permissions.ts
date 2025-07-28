@@ -13,9 +13,11 @@ export const usePermissions = () => {
   const hasPermission = (permission: PermissionType, entity: EntityType): boolean => {
     switch (entity) {
       case EntityType.COLLECTION:
-        return permissions.collections.general.includes(permission);
+        return permissions.collections?.general?.includes(permission);
       case EntityType.PROGRAM:
-        return permissions.programs.general.includes(permission);
+        return permissions.programs?.general?.includes(permission);
+      case EntityType.PROFILE:
+        return permissions.profile?.general?.includes(permission);
       default:
         return false;
     }
@@ -27,9 +29,9 @@ export const usePermissions = () => {
   ): boolean => {
     switch (entity) {
       case EntityType.COLLECTION:
-        return permissions.collections.specific?.includes(specificPermission) ?? false;
+        return permissions.collections?.specific?.includes(specificPermission) ?? false;
       case EntityType.PROGRAM:
-        return permissions.programs.specific?.includes(specificPermission) ?? false;
+        return permissions.programs?.specific?.includes(specificPermission) ?? false;
       default:
         return false;
     }
@@ -83,6 +85,33 @@ export const usePermissions = () => {
   const canViewProfile = () => hasPermission(PermissionType.READ, EntityType.PROFILE);
   const canUpdateProfile = () => hasPermission(PermissionType.UPDATE, EntityType.PROFILE);
 
+  const hasFullAccess = () => {
+    const required = [
+      PermissionType.CREATE,
+      PermissionType.READ,
+      PermissionType.UPDATE,
+      PermissionType.DELETE,
+    ];
+    const collections = permissions.collections?.general || [];
+    const programs = permissions.programs?.general || [];
+    return (
+      required.every((perm) => collections.includes(perm)) &&
+      required.every((perm) => programs.includes(perm))
+    );
+  };
+
+  const hasNoPermissions = () => {
+    const isEmpty = (arr: any[] | undefined) => !arr || arr.length === 0;
+    return (
+      isEmpty(permissions.collections?.general) &&
+      isEmpty(permissions.collections?.specific) &&
+      isEmpty(permissions.programs?.general) &&
+      isEmpty(permissions.programs?.specific) &&
+      isEmpty(permissions.profile?.general) &&
+      isEmpty(permissions.profile?.specific)
+    );
+  };
+
   return {
     canCreateCollection,
     canReadCollection,
@@ -103,5 +132,7 @@ export const usePermissions = () => {
     canViewProfile,
     canUpdateProfile,
     hasPermission,
+    hasFullAccess,
+    hasNoPermissions,
   };
 };
