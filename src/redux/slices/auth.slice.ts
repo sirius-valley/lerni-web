@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { authApi, AuthType } from '../service/auth.service';
-import { Permissions, PermissionType, SpecificAction } from '../service/types/auth.types';
+import { Permissions } from '../service/types/auth.types';
 
 interface InitialStateAuthType {
   token: string;
@@ -10,16 +10,19 @@ interface InitialStateAuthType {
 
 const permissionsInitialState: Permissions = {
   collections: {
-    general: [PermissionType.READ],
-    specific: [],
+    permissions: [],
   },
   programs: {
-    general: [],
-    specific: [],
+    permissions: [],
   },
   profile: {
-    general: [],
-    specific: [],
+    permissions: [],
+  },
+  professors: {
+    permissions: [],
+  },
+  stats: {
+    permissions: [],
   },
 };
 
@@ -29,121 +32,15 @@ const initialState: InitialStateAuthType = {
   institutionIds: [],
 };
 
-const mockedPermissions = (
-  type: 'fullAccess' | 'readOnly' | 'readOnlyCollections' | 'admin',
-): Permissions => {
-  switch (type) {
-    case 'fullAccess':
-      return {
-        collections: {
-          general: [
-            PermissionType.READ,
-            PermissionType.CREATE,
-            PermissionType.UPDATE,
-            PermissionType.DELETE,
-          ],
-          specific: [
-            SpecificAction.ADD_STUDENT,
-            SpecificAction.EDIT_STUDENTS_LIST,
-            SpecificAction.EDIT_CONTENT,
-          ],
-        },
-        programs: {
-          general: [
-            PermissionType.READ,
-            PermissionType.CREATE,
-            PermissionType.UPDATE,
-            PermissionType.DELETE,
-          ],
-          specific: [
-            SpecificAction.ADD_STUDENT,
-            SpecificAction.EDIT_STUDENTS_LIST,
-            SpecificAction.EDIT_CONTENT,
-          ],
-        },
-        profile: {
-          general: [PermissionType.READ, PermissionType.UPDATE],
-          specific: [],
-        },
-      };
-    case 'readOnly':
-      return {
-        collections: {
-          general: [PermissionType.READ],
-          specific: [],
-        },
-        programs: {
-          general: [PermissionType.READ],
-          specific: [],
-        },
-        profile: {
-          general: [PermissionType.READ],
-          specific: [],
-        },
-      };
-    case 'readOnlyCollections':
-      return {
-        collections: {
-          general: [PermissionType.READ],
-          specific: [],
-        },
-        programs: {
-          general: [],
-          specific: [],
-        },
-        profile: {
-          general: [PermissionType.READ],
-          specific: [],
-        },
-      };
-    case 'admin':
-      return {
-        collections: {
-          general: [PermissionType.READ, PermissionType.CREATE, PermissionType.DELETE],
-          specific: [
-            SpecificAction.ADD_STUDENT,
-            SpecificAction.EDIT_STUDENTS_LIST,
-            SpecificAction.EDIT_CONTENT,
-          ],
-        },
-        programs: {
-          general: [PermissionType.READ, PermissionType.CREATE, PermissionType.DELETE],
-          specific: [
-            SpecificAction.ADD_STUDENT,
-            SpecificAction.EDIT_STUDENTS_LIST,
-            SpecificAction.EDIT_CONTENT,
-          ],
-        },
-        profile: {
-          general: [PermissionType.READ],
-          specific: [],
-        },
-      };
-    default:
-      return {
-        collections: {
-          general: [PermissionType.READ],
-          specific: [],
-        },
-        programs: {
-          general: [PermissionType.READ],
-          specific: [],
-        },
-        profile: {
-          general: [PermissionType.READ],
-          specific: [],
-        },
-      };
-  }
-};
-
 const isPermissions = (permissions: any): permissions is Permissions => {
   if (
     permissions &&
     typeof permissions === 'object' &&
     'collections' in permissions &&
     'programs' in permissions &&
-    'profile' in permissions
+    'profile' in permissions &&
+    'professors' in permissions &&
+    'stats' in permissions
   ) {
     return true;
   }
@@ -182,16 +79,17 @@ export const authSlice = createSlice({
       },
     );
     builder.addMatcher(authApi.endpoints.me.matchRejected, (state, action) => {
-      state.permissions = mockedPermissions('admin');
+      // Keep current permissions on error
     });
     builder.addMatcher(authApi.endpoints.me.matchFulfilled, (state, action) => {
       const permissions = action.payload.permissions;
+      //const permissions = mockedPermissions('fullAccess');
       const institutionIds = action.payload.institutionIds || [];
       if (isPermissions(permissions)) {
         state.permissions = permissions;
       } else {
         console.warn('Invalid permissions format received:', permissions);
-        state.permissions = mockedPermissions('readOnly');
+        state.permissions = permissionsInitialState;
       }
       state.institutionIds = institutionIds;
     });

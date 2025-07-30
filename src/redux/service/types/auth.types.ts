@@ -3,26 +3,14 @@ export type PermissionsResponseDTO = {
   institutionIds: string[];
 };
 
-export enum PermissionType {
-  CREATE = 'create',
-  READ = 'read',
-  UPDATE = 'update',
-  DELETE = 'delete',
-}
-
-export enum SpecificAction {
-  ADD_STUDENT = 'add_student',
-  EDIT_STUDENTS_LIST = 'edit_students_list',
-  EDIT_CONTENT = 'edit_content',
-}
-
 interface EntityPermissions {
-  general: PermissionType[];
-  specific?: SpecificAction[];
+  permissions: string[];
 }
 
 export interface Permissions {
   collections: EntityPermissions;
   programs: EntityPermissions;
   profile: EntityPermissions;
+  professors: EntityPermissions;
+  stats: EntityPermissions;
 }

@@ -1,65 +1,52 @@
 import { useLSelector } from '../redux/hooks';
-import { PermissionType, SpecificAction } from '../redux/service/types/auth.types';
 
 export enum EntityType {
   COLLECTION = 'collection',
   PROGRAM = 'program',
   PROFILE = 'profile',
+  PROFESSOR = 'professor',
+  STATS = 'stats',
 }
 
 export const usePermissions = () => {
   const permissions = useLSelector((state) => state.auth.permissions);
 
-  const hasPermission = (permission: PermissionType, entity: EntityType): boolean => {
+  const hasPermission = (permission: string, entity: EntityType): boolean => {
     switch (entity) {
       case EntityType.COLLECTION:
-        return permissions.collections?.general?.includes(permission);
+        return permissions.collections?.permissions?.includes(permission) ?? false;
       case EntityType.PROGRAM:
-        return permissions.programs?.general?.includes(permission);
+        return permissions.programs?.permissions?.includes(permission) ?? false;
       case EntityType.PROFILE:
-        return permissions.profile?.general?.includes(permission);
+        return permissions.profile?.permissions?.includes(permission) ?? false;
+      case EntityType.PROFESSOR:
+        return permissions.professors?.permissions?.includes(permission) ?? false;
+      case EntityType.STATS:
+        return permissions.stats?.permissions?.includes(permission) ?? false;
       default:
         return false;
     }
   };
 
-  const hasSpecificPermission = (
-    specificPermission: SpecificAction,
-    entity: EntityType,
-  ): boolean => {
-    switch (entity) {
-      case EntityType.COLLECTION:
-        return permissions.collections?.specific?.includes(specificPermission) ?? false;
-      case EntityType.PROGRAM:
-        return permissions.programs?.specific?.includes(specificPermission) ?? false;
-      default:
-        return false;
-    }
-  };
+  const canCreateCollection = () => hasPermission('create', EntityType.COLLECTION);
+  const canReadCollection = () => hasPermission('read', EntityType.COLLECTION);
+  const canUpdateCollection = () => hasPermission('update', EntityType.COLLECTION);
+  const canDeleteCollection = () => hasPermission('delete', EntityType.COLLECTION);
 
-  const canCreateCollection = () => hasPermission(PermissionType.CREATE, EntityType.COLLECTION);
-  const canReadCollection = () => hasPermission(PermissionType.READ, EntityType.COLLECTION);
-  const canUpdateCollection = () => hasPermission(PermissionType.UPDATE, EntityType.COLLECTION);
-  const canDeleteCollection = () => hasPermission(PermissionType.DELETE, EntityType.COLLECTION);
-
-  const canAddStudentToCollection = () =>
-    hasSpecificPermission(SpecificAction.ADD_STUDENT, EntityType.COLLECTION);
+  const canAddStudentToCollection = () => hasPermission('add_student', EntityType.COLLECTION);
   const canEditStudentsListFromCollection = () =>
-    hasSpecificPermission(SpecificAction.EDIT_STUDENTS_LIST, EntityType.COLLECTION);
-  const canEditCollectionContent = () =>
-    hasSpecificPermission(SpecificAction.EDIT_CONTENT, EntityType.COLLECTION);
+    hasPermission('edit_students_list', EntityType.COLLECTION);
+  const canEditCollectionContent = () => hasPermission('edit_content', EntityType.COLLECTION);
 
-  const canCreateProgram = () => hasPermission(PermissionType.CREATE, EntityType.PROGRAM);
-  const canReadProgram = () => hasPermission(PermissionType.READ, EntityType.PROGRAM);
-  const canUpdateProgram = () => hasPermission(PermissionType.UPDATE, EntityType.PROGRAM);
-  const canDeleteProgram = () => hasPermission(PermissionType.DELETE, EntityType.PROGRAM);
+  const canCreateProgram = () => hasPermission('create', EntityType.PROGRAM);
+  const canReadProgram = () => hasPermission('read', EntityType.PROGRAM);
+  const canUpdateProgram = () => hasPermission('update', EntityType.PROGRAM);
+  const canDeleteProgram = () => hasPermission('delete', EntityType.PROGRAM);
 
-  const canAddStudentToProgram = () =>
-    hasSpecificPermission(SpecificAction.ADD_STUDENT, EntityType.PROGRAM);
+  const canAddStudentToProgram = () => hasPermission('add_student', EntityType.PROGRAM);
   const canEditStudentsListFromProgram = () =>
-    hasSpecificPermission(SpecificAction.EDIT_STUDENTS_LIST, EntityType.PROGRAM);
-  const canEditProgramContent = () =>
-    hasSpecificPermission(SpecificAction.EDIT_CONTENT, EntityType.PROGRAM);
+    hasPermission('edit_students_list', EntityType.PROGRAM);
+  const canEditProgramContent = () => hasPermission('edit_content', EntityType.PROGRAM);
 
   const canOnlyReadProgram = () => {
     return (
@@ -82,18 +69,13 @@ export const usePermissions = () => {
     );
   };
 
-  const canViewProfile = () => hasPermission(PermissionType.READ, EntityType.PROFILE);
-  const canUpdateProfile = () => hasPermission(PermissionType.UPDATE, EntityType.PROFILE);
+  const canViewProfile = () => hasPermission('read', EntityType.PROFILE);
+  const canUpdateProfile = () => hasPermission('update', EntityType.PROFILE);
 
   const hasFullAccess = () => {
-    const required = [
-      PermissionType.CREATE,
-      PermissionType.READ,
-      PermissionType.UPDATE,
-      PermissionType.DELETE,
-    ];
-    const collections = permissions.collections?.general || [];
-    const programs = permissions.programs?.general || [];
+    const required = ['create', 'read', 'update', 'delete'];
+    const collections = permissions.collections?.permissions || [];
+    const programs = permissions.programs?.permissions || [];
     return (
       required.every((perm) => collections.includes(perm)) &&
       required.every((perm) => programs.includes(perm))
@@ -103,12 +85,11 @@ export const usePermissions = () => {
   const hasNoPermissions = () => {
     const isEmpty = (arr: any[] | undefined) => !arr || arr.length === 0;
     return (
-      isEmpty(permissions.collections?.general) &&
-      isEmpty(permissions.collections?.specific) &&
-      isEmpty(permissions.programs?.general) &&
-      isEmpty(permissions.programs?.specific) &&
-      isEmpty(permissions.profile?.general) &&
-      isEmpty(permissions.profile?.specific)
+      isEmpty(permissions.collections?.permissions) &&
+      isEmpty(permissions.programs?.permissions) &&
+      isEmpty(permissions.profile?.permissions) &&
+      isEmpty(permissions.professors?.permissions) &&
+      isEmpty(permissions.stats?.permissions)
     );
   };
 
