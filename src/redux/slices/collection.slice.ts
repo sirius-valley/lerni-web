@@ -11,6 +11,7 @@ export interface CreateCollectionState {
     initial: StudentDTO[];
     current: StudentDTO[];
   };
+  institutionId: string | null;
   edit: boolean;
   isLoading: boolean;
 }
@@ -22,6 +23,7 @@ const initialState: CreateCollectionState = {
     initial: [],
     current: [],
   },
+  institutionId: null,
   edit: true,
   isLoading: false,
 };
