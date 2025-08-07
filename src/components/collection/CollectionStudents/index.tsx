@@ -16,10 +16,11 @@ import { useNavigate } from 'react-router-dom';
 import { EntityType, usePermissions } from '../../../utils/permissions';
 import CollectionStudentsSkeleton from './Skeleton';
 import { useIsAdmin } from '../../../hooks/useIsAdmin';
+import { generateUUID } from '../../../utils/uuid';
 
 const mockedStudents: StudentDTO[] = [
   ...Array.from({ length: 3000 }, () => ({
-    authId: crypto.randomUUID(),
+    authId: generateUUID(),
     career: [
       'Ingeniería',
       'Medicina',
@@ -41,8 +42,8 @@ const mockedStudents: StudentDTO[] = [
       'Montevideo',
     ][Math.floor(Math.random() * 8)],
     email: `${Math.random().toString(36).substring(7)}@example.com`,
-    id: crypto.randomUUID(),
-    image: Math.random() > 0.5 ? `https://example.com/${crypto.randomUUID()}.jpg` : undefined,
+    id: generateUUID(),
+    image: Math.random() > 0.5 ? `https://example.com/${generateUUID()}.jpg` : undefined,
     lastname: [
       'González',
       'Rodríguez',
