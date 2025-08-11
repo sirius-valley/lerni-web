@@ -11,18 +11,29 @@ export enum EntityType {
 export const usePermissions = () => {
   const permissions = useLSelector((state) => state.auth.permissions);
 
+  // Debug function to log current permissions
+  const debugPermissions = () => {
+    console.log('🔍 Current Permissions State:', {
+      collections: permissions.collections,
+      programs: permissions.programs,
+      profile: permissions.profile,
+      professors: permissions.professors,
+      stats: permissions.stats,
+    });
+  };
+
   const hasPermission = (permission: string, entity: EntityType): boolean => {
     switch (entity) {
       case EntityType.COLLECTION:
-        return permissions.collections?.permissions?.includes(permission) ?? false;
+        return permissions.collections?.includes(permission) ?? false;
       case EntityType.PROGRAM:
-        return permissions.programs?.permissions?.includes(permission) ?? false;
+        return permissions.programs?.includes(permission) ?? false;
       case EntityType.PROFILE:
-        return permissions.profile?.permissions?.includes(permission) ?? false;
+        return permissions.profile?.includes(permission) ?? false;
       case EntityType.PROFESSOR:
-        return permissions.professors?.permissions?.includes(permission) ?? false;
+        return permissions.professors?.includes(permission) ?? false;
       case EntityType.STATS:
-        return permissions.stats?.permissions?.includes(permission) ?? false;
+        return permissions.stats?.includes(permission) ?? false;
       default:
         return false;
     }
@@ -74,8 +85,8 @@ export const usePermissions = () => {
 
   const hasFullAccess = () => {
     const required = ['create', 'read', 'update', 'delete'];
-    const collections = permissions.collections?.permissions || [];
-    const programs = permissions.programs?.permissions || [];
+    const collections = permissions.collections || [];
+    const programs = permissions.programs || [];
     return (
       required.every((perm) => collections.includes(perm)) &&
       required.every((perm) => programs.includes(perm))
@@ -85,11 +96,11 @@ export const usePermissions = () => {
   const hasNoPermissions = () => {
     const isEmpty = (arr: any[] | undefined) => !arr || arr.length === 0;
     return (
-      isEmpty(permissions.collections?.permissions) &&
-      isEmpty(permissions.programs?.permissions) &&
-      isEmpty(permissions.profile?.permissions) &&
-      isEmpty(permissions.professors?.permissions) &&
-      isEmpty(permissions.stats?.permissions)
+      isEmpty(permissions.collections) &&
+      isEmpty(permissions.programs) &&
+      isEmpty(permissions.profile) &&
+      isEmpty(permissions.professors) &&
+      isEmpty(permissions.stats)
     );
   };
 
@@ -115,5 +126,6 @@ export const usePermissions = () => {
     hasPermission,
     hasFullAccess,
     hasNoPermissions,
+    debugPermissions, // Add debug function to return object
   };
 };

@@ -3,14 +3,21 @@ export type PermissionsResponseDTO = {
   institutionIds: string[];
 };
 
-interface EntityPermissions {
-  permissions: string[];
-}
-
+/**
+ * Permissions interface - each property contains an array of permission strings
+ * Example:
+ * {
+ *   collections: ["read", "add_student", "edit_students_list", "edit_content"],
+ *   programs: ["read", "add_student", "edit_students_list", "edit_content"],
+ *   profile: ["read"],
+ *   professors: [],
+ *   stats: []
+ * }
+ */
 export interface Permissions {
-  collections: EntityPermissions;
-  programs: EntityPermissions;
-  profile: EntityPermissions;
-  professors: EntityPermissions;
-  stats: EntityPermissions;
+  collections: string[];
+  programs: string[];
+  profile: string[];
+  professors: string[];
+  stats: string[];
 }

@@ -9,21 +9,11 @@ interface InitialStateAuthType {
 }
 
 const permissionsInitialState: Permissions = {
-  collections: {
-    permissions: [],
-  },
-  programs: {
-    permissions: [],
-  },
-  profile: {
-    permissions: [],
-  },
-  professors: {
-    permissions: [],
-  },
-  stats: {
-    permissions: [],
-  },
+  collections: [],
+  programs: [],
+  profile: [],
+  professors: [],
+  stats: [],
 };
 
 const initialState: InitialStateAuthType = {
@@ -33,18 +23,40 @@ const initialState: InitialStateAuthType = {
 };
 
 const isPermissions = (permissions: any): permissions is Permissions => {
-  if (
-    permissions &&
-    typeof permissions === 'object' &&
-    'collections' in permissions &&
-    'programs' in permissions &&
-    'profile' in permissions &&
-    'professors' in permissions &&
-    'stats' in permissions
-  ) {
-    return true;
+  // Check if permissions object exists and is an object
+  if (!permissions || typeof permissions !== 'object' || Array.isArray(permissions)) {
+    return false;
   }
-  return false;
+
+  // Check if all required properties exist (only the ones backend actually sends)
+  const requiredProperties = ['collections', 'programs', 'profile'];
+  for (const prop of requiredProperties) {
+    if (!(prop in permissions)) {
+      console.warn(`Missing required permission property: ${prop}`);
+      return false;
+    }
+  }
+
+  // Check if all properties are arrays
+  for (const prop of requiredProperties) {
+    if (!Array.isArray(permissions[prop])) {
+      console.warn(`Permission property ${prop} is not an array:`, permissions[prop]);
+      return false;
+    }
+  }
+
+  // Check if all array elements are strings
+  for (const prop of requiredProperties) {
+    const permissionArray = permissions[prop];
+    for (let i = 0; i < permissionArray.length; i++) {
+      if (typeof permissionArray[i] !== 'string') {
+        console.warn(`Permission property ${prop}[${i}] is not a string:`, permissionArray[i]);
+        return false;
+      }
+    }
+  }
+
+  return true;
 };
 
 export const authSlice = createSlice({
@@ -86,9 +98,14 @@ export const authSlice = createSlice({
       //const permissions = mockedPermissions('fullAccess');
       const institutionIds = action.payload.institutionIds || [];
       if (isPermissions(permissions)) {
+        console.log('✅ Permissions validated successfully:', {
+          collections: permissions.collections?.length || 0,
+          programs: permissions.programs?.length || 0,
+          profile: permissions.profile?.length || 0,
+        });
         state.permissions = permissions;
       } else {
-        console.warn('Invalid permissions format received:', permissions);
+        console.warn('❌ Invalid permissions format received:', permissions);
         state.permissions = permissionsInitialState;
       }
       state.institutionIds = institutionIds;
