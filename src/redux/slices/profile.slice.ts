@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { studentsApi } from '../service/students.service';
 import { ProgramCardItem } from '../service/types/profile.types';
+import { Achievement } from '../service/types/students.response';
 
 export interface ProfileState {
   id: string;
@@ -13,7 +14,7 @@ export interface ProfileState {
   groups: string[];
   points: number;
   assignedPrograms?: ProgramCardItem[];
-  rewards?: string[];
+  rewards?: Achievement[];
 }
 
 const initialState: ProfileState = {
@@ -46,20 +47,20 @@ export const profileSlice = createSlice({
   extraReducers: (builder) => {
     builder.addMatcher(studentsApi.endpoints.studentProfile.matchFulfilled, (state, action) => {
       state.id = action.payload.id;
-      state.fullname = `${action.payload.name} ${action.payload.lastname}`;
-      state.email = 'Por ahora no hay mail';
+      state.fullname = action.payload.displayName;
+      state.email = action.payload.email;
       state.image = action.payload.image;
-      state.career = action.payload.career || 'Sin profesión';
-      state.city = action.payload.city || 'Sin ciudad';
-      state.points = action.payload.points || 0;
-      state.groups = ['Nuevos', 'Enfermeros', 'Residentes'];
+      state.career = action.payload.career;
+      state.city = action.payload.city;
+      state.points = action.payload.points;
+      state.groups = action.payload.groups;
       state.assignedPrograms = [];
-      state.rewards = [];
+      state.rewards = action.payload.rewards || [];
     });
   },
 });
 
-const profile: any = (state: RootState) => state.profile;
+export const selectProfile = (state: RootState) => state.profile;
 
 export const { updateProfile, resetProfileSlice } = profileSlice.actions;
 
