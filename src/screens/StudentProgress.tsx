@@ -10,6 +10,12 @@ import { CollectionStudent } from '../redux/service/types/students.response';
 import { errorToast } from '../components/Toasts';
 import Card from '../components/Card';
 import Loader from '../components/styled/Loader';
+import Button from '../components/styled/Button';
+import { ComponentVariantType } from '../utils/constants';
+import { ButtonLabelSize } from '../components/styled/Button/styles';
+import CsvManagementModal from '../hoc/modals/CsvManagementModal';
+import { store } from '../redux/store';
+import { studentsApi } from '../redux/service/students.service';
 
 type ViewMode = 'progress' | 'grade';
 
@@ -44,35 +50,30 @@ const StudentProgress = () => {
   const [currentOffset, setCurrentOffset] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [showCsvModal, setShowCsvModal] = useState(false);
   const batchSize = 100;
-  const loadMoreTriggeredRef = useRef(false);
   const listRef = useRef<any>(null);
   const scrollTopRef = useRef(0);
-  const preserveScrollRef = useRef(false);
+  const lastProcessedDataRef = useRef<string>(''); // Track last processed data to prevent duplicates
+  const [loadRequestInProgress, setLoadRequestInProgress] = useState(false); // Track if a load request is in progress
+  const scrollDebounceRef = useRef<NodeJS.Timeout | null>(null); // Debounce for scroll events
+  const globalQueryLockRef = useRef(false); // Global lock to prevent any query from running
 
   // Debounce para el término de búsqueda
   useEffect(() => {
     // Si el campo está vacío, actualizar inmediatamente
     if (!searchTerm || searchTerm.trim() === '') {
-      console.log('🔍 Campo vacío - actualizando inmediatamente');
       setDebouncedSearchTerm('');
       return;
     }
 
     // Para texto no vacío, aplicar debounce
-    console.log('⏱️ Aplicando debounce para:', searchTerm);
     const timer = setTimeout(() => {
-      console.log('🚀 Ejecutando búsqueda para:', searchTerm);
       setDebouncedSearchTerm(searchTerm);
     }, 300); // 300ms de delay
 
     return () => clearTimeout(timer);
   }, [searchTerm]);
-
-  // Log para ver cuando cambia el debouncedSearchTerm
-  useEffect(() => {
-    console.log('📡 debouncedSearchTerm cambió a:', debouncedSearchTerm);
-  }, [debouncedSearchTerm]);
 
   const {
     data: collectionData,
@@ -85,13 +86,10 @@ const StudentProgress = () => {
     collectionId: collectionId as string,
     limit: batchSize,
     offset: currentOffset,
-    ...(debouncedSearchTerm.trim() && { search: debouncedSearchTerm.trim() }),
+    ...(debouncedSearchTerm.trim() && { search: debouncedSearchTerm.trim().toLowerCase() }),
   };
 
-  console.log('🔎 Query params:', queryParams);
-
-  const shouldSkipQuery = !collectionId || isLoadingMore;
-  console.log('🚫 shouldSkipQuery:', shouldSkipQuery, { collectionId, isLoadingMore });
+  const shouldSkipQuery = !collectionId || globalQueryLockRef.current;
 
   const {
     data: studentsData,
@@ -106,105 +104,60 @@ const StudentProgress = () => {
 
   // Efecto para manejar la carga de datos
   useEffect(() => {
-    console.log('📊 studentsData recibido:', studentsData);
-    console.log('📊 studentsData?.students length:', studentsData?.students?.length);
-    console.log('📊 studentsData?.total:', studentsData?.total);
     if (studentsData?.students) {
-      console.log('✅ Datos válidos recibidos, currentOffset:', currentOffset);
-      console.log('✅ Cantidad de estudiantes en respuesta:', studentsData.students.length);
-
+      // Crear una clave única para estos datos
+      const dataKey = `${currentOffset}-${studentsData.students.length}-${
+        studentsData.students[0]?.id || 'empty'
+      }`;
+      // Verificar si ya procesamos estos datos exactos
+      if (lastProcessedDataRef.current === dataKey) {
+        return;
+      }
+      // Marcar estos datos como procesados
+      lastProcessedDataRef.current = dataKey;
       // Crear un nuevo array con IDs únicos para forzar re-render
       const newStudents = studentsData.students.map((student) => ({ ...student }));
-
       if (currentOffset === 0) {
-        // Primera carga o nueva búsqueda - siempre reemplazar
-        console.log(
-          '🔄 Primera carga - reemplazando array completo con',
-          newStudents.length,
-          'estudiantes',
-        );
-        console.log(
-          '🔄 Datos que se van a mostrar:',
-          newStudents.map((s) => `${s.name} ${s.lastname}`).slice(0, 3),
-        );
         setAllStudents(newStudents);
       } else {
-        // Cargar más datos (infinite scroll)
-        console.log('➕ Agregando más datos al array existente');
         setAllStudents((prev) => {
-          console.log('➕ Array anterior tenía:', prev.length, 'estudiantes');
-          console.log('➕ Agregando:', newStudents.length, 'estudiantes más');
-          return [...prev, ...newStudents];
+          const existingIds = new Set(prev.map((student) => student.id));
+          const uniqueNewStudents = newStudents.filter((student) => !existingIds.has(student.id));
+          return [...prev, ...uniqueNewStudents];
         });
       }
-
       // Verificar si hay más páginas
       const hasMore =
         studentsData.students.length === batchSize &&
         currentOffset + batchSize < (studentsData.total || 0);
-      console.log(
-        '📄 hasMore:',
-        hasMore,
-        'batchSize:',
-        batchSize,
-        'currentOffset + batchSize:',
-        currentOffset + batchSize,
-        'total:',
-        studentsData.total,
-      );
       setHasNextPage(hasMore);
       setIsLoadingMore(false);
-
-      // Reset the trigger flag when data is loaded
-      loadMoreTriggeredRef.current = false;
-
+      setLoadRequestInProgress(false); // Reset the load request flag
+      globalQueryLockRef.current = false; // Release global lock
       // Restore scroll position for infinite scroll
-      if (preserveScrollRef.current && listRef.current) {
+      if (listRef.current) {
         const targetRow = Math.floor(scrollTopRef.current / 60);
-        console.log(
-          '📍 Restoring scroll to row:',
-          targetRow,
-          'from position:',
-          scrollTopRef.current,
-        );
-
-        // Use multiple strategies to ensure scroll is preserved
-        setTimeout(() => {
-          if (listRef.current && targetRow > 0) {
-            console.log('🎯 Scrolling to row:', targetRow);
-            listRef.current.scrollToRow(targetRow);
-          }
-        }, 50);
-
-        setTimeout(() => {
-          if (listRef.current) {
-            console.log('🎯 Fine-tuning scroll position to:', scrollTopRef.current);
-            listRef.current.scrollToPosition(scrollTopRef.current);
-          }
-        }, 150);
-
-        preserveScrollRef.current = false;
       }
-    } else {
-      console.log('❌ No hay datos válidos en studentsData');
     }
   }, [studentsData, currentOffset, batchSize]);
 
   // Log adicional para ver cuando cambia allStudents
-  useEffect(() => {
-    console.log('👥 allStudents actualizado:', allStudents.length, 'estudiantes');
-  }, [allStudents]);
 
   // Reset cuando cambia la búsqueda o colección
   useEffect(() => {
-    console.log('🔄 Reset por cambio de búsqueda o colección');
-    console.log('🔄 Reset - reseteando offset y estados');
+    // Clear any pending scroll debounce
+    if (scrollDebounceRef.current) {
+      clearTimeout(scrollDebounceRef.current);
+      scrollDebounceRef.current = null;
+    }
+    // Release global lock
+    globalQueryLockRef.current = false;
     setCurrentOffset(0);
     setHasNextPage(true);
     setIsLoadingMore(false);
-    loadMoreTriggeredRef.current = false; // Reset infinite scroll trigger
+    setLoadRequestInProgress(false); // Reset load request flag
     scrollTopRef.current = 0; // Reset scroll position for new search
-    preserveScrollRef.current = false; // Reset preserve scroll flag
+    lastProcessedDataRef.current = ''; // Reset processed data tracking
     // No limpiar allStudents aquí - dejar que se limpie cuando lleguen nuevos datos
   }, [debouncedSearchTerm, collectionId]);
 
@@ -214,8 +167,9 @@ const StudentProgress = () => {
       navigate('/');
     }
     if (studentsError) {
-      console.error('Error loading students:', studentsErrorData);
       errorToast('Error al cargar los datos de estudiantes');
+      // Release global lock on error
+      globalQueryLockRef.current = false;
       navigate('/');
     }
   }, [collectionError, studentsError, studentsErrorData, navigate]);
@@ -259,8 +213,11 @@ const StudentProgress = () => {
         };
       } = {};
 
+      // Safety check: ensure student.programs is an array
+      const studentPrograms = Array.isArray(student.programs) ? student.programs : [];
+
       // Crear mapas por programId Y por programName para mayor flexibilidad
-      const studentProgramsByIdMap = student.programs.reduce(
+      const studentProgramsByIdMap = studentPrograms.reduce(
         (acc, program) => {
           acc[program.programId] = program;
           return acc;
@@ -268,7 +225,7 @@ const StudentProgress = () => {
         {} as Record<string, CollectionStudent['programs'][0]>,
       );
 
-      const studentProgramsByNameMap = student.programs.reduce(
+      const studentProgramsByNameMap = studentPrograms.reduce(
         (acc, program) => {
           acc[program.programName] = program;
           return acc;
@@ -319,10 +276,7 @@ const StudentProgress = () => {
   };
 
   const progressData = useMemo(() => {
-    console.log('🔄 Recalculando progressData con', allStudents.length, 'estudiantes');
-    console.log('🔄 collectionData?.programs length:', collectionData?.programs?.length);
     const result = convertApiDataToTableFormat();
-    console.log('🔄 progressData calculado:', result.length, 'estudiantes procesados');
     return result;
   }, [allStudents, collectionData?.programs]);
 
@@ -346,47 +300,77 @@ const StudentProgress = () => {
 
   // Función para abrir el certificado
   const handleOpenCertificate = (certificateId: string) => {
-    console.log('Opening certificate:', certificateId);
-
     // URL del certificado en S3
     const certificateUrl = `https://lerni-assets.s3.us-east-1.amazonaws.com/certificates/${certificateId}.pdf`;
     window.open(certificateUrl, '_blank');
   };
 
-  // Función para guardar la posición de scroll
-  const handleScroll = useCallback(({ scrollTop }: { scrollTop: number }) => {
-    scrollTopRef.current = scrollTop;
-    // Calculate current visible row
-    const currentRow = Math.floor(scrollTop / 60); // 60 is rowHeight
-    console.log('📍 Current scroll position:', scrollTop, 'Current row:', currentRow);
-  }, []);
-
   // Función para cargar más estudiantes (infinite scroll)
   const loadMoreStudents = useCallback(() => {
-    console.log('🚀 loadMoreStudents called', {
-      hasNextPage,
-      isLoadingMore,
-      studentsLoading,
-      triggered: loadMoreTriggeredRef.current,
-    });
-
-    if (hasNextPage && !isLoadingMore && !studentsLoading && !loadMoreTriggeredRef.current) {
-      console.log('✅ Conditions met - loading more students');
-      const currentRow = Math.floor(scrollTopRef.current / 60);
-      console.log('📍 Saving scroll position:', scrollTopRef.current, 'Current row:', currentRow);
-
-      preserveScrollRef.current = true; // Mark that we should preserve scroll
-      loadMoreTriggeredRef.current = true;
-      setIsLoadingMore(true);
-      setCurrentOffset((prev) => {
-        const newOffset = prev + batchSize;
-        console.log('📈 Setting new offset:', newOffset);
-        return newOffset;
-      });
-    } else {
-      console.log('❌ Conditions not met for loading more');
+    // Check if global lock is active
+    if (globalQueryLockRef.current) {
+      return;
     }
-  }, [hasNextPage, isLoadingMore, studentsLoading, batchSize]);
+    if (!hasNextPage) {
+      return;
+    }
+    // Set global lock to prevent any other queries
+    globalQueryLockRef.current = true;
+    setCurrentOffset((prev) => {
+      const newOffset = prev + batchSize;
+      return newOffset;
+    });
+  }, [hasNextPage, batchSize, currentOffset]);
+
+  // Función para detectar cuando el usuario llega al final del scroll
+  const handleScroll = useCallback(
+    ({
+      scrollTop,
+      scrollHeight,
+      clientHeight,
+    }: {
+      scrollTop: number;
+      scrollHeight: number;
+      clientHeight: number;
+    }) => {
+      scrollTopRef.current = scrollTop;
+      // Si hay una query ejecutándose (lock global), no procesar scroll events
+      if (globalQueryLockRef.current) {
+        return;
+      }
+      // Detectar cuando estamos cerca del final (con un margen de 200px para ser más permisivo)
+      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 200;
+      // Clear any existing debounce timer
+      if (scrollDebounceRef.current) {
+        clearTimeout(scrollDebounceRef.current);
+        scrollDebounceRef.current = null;
+      }
+      // Only set up debounce if we're near bottom and conditions are met
+      if (isNearBottom && hasNextPage && !globalQueryLockRef.current) {
+        scrollDebounceRef.current = setTimeout(() => {
+          loadMoreStudents();
+          scrollDebounceRef.current = null;
+        }, 200); // 200ms debounce
+      }
+    },
+    [hasNextPage, loadMoreStudents],
+  );
+
+  // Debug: Log when handleScroll is recreated
+  useEffect(() => {}, [hasNextPage, isLoadingMore, studentsLoading, loadRequestInProgress]);
+
+  // Cleanup effect for component unmount
+  useEffect(() => {
+    return () => {
+      // Clear any pending timers when component unmounts
+      if (scrollDebounceRef.current) {
+        clearTimeout(scrollDebounceRef.current);
+        scrollDebounceRef.current = null;
+      }
+      // Release global lock
+      globalQueryLockRef.current = false;
+    };
+  }, []);
 
   // Componente de fila virtualizada para react-virtualized
   const rowRenderer = ({
@@ -578,6 +562,63 @@ const StudentProgress = () => {
     }
   };
 
+  // Función para traer todos los estudiantes sin límites de paginación
+  const fetchAllStudents = useCallback(
+    async (onProgress?: (message: string) => void): Promise<any[]> => {
+      onProgress?.('Iniciando carga de todos los estudiantes...');
+      // Set global lock to prevent other queries
+      globalQueryLockRef.current = true;
+      try {
+        const allStudents: any[] = [];
+        let offset = 0;
+        const batchSize = 500;
+        let hasMore = true;
+        let batchCount = 0;
+        while (hasMore) {
+          batchCount++;
+          onProgress?.(
+            `Cargando batch ${batchCount} (${allStudents.length} estudiantes cargados hasta ahora)...`,
+          );
+          // Query parameters for this batch
+          const batchParams = {
+            collectionId: collectionId as string,
+            limit: batchSize,
+            offset: offset,
+            ...(debouncedSearchTerm.trim() && { search: debouncedSearchTerm.trim().toLowerCase() }),
+          };
+          // Use RTK Query service directly to fetch this batch
+          const result = await store.dispatch(
+            studentsApi.endpoints.collectionStudents.initiate(batchParams),
+          );
+          if (result.error) {
+            throw new Error(`Error fetching students batch: ${result.error}`);
+          }
+          const batchStudents = result.data?.students || [];
+          // Add students to the total array
+          allStudents.push(...batchStudents);
+          // Check if there are more students
+          hasMore = batchStudents.length === batchSize;
+          offset += batchSize;
+          // Small delay to avoid overwhelming the server
+          if (hasMore) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+          }
+        }
+        onProgress?.(
+          `✅ Carga completada: ${allStudents.length} estudiantes cargados en ${batchCount} batches`,
+        );
+        return allStudents;
+      } catch (error) {
+        onProgress?.('❌ Error al cargar los estudiantes');
+        throw error;
+      } finally {
+        // Release global lock
+        globalQueryLockRef.current = false;
+      }
+    },
+    [collectionId, debouncedSearchTerm],
+  );
+
   // Si hay error de colección, navegar hacia atrás
   if (collectionError) {
     navigate('/');
@@ -604,39 +645,6 @@ const StudentProgress = () => {
       </StyledRow>
 
       <StyledColumn css={{ padding: '24px', gap: '24px', height: 'calc(100vh - 66px)' }}>
-        {/* Results Counter */}
-        {(debouncedSearchTerm || allStudents.length > 0) && (
-          <Card css={{ padding: '12px 16px' }}>
-            <StyledRow css={{ justifyContent: 'center', alignItems: 'center', gap: '16px' }}>
-              <StyledText variant="body3" css={{ color: theme.gray600 }}>
-                {debouncedSearchTerm ? (
-                  <>
-                    Mostrando {allStudents.length} estudiante{allStudents.length !== 1 ? 's' : ''}{' '}
-                    para &quot;{debouncedSearchTerm}&quot;
-                  </>
-                ) : (
-                  <>
-                    Mostrando {allStudents.length} estudiante{allStudents.length !== 1 ? 's' : ''}
-                  </>
-                )}
-                {studentsData?.total && studentsData.total > allStudents.length && (
-                  <> de {studentsData.total} totales</>
-                )}
-              </StyledText>
-              {hasNextPage && !studentsLoading && (
-                <StyledText variant="body3" css={{ color: theme.primary400, fontWeight: 'bold' }}>
-                  • Scroll para cargar más
-                </StyledText>
-              )}
-              {studentsLoading && currentOffset === 0 && (
-                <StyledText variant="body3" css={{ color: theme.primary400, fontWeight: 'bold' }}>
-                  • Buscando...
-                </StyledText>
-              )}
-            </StyledRow>
-          </Card>
-        )}
-
         {/* Progress Table */}
         <Card
           css={{
@@ -700,8 +708,26 @@ const StudentProgress = () => {
                 )}
               </StyledBox>
 
-              {/* View Mode Switch - Right */}
+              {/* Excel and View Mode Controls - Right */}
               <StyledRow css={{ gap: '16px', alignItems: 'center' }}>
+                {/* CSV Management Button */}
+                <Button
+                  variant={ComponentVariantType.PRIMARY}
+                  onClick={() => setShowCsvModal(true)}
+                  labelSize={ButtonLabelSize.BODY3}
+                  css={{
+                    height: '32px',
+                    padding: '6px 12px',
+                    fontSize: '12px',
+                  }}
+                >
+                  Gestionar CSV
+                </Button>
+
+                {/* Separator */}
+                <StyledBox css={{ width: '1px', height: '24px', background: theme.gray300 }} />
+
+                {/* View Mode Switch */}
                 <StyledText variant="body3" css={{ color: theme.gray600 }}>
                   Vista:
                 </StyledText>
@@ -814,71 +840,78 @@ const StudentProgress = () => {
               {/* Virtualized Table Body */}
               <StyledBox css={{ height: '70vh', minWidth: tableWidth }}>
                 {progressData.length > 0 ? (
-                  <AutoSizer>
-                    {({ height, width }) => (
-                      <List
-                        ref={listRef}
-                        key={`${debouncedSearchTerm}`} // Only re-render on search change, not on data change
-                        height={height}
-                        rowCount={progressData.length + (hasNextPage ? 1 : 0)} // +1 para el loader
-                        rowHeight={60}
-                        onScroll={handleScroll}
-                        rowRenderer={({ index, key, style }) => {
-                          // Si es la última fila y hay más páginas, mostrar loader
-                          if (index === progressData.length && hasNextPage) {
-                            // Trigger load more cuando se renderiza esta fila (solo una vez)
-                            if (!isLoadingMore && !loadMoreTriggeredRef.current) {
-                              console.log('🎯 Triggering load more from row renderer');
-                              loadMoreStudents();
+                  <StyledColumn css={{ height: '100%' }}>
+                    <StyledBox css={{ flex: 1 }}>
+                      <AutoSizer>
+                        {({ height, width }) => (
+                          <List
+                            ref={listRef}
+                            key={`${debouncedSearchTerm}`} // Only re-render on search change, not on data change
+                            height={height}
+                            rowCount={
+                              progressData.length +
+                              (hasNextPage && (isLoadingMore || studentsLoading) ? 1 : 0)
                             }
-
-                            return (
-                              <div key={key} style={style}>
-                                <StyledRow
-                                  css={{
-                                    padding: '12px 16px',
-                                    borderBottom: `1px solid ${theme.gray200}`,
-                                    background: theme.white,
-                                    minWidth: tableWidth,
-                                    width: '100%',
-                                    height: '60px',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                  }}
-                                >
-                                  <StyledBox
-                                    css={{ display: 'flex', alignItems: 'center', gap: '12px' }}
-                                  >
-                                    <StyledBox
+                            rowHeight={60}
+                            onScroll={handleScroll}
+                            scrollToAlignment="start"
+                            overscanRowCount={5}
+                            rowRenderer={({ index, key, style }) => {
+                              // Si es la última fila y hay más páginas cargando, mostrar loader
+                              if (
+                                index === progressData.length &&
+                                hasNextPage &&
+                                (isLoadingMore || studentsLoading)
+                              ) {
+                                return (
+                                  <div key={key} style={style}>
+                                    <StyledRow
                                       css={{
-                                        width: '16px',
-                                        height: '16px',
-                                        border: `2px solid ${theme.gray300}`,
-                                        borderTopColor: theme.primary400,
-                                        borderRadius: '50%',
-                                        animation: 'spin 1s linear infinite',
+                                        padding: '12px 16px',
+                                        borderBottom: `1px solid ${theme.gray200}`,
+                                        background: theme.white,
+                                        minWidth: tableWidth,
+                                        width: '100%',
+                                        height: '60px',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                       }}
-                                    />
-                                    <StyledText variant="body3" css={{ color: theme.gray600 }}>
-                                      Cargando más estudiantes...
-                                    </StyledText>
-                                  </StyledBox>
-                                </StyledRow>
-                              </div>
-                            );
-                          }
+                                    >
+                                      <StyledBox
+                                        css={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                                      >
+                                        <StyledBox
+                                          css={{
+                                            width: '16px',
+                                            height: '16px',
+                                            border: `2px solid ${theme.gray300}`,
+                                            borderTopColor: theme.primary400,
+                                            borderRadius: '50%',
+                                            animation: 'spin 1s linear infinite',
+                                          }}
+                                        />
+                                        <StyledText variant="body3" css={{ color: theme.gray600 }}>
+                                          Cargando más estudiantes...
+                                        </StyledText>
+                                      </StyledBox>
+                                    </StyledRow>
+                                  </div>
+                                );
+                              }
 
-                          // Renderizar fila normal de estudiante
-                          return rowRenderer({ index, key, style });
-                        }}
-                        width={Math.max(width, tableWidth)}
-                        style={{
-                          outline: 'none',
-                          scrollbarWidth: 'thin',
-                        }}
-                      />
-                    )}
-                  </AutoSizer>
+                              // Renderizar fila normal de estudiante
+                              return rowRenderer({ index, key, style });
+                            }}
+                            width={Math.max(width, tableWidth)}
+                            style={{
+                              outline: 'none',
+                              scrollbarWidth: 'thin',
+                            }}
+                          />
+                        )}
+                      </AutoSizer>
+                    </StyledBox>
+                  </StyledColumn>
                 ) : studentsLoading ? (
                   <StyledBox
                     css={{
@@ -932,6 +965,15 @@ const StudentProgress = () => {
           </StyledBox>
         </Card>
       </StyledColumn>
+
+      {/* CSV Management Modal */}
+      <CsvManagementModal
+        show={showCsvModal}
+        onClose={() => setShowCsvModal(false)}
+        studentsData={progressData}
+        programs={collectionData?.programs || []}
+        onFetchAllStudents={fetchAllStudents}
+      />
     </StyledBox>
   );
 };

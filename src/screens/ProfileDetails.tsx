@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
+import { StyledBox, StyledColumn } from '../components/styled/styles';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
 import { useTheme } from 'styled-components';
 import ProfileDetailsComponent from '../components/profile/ProfileDetails';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useLDispatch } from '../redux/hooks';
 import { api } from '../redux/service/api';
 import { resetProfileSlice } from '../redux/slices/profile.slice';
@@ -17,7 +17,6 @@ const ProfileDetails = () => {
   const theme = useTheme();
   const { id } = useParams();
   const dispatch = useLDispatch();
-  const location = useLocation();
 
   const { data } = useStudentProfileQuery(id as string);
   const handleSave = () => {

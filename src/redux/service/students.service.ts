@@ -4,6 +4,7 @@ import {
   StudentsRegisteredResponse,
   CollectionStudentsResponse,
 } from './types/students.response';
+import { ProgramCardItem } from './types/profile.types';
 
 export const studentsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -22,7 +23,13 @@ export const studentsApi = api.injectEndpoints({
     }),
     studentProfile: builder.query<StudentDetailsResponse, string>({
       query: (id: string) => ({
-        url: `api/student/profile/${id}`,
+        url: `api/student/profile/byAdmin/${id}`,
+        method: 'GET',
+      }),
+    }),
+    studentPrograms: builder.query<ProgramCardItem[], string>({
+      query: (studentId: string) => ({
+        url: `api/program/byAdmin/${studentId}`,
         method: 'GET',
       }),
     }),
@@ -52,5 +59,6 @@ export const {
   useStudentsRegisteredQuery,
   useStudentsListQuery,
   useStudentProfileQuery,
+  useStudentProgramsQuery,
   useCollectionStudentsQuery,
 } = studentsApi;
