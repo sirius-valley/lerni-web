@@ -9,7 +9,7 @@ import {
 // Token fijo para acceso público a student progress
 const PUBLIC_ACCESS_TOKEN =
   process.env.REACT_APP_PUBLIC_ACCESS_TOKEN ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMDM0NDFjYS00YzE4LTQ5MWYtODMzNC1jZTJiMDRiZTA3MDAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTQ1ODM2MTksImV4cCI6MTc1NTE4ODQxOX0.2IPJrGlxowRDgpjoSBQs3Cti8WNDagwbSLZSN_Rd6Nc';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMDM0NDFjYS00YzE4LTQ5MWYtODMzNC1jZTJiMDRiZTA3MDAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTU1MjkzNjIsImV4cCI6MTc1NjEzNDE2Mn0.q6CjJZyZnH0yTNhoe_qtU9j7ixAa3A4toNTacG6POSg';
 
 const publicBaseQuery = fetchBaseQuery({
   baseUrl: process.env.REACT_APP_BASE_URL || '',
