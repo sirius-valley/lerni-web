@@ -114,7 +114,7 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
     dispatch(setModalOpen({ modalType: 'COLLECTION_STUDENTS_CREATE' }));
   };
 
-  const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: StudentDTO) => {
+  const handleMenuClick = (action: 'view' | 'delete' | 'edit' | 'reset', student: StudentDTO) => {
     switch (action) {
       case 'view':
         if (!edit) navigate(`/profile/${student.id}`);
@@ -131,6 +131,11 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
             metadata: { studentEmail: student.email, entityType: EntityType.COLLECTION },
           }),
         );
+        break;
+
+      case 'reset':
+        // Reset action is not applicable for collections
+        console.warn('Reset action is not applicable for collections');
         break;
 
       default:
