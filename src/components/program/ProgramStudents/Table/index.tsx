@@ -1,20 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  getSortedRowModel,
-  getFilteredRowModel,
-  Row,
-} from '@tanstack/react-table';
+import React, { useCallback, useState } from 'react';
+import { ColumnDef } from '@tanstack/react-table';
 import { useTheme } from 'styled-components';
-import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../../styled/styles';
-import { useLDispatch } from '../../../../redux/hooks';
-import { TextInput } from '../../../styled/TextInput';
-import { UpArrowIcon } from '../../../../assets/icons/UpArrowIcon';
-import { DownArrowIcon } from '../../../../assets/icons/DownArrowIcon';
-import { Chip } from '@mui/material';
 import Email from './columns/Email';
 import Fullname from './columns/Fullname';
 import Status from './columns/Status';
@@ -23,7 +9,6 @@ import Groups from './columns/Groups';
 import Actions from './columns/Actions';
 import { StudentDTO } from '../../../../redux/service/types/students.response';
 import { GroupDTO } from '../../../../redux/service/types/groups.types';
-import { useVirtualizer } from '@tanstack/react-virtual';
 import { Tooltip } from 'react-tooltip';
 import TableMenu from './Menu';
 import Table from '../../../Table';
@@ -34,16 +19,10 @@ interface StudentsTableProps {
   groups: GroupDTO[];
   programVersionId: string;
   entityType: EntityType;
-  onMenuClick: (action: 'view' | 'delete' | 'edit', student: StudentDTO) => void;
+  onMenuClick: (action: 'view' | 'delete' | 'edit' | 'reset', student: StudentDTO) => void;
 }
 
-export const StudentsTable = ({
-  students,
-  groups,
-  programVersionId,
-  entityType,
-  onMenuClick,
-}: StudentsTableProps) => {
+export const StudentsTable = ({ students, entityType, onMenuClick }: StudentsTableProps) => {
   const theme = useTheme();
 
   const { canEditStudentsListFromCollection, canEditStudentsListFromProgram } = usePermissions();
@@ -68,7 +47,10 @@ export const StudentsTable = ({
     setSelectedStudent(null);
   }, []);
 
-  const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: StudentDTO | null) => {
+  const handleMenuClick = (
+    action: 'view' | 'delete' | 'edit' | 'reset',
+    student: StudentDTO | null,
+  ) => {
     student && onMenuClick(action, student);
   };
 
@@ -210,6 +192,7 @@ export const StudentsTable = ({
         onClose={handleMenuClose}
         menuAnchor={menuAnchor}
         canEdit={canEdit}
+        entityType={entityType}
       />
     </>
   );

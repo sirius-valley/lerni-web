@@ -130,6 +130,13 @@ export const programApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    resetProgress: builder.mutation<void, { programVersionId: string; studentId: string }>({
+      query: ({ programVersionId, studentId }) => ({
+        url: `api/program/reset-progress/${programVersionId}/${studentId}`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['ProgramDetails', 'StudentsProgress'],
+    }),
   }),
 });
 
@@ -146,4 +153,5 @@ export const {
   useAllProgramsChartQuery,
   useStudentsProgressQuery,
   useStudentsListQuery,
+  useResetProgressMutation,
 } = programApi;

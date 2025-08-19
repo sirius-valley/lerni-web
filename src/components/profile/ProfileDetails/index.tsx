@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Card from '../../Card';
 import { StyledColumn, StyledRow } from '../../styled/styles';
 import { TextInput } from '../../styled/TextInput';
@@ -41,7 +41,7 @@ const ProfileDetails = () => {
             placeholder="No se registró nombre"
             title="Nombre y Apellido"
             required
-            value={profile.fullname}
+            value={profile.fullname || ''}
             onChange={(value) => handleChange('fullname', value)}
             disabled={!canUpdate}
           ></TextInput>
@@ -49,7 +49,7 @@ const ProfileDetails = () => {
             placeholder="No se registró email"
             title="Email"
             required
-            value={profile.email}
+            value={profile.email || ''}
             onChange={(value) => handleChange('email', value)}
             disabled={!canUpdate}
           ></TextInput>
@@ -57,7 +57,7 @@ const ProfileDetails = () => {
             placeholder="Sin profesión"
             title="Profesión"
             required
-            value={profile.career}
+            value={profile.career || ''}
             onChange={(value) => handleChange('career', value)}
             disabled={!canUpdate}
           ></TextInput>
@@ -65,8 +65,8 @@ const ProfileDetails = () => {
             placeholder="No especificado"
             title="Ubicación"
             required
-            value={profile.city}
-            onChange={(value) => handleChange('location', value)}
+            value={profile.city || ''}
+            onChange={(value) => handleChange('city', value)}
             disabled={!canUpdate}
           ></TextInput>
           <AutocompleteComponent
@@ -80,10 +80,10 @@ const ProfileDetails = () => {
           />
 
           <TextInput
-            placeholder="Introducción a la Historia Argentina..."
+            placeholder="0"
             title="Puntos"
             required
-            value={profile.points.toString()}
+            value={profile.points?.toString() || '0'}
             onChange={(value) => handleChange('points', value)}
             disabled={!canUpdate}
           ></TextInput>

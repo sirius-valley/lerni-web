@@ -22,17 +22,26 @@ export type StudentDTO = {
   progress: number;
 };
 
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+}
+
 export interface StudentDetailsResponse {
   id: string;
-  name?: string;
-  lastname?: string;
-  city?: string;
-  profession?: string;
-  career?: string;
-  image?: string;
-  hasCompletedIntroduction: boolean;
-  points?: number;
-  ranking?: number;
+  name: string;
+  lastname: string;
+  displayName: string;
+  city: string;
+  profession: string | null;
+  career: string;
+  image: string;
+  groups: string[];
+  points: number;
+  email: string;
+  rewards?: Achievement[];
 }
 
 export interface CollectionStudentProgram {
