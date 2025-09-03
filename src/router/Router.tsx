@@ -18,6 +18,7 @@ import CollectionDetails from '../screens/CollectionDetails';
 import ProfileDetails from '../screens/ProfileDetails';
 import LimitedView from '../screens/LimitedView';
 import StudentProgress from '../screens/StudentProgress';
+import PublicStudentProgress from '../screens/PublicStudentProgress';
 import { usePermissions } from '../utils/permissions';
 import { useMeQuery } from '../redux/service/auth.service';
 
@@ -63,6 +64,7 @@ const Router = () => {
       <Route element={<PublicRoute />}>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route path="public-student-progress/:collectionId" element={<PublicStudentProgress />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

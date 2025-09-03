@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import counterSlice from './slices/counter.slice';
 import pokemonSlice from './slices/pokemon.slice';
 import { api } from './service/api';
+import { publicApi } from './service/public-api';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import authSlice from './slices/auth.slice';
 import utilsSlice from './slices/utils.slice';
@@ -12,6 +13,7 @@ import profileSlice from './slices/profile.slice';
 
 const reducers = combineReducers({
   [api.reducerPath]: api.reducer,
+  [publicApi.reducerPath]: publicApi.reducer,
   auth: authSlice,
   utils: utilsSlice,
   counter: counterSlice,
@@ -36,7 +38,8 @@ const combinedReducer = (state: any, action: any) => {
 
 export const store = configureStore({
   reducer: combinedReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(api.middleware, publicApi.middleware),
 });
 
 // This action will reset all redux state.
