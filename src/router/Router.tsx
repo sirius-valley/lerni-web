@@ -24,8 +24,11 @@ import { useMeQuery } from '../redux/service/auth.service';
 
 const Router = () => {
   const dispatch = useLDispatch();
-  const { data: meData, isError: meError } = useMeQuery();
+  const token = getTokenFromLocalStorage();
 
+  const { data: meData, isError: meError } = useMeQuery(undefined, {
+    skip: !token,
+  });
   const { canCreateCollection, canCreateProgram, canReadProgram, canReadCollection } =
     usePermissions();
   const viewPrograms = canReadProgram();
