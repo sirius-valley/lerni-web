@@ -5,7 +5,6 @@ import ProgramContent from '../components/program/ProgramContent';
 import ProgramDetails from '../components/program/ProgramDetails';
 import { ProgramQuestionnaire } from '../components/program/ProgramQuestionnaire';
 import { ProgramTrivia } from '../components/program/ProgramTrivia';
-import { ProgramStudents } from '../components/program/ProgramStudents';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
 import { useLDispatch, useLSelector } from '../redux/hooks';
@@ -89,7 +88,6 @@ const CreateProgram = () => {
           <ProgramContent />
           <ProgramQuestionnaire />
           <ProgramTrivia />
-          <ProgramStudents />
           <Button
             variant={ComponentVariantType.PRIMARY}
             onClick={handleSave}

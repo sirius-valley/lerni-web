@@ -18,13 +18,17 @@ import CollectionDetails from '../screens/CollectionDetails';
 import ProfileDetails from '../screens/ProfileDetails';
 import LimitedView from '../screens/LimitedView';
 import StudentProgress from '../screens/StudentProgress';
+import PublicStudentProgress from '../screens/PublicStudentProgress';
 import { usePermissions } from '../utils/permissions';
 import { useMeQuery } from '../redux/service/auth.service';
 
 const Router = () => {
   const dispatch = useLDispatch();
-  const { data: meData, isError: meError } = useMeQuery();
+  const token = getTokenFromLocalStorage();
 
+  const { data: meData, isError: meError } = useMeQuery(undefined, {
+    skip: !token,
+  });
   const { canCreateCollection, canCreateProgram, canReadProgram, canReadCollection } =
     usePermissions();
   const viewPrograms = canReadProgram();
@@ -60,6 +64,7 @@ const Router = () => {
       <Route element={<PublicRoute />}>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route path="public-student-progress/:collectionId" element={<PublicStudentProgress />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

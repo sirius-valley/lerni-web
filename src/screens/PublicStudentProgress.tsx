@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useTheme } from 'styled-components';
 import { List, AutoSizer } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
-import { useCollectionDetailsQuery } from '../redux/service/collection.service';
-import { useCollectionStudentsQuery } from '../redux/service/students.service';
+import {
+  usePublicCollectionDetailsQuery,
+  usePublicCollectionStudentsQuery,
+} from '../redux/service/public-collection.service';
 import { CollectionStudent } from '../redux/service/types/students.response';
 import { errorToast } from '../components/Toasts';
 import Card from '../components/Card';
@@ -13,9 +15,6 @@ import Loader from '../components/styled/Loader';
 import Button from '../components/styled/Button';
 import { ComponentVariantType } from '../utils/constants';
 import { ButtonLabelSize } from '../components/styled/Button/styles';
-import CsvManagementModal from '../hoc/modals/CsvManagementModal';
-import { store } from '../redux/store';
-import { studentsApi } from '../redux/service/students.service';
 
 type ViewMode = 'progress' | 'grade';
 
@@ -39,9 +38,8 @@ interface StudentProgressData {
   };
 }
 
-const StudentProgress = () => {
+const PublicStudentProgress = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
   const { collectionId } = useParams<{ collectionId: string }>();
   const [viewMode, setViewMode] = useState<ViewMode>('progress');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -50,38 +48,35 @@ const StudentProgress = () => {
   const [currentOffset, setCurrentOffset] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [showCsvModal, setShowCsvModal] = useState(false);
   const batchSize = 100;
   const listRef = useRef<any>(null);
   const scrollTopRef = useRef(0);
-  const lastProcessedDataRef = useRef<string>(''); // Track last processed data to prevent duplicates
-  const [loadRequestInProgress, setLoadRequestInProgress] = useState(false); // Track if a load request is in progress
-  const scrollDebounceRef = useRef<NodeJS.Timeout | null>(null); // Debounce for scroll events
-  const globalQueryLockRef = useRef(false); // Global lock to prevent any query from running
+  const lastProcessedDataRef = useRef<string>('');
+  const [loadRequestInProgress, setLoadRequestInProgress] = useState(false);
+  const scrollDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  const globalQueryLockRef = useRef(false);
 
   // Debounce para el término de búsqueda
   useEffect(() => {
-    // Si el campo está vacío, actualizar inmediatamente
     if (!searchTerm || searchTerm.trim() === '') {
       setDebouncedSearchTerm('');
       return;
     }
 
-    // Para texto no vacío, aplicar debounce
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 300); // 300ms de delay
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
+  // PUBLIC API: Cambiar solo esta parte para usar la API pública
   const {
     data: collectionData,
     isError: collectionError,
     isLoading: collectionLoading,
-  } = useCollectionDetailsQuery(collectionId as string);
+  } = usePublicCollectionDetailsQuery(collectionId as string);
 
-  // Query RTK para cargar estudiantes con paginación
   const queryParams = {
     collectionId: collectionId as string,
     limit: batchSize,
@@ -97,25 +92,21 @@ const StudentProgress = () => {
     isError: studentsError,
     error: studentsErrorData,
     refetch,
-  } = useCollectionStudentsQuery(queryParams, {
+  } = usePublicCollectionStudentsQuery(queryParams, {
     skip: shouldSkipQuery,
-    refetchOnMountOrArgChange: true, // This will refetch when query params change
+    refetchOnMountOrArgChange: true,
   });
 
   // Efecto para manejar la carga de datos
   useEffect(() => {
     if (studentsData?.students) {
-      // Crear una clave única para estos datos
       const dataKey = `${currentOffset}-${studentsData.students.length}-${
         studentsData.students[0]?.id || 'empty'
       }`;
-      // Verificar si ya procesamos estos datos exactos
       if (lastProcessedDataRef.current === dataKey) {
         return;
       }
-      // Marcar estos datos como procesados
       lastProcessedDataRef.current = dataKey;
-      // Crear un nuevo array con IDs únicos para forzar re-render
       const newStudents = studentsData.students.map((student) => ({ ...student }));
       if (currentOffset === 0) {
         setAllStudents(newStudents);
@@ -126,57 +117,43 @@ const StudentProgress = () => {
           return [...prev, ...uniqueNewStudents];
         });
       }
-      // Verificar si hay más páginas
       const hasMore =
         studentsData.students.length === batchSize &&
         currentOffset + batchSize < (studentsData.total || 0);
       setHasNextPage(hasMore);
       setIsLoadingMore(false);
-      setLoadRequestInProgress(false); // Reset the load request flag
-      globalQueryLockRef.current = false; // Release global lock
-      // Restore scroll position for infinite scroll
-      if (listRef.current) {
-        const targetRow = Math.floor(scrollTopRef.current / 60);
-      }
+      setLoadRequestInProgress(false);
+      globalQueryLockRef.current = false;
     }
   }, [studentsData, currentOffset, batchSize]);
 
-  // Log adicional para ver cuando cambia allStudents
-
   // Reset cuando cambia la búsqueda o colección
   useEffect(() => {
-    // Clear any pending scroll debounce
     if (scrollDebounceRef.current) {
       clearTimeout(scrollDebounceRef.current);
       scrollDebounceRef.current = null;
     }
-    // Release global lock
     globalQueryLockRef.current = false;
     setCurrentOffset(0);
     setHasNextPage(true);
     setIsLoadingMore(false);
-    setLoadRequestInProgress(false); // Reset load request flag
-    scrollTopRef.current = 0; // Reset scroll position for new search
-    lastProcessedDataRef.current = ''; // Reset processed data tracking
-    // No limpiar allStudents aquí - dejar que se limpie cuando lleguen nuevos datos
+    setLoadRequestInProgress(false);
+    scrollTopRef.current = 0;
+    lastProcessedDataRef.current = '';
   }, [debouncedSearchTerm, collectionId]);
 
   useEffect(() => {
     if (collectionError) {
       errorToast('Error al cargar los datos de la colección');
-      navigate('/');
     }
     if (studentsError) {
       errorToast('Error al cargar los datos de estudiantes');
-      // Release global lock on error
       globalQueryLockRef.current = false;
-      navigate('/');
     }
-  }, [collectionError, studentsError, studentsErrorData, navigate]);
+  }, [collectionError, studentsError, studentsErrorData]);
 
   // Mapear estados de la API a nuestros tipos locales
   const mapApiStatusToLocal = (apiStatus: string): ProgressStatus => {
-    // Normalizar el estado (trim y lowercase para ser más tolerante)
     const normalizedStatus = apiStatus?.toString().trim().toLowerCase();
 
     switch (normalizedStatus) {
@@ -213,10 +190,8 @@ const StudentProgress = () => {
         };
       } = {};
 
-      // Safety check: ensure student.programs is an array
       const studentPrograms = Array.isArray(student.programs) ? student.programs : [];
 
-      // Crear mapas por programId Y por programName para mayor flexibilidad
       const studentProgramsByIdMap = studentPrograms.reduce(
         (acc, program) => {
           acc[program.programId] = program;
@@ -233,16 +208,13 @@ const StudentProgress = () => {
         {} as Record<string, CollectionStudent['programs'][0]>,
       );
 
-      // Mapear cada programa de la colección
       collectionData.programs.forEach((collectionProgram) => {
-        // Intentar mapear por ID primero, luego por nombre
         let studentProgram = studentProgramsByIdMap[collectionProgram.id];
         if (!studentProgram) {
           studentProgram = studentProgramsByNameMap[collectionProgram.program.name];
         }
 
         if (studentProgram) {
-          // El estudiante tiene este programa asignado
           const mappedStatus = mapApiStatusToLocal(studentProgram.status);
 
           programs[collectionProgram.id] = {
@@ -252,7 +224,6 @@ const StudentProgress = () => {
             progress: studentProgram.progress,
           };
         } else {
-          // El estudiante no tiene este programa asignado
           programs[collectionProgram.id] = {
             status: 'No asignado',
             grade: undefined,
@@ -282,9 +253,9 @@ const StudentProgress = () => {
 
   // Calcular el ancho total de la tabla
   const tableWidth = useMemo(() => {
-    const fixedColumnsWidth = 60 + 200 + 250; // # + Estudiante + Email
+    const fixedColumnsWidth = 60 + 200 + 250;
     const programColumnsWidth = (collectionData?.programs.length || 0) * 180;
-    return fixedColumnsWidth + programColumnsWidth; // Sin padding extra
+    return fixedColumnsWidth + programColumnsWidth;
   }, [collectionData?.programs.length]);
 
   // Función para verificar si un estudiante completó todos sus programas asignados
@@ -294,27 +265,24 @@ const StudentProgress = () => {
     const assignedPrograms = Object.values(studentPrograms).filter(
       (program) => program.status !== 'No asignado',
     );
-    if (assignedPrograms.length === 0) return false; // Si no tiene programas asignados, no está "completado"
+    if (assignedPrograms.length === 0) return false;
     return assignedPrograms.every((program) => program.status === 'Terminado');
   };
 
   // Función para abrir el certificado
   const handleOpenCertificate = (certificateId: string) => {
-    // URL del certificado en S3
     const certificateUrl = `https://lerni-assets.s3.us-east-1.amazonaws.com/certificates/${certificateId}.pdf`;
     window.open(certificateUrl, '_blank');
   };
 
   // Función para cargar más estudiantes (infinite scroll)
   const loadMoreStudents = useCallback(() => {
-    // Check if global lock is active
     if (globalQueryLockRef.current) {
       return;
     }
     if (!hasNextPage) {
       return;
     }
-    // Set global lock to prevent any other queries
     globalQueryLockRef.current = true;
     setCurrentOffset((prev) => {
       const newOffset = prev + batchSize;
@@ -334,40 +302,31 @@ const StudentProgress = () => {
       clientHeight: number;
     }) => {
       scrollTopRef.current = scrollTop;
-      // Si hay una query ejecutándose (lock global), no procesar scroll events
       if (globalQueryLockRef.current) {
         return;
       }
-      // Detectar cuando estamos cerca del final (con un margen de 200px para ser más permisivo)
       const isNearBottom = scrollTop + clientHeight >= scrollHeight - 200;
-      // Clear any existing debounce timer
       if (scrollDebounceRef.current) {
         clearTimeout(scrollDebounceRef.current);
         scrollDebounceRef.current = null;
       }
-      // Only set up debounce if we're near bottom and conditions are met
       if (isNearBottom && hasNextPage && !globalQueryLockRef.current) {
         scrollDebounceRef.current = setTimeout(() => {
           loadMoreStudents();
           scrollDebounceRef.current = null;
-        }, 200); // 200ms debounce
+        }, 200);
       }
     },
     [hasNextPage, loadMoreStudents],
   );
 
-  // Debug: Log when handleScroll is recreated
-  useEffect(() => {}, [hasNextPage, isLoadingMore, studentsLoading, loadRequestInProgress]);
-
   // Cleanup effect for component unmount
   useEffect(() => {
     return () => {
-      // Clear any pending timers when component unmounts
       if (scrollDebounceRef.current) {
         clearTimeout(scrollDebounceRef.current);
         scrollDebounceRef.current = null;
       }
-      // Release global lock
       globalQueryLockRef.current = false;
     };
   }, []);
@@ -562,67 +521,12 @@ const StudentProgress = () => {
     }
   };
 
-  // Función para traer todos los estudiantes sin límites de paginación
-  const fetchAllStudents = useCallback(
-    async (onProgress?: (message: string) => void): Promise<any[]> => {
-      onProgress?.('Iniciando carga de todos los estudiantes...');
-      // Set global lock to prevent other queries
-      globalQueryLockRef.current = true;
-      try {
-        const allStudents: any[] = [];
-        let offset = 0;
-        const batchSize = 500;
-        let hasMore = true;
-        let batchCount = 0;
-        while (hasMore) {
-          batchCount++;
-          onProgress?.(
-            `Cargando batch ${batchCount} (${allStudents.length} estudiantes cargados hasta ahora)...`,
-          );
-          // Query parameters for this batch
-          const batchParams = {
-            collectionId: collectionId as string,
-            limit: batchSize,
-            offset: offset,
-            ...(debouncedSearchTerm.trim() && { search: debouncedSearchTerm.trim().toLowerCase() }),
-          };
-          // Use RTK Query service directly to fetch this batch
-          const result = await store.dispatch(
-            studentsApi.endpoints.collectionStudents.initiate(batchParams),
-          );
-          if (result.error) {
-            throw new Error(`Error fetching students batch: ${result.error}`);
-          }
-          const batchStudents = result.data?.students || [];
-          // Add students to the total array
-          allStudents.push(...batchStudents);
-          // Check if there are more students
-          hasMore = batchStudents.length === batchSize;
-          offset += batchSize;
-          // Small delay to avoid overwhelming the server
-          if (hasMore) {
-            await new Promise((resolve) => setTimeout(resolve, 100));
-          }
-        }
-        onProgress?.(
-          `✅ Carga completada: ${allStudents.length} estudiantes cargados en ${batchCount} batches`,
-        );
-        return allStudents;
-      } catch (error) {
-        onProgress?.('❌ Error al cargar los estudiantes');
-        throw error;
-      } finally {
-        // Release global lock
-        globalQueryLockRef.current = false;
-      }
-    },
-    [collectionId, debouncedSearchTerm],
-  );
-
-  // Si hay error de colección, navegar hacia atrás
   if (collectionError) {
-    navigate('/');
-    return null;
+    return (
+      <StyledBox css={{ padding: '24px', alignItems: 'center', justifyContent: 'center' }}>
+        <StyledText css={{ color: theme.error }}>Error cargando la colección</StyledText>
+      </StyledBox>
+    );
   }
 
   return (
@@ -708,25 +612,8 @@ const StudentProgress = () => {
                 )}
               </StyledBox>
 
-              {/* Excel and View Mode Controls - Right */}
+              {/* View Mode Controls - Right */}
               <StyledRow css={{ gap: '16px', alignItems: 'center' }}>
-                {/* CSV Management Button */}
-                <Button
-                  variant={ComponentVariantType.PRIMARY}
-                  onClick={() => setShowCsvModal(true)}
-                  labelSize={ButtonLabelSize.BODY3}
-                  css={{
-                    height: '32px',
-                    padding: '6px 12px',
-                    fontSize: '12px',
-                  }}
-                >
-                  Gestionar CSV
-                </Button>
-
-                {/* Separator */}
-                <StyledBox css={{ width: '1px', height: '24px', background: theme.gray300 }} />
-
                 {/* View Mode Switch */}
                 <StyledText variant="body3" css={{ color: theme.gray600 }}>
                   Vista:
@@ -846,7 +733,7 @@ const StudentProgress = () => {
                         {({ height, width }) => (
                           <List
                             ref={listRef}
-                            key={`${debouncedSearchTerm}`} // Only re-render on search change, not on data change
+                            key={`${debouncedSearchTerm}`}
                             height={height}
                             rowCount={
                               progressData.length +
@@ -965,17 +852,8 @@ const StudentProgress = () => {
           </StyledBox>
         </Card>
       </StyledColumn>
-
-      {/* CSV Management Modal */}
-      <CsvManagementModal
-        show={showCsvModal}
-        onClose={() => setShowCsvModal(false)}
-        studentsData={progressData}
-        programs={collectionData?.programs || []}
-        onFetchAllStudents={fetchAllStudents}
-      />
     </StyledBox>
   );
 };
 
-export default StudentProgress;
+export default PublicStudentProgress;
