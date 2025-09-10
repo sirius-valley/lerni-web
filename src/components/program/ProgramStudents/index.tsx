@@ -1,7 +1,10 @@
 import { useTheme } from 'styled-components';
 import Card from '../../Card';
 import { StyledBox, StyledRow, StyledText } from '../../styled/styles';
+import Button from '../../styled/Button';
 import React, { useEffect } from 'react';
+import { ButtonLabelSize } from '../../styled/Button/styles';
+import { ComponentVariantType } from '../../../utils/constants';
 import { StudentsTable } from './Table';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
@@ -9,7 +12,7 @@ import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { StudentDTO } from '../../../redux/service/types/students.response';
 import { removeStudent, setStudents } from '../../../redux/slices/program.slice';
 import { useStudentsListQuery } from '../../../redux/service/program.service';
-import { EntityType } from '../../../utils/permissions';
+import { EntityType, usePermissions } from '../../../utils/permissions';
 import ProgramStudentsSkeleton from './Skeleton';
 
 interface ProgramStudents {
@@ -19,6 +22,9 @@ interface ProgramStudents {
 export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
   const theme = useTheme();
   const dispatch = useLDispatch();
+
+  const { canAddStudentToProgram } = usePermissions();
+  const canAdd = canAddStudentToProgram();
 
   const groups = useGetGroupsQuery();
 
@@ -33,6 +39,10 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
       dispatch(setStudents(fetchedStudents));
     }
   }, [fetchedStudents, dispatch]);
+
+  const handleShowModal = () => {
+    dispatch(setModalOpen({ modalType: 'PROGRAM_STUDENTS_CREATE' }));
+  };
 
   const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: StudentDTO) => {
     switch (action) {
@@ -83,6 +93,24 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
           <StyledText variant="h2" style={{ marginBottom: '6px' }}>
             {'Estudiantes'}
           </StyledText>
+          {canAdd && (
+            <StyledBox style={{ marginBottom: '6px' }}>
+              <Button
+                variant={ComponentVariantType.PRIMARY}
+                onClick={handleShowModal}
+                labelSize={ButtonLabelSize.BODY3}
+                css={{
+                  width: 'auto',
+                  height: '30px',
+                  padding: '8px 16px 8px 16px',
+                  fontFamily: 'Roboto-Bold',
+                  cursor: 'pointer',
+                }}
+              >
+                {'Cargar estudiantes'}
+              </Button>
+            </StyledBox>
+          )}
         </StyledRow>
       }
     >

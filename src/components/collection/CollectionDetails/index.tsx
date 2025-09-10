@@ -2,15 +2,12 @@ import { TextInput } from '../../styled/TextInput';
 import Card from '../../Card';
 import React from 'react';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
-import { RootState } from '../../../redux/store';
 import { updateCollectionInfo } from '../../../redux/slices/collection.slice';
 import { usePermissions } from '../../../utils/permissions';
 import CollectionDetailsSkeleton from './Skeleton';
-import { Dropdown } from '../../Dropdown';
 
 const CollectionDetails = () => {
   const collection = useLSelector((state) => state.collection);
-  const institutionIds = useLSelector((state: RootState) => state.auth.institutionIds);
   const { edit, isLoading } = collection;
   const dispatch = useLDispatch();
 
@@ -33,20 +30,6 @@ const CollectionDetails = () => {
         onChange={(value) => handleChange('title', value)}
         disabled={!canUpdate}
       ></TextInput>
-      {/* Show dropdown only if creating a collection (edit mode) and there are institutionIds */}
-      {edit && institutionIds && institutionIds.length > 0 && (
-        <div style={{ marginTop: 16 }}>
-          <Dropdown
-            label="Institución"
-            required
-            placeholder="Selecciona una institución"
-            value={collection.institutionId || ''}
-            onChange={(value) => handleChange('institutionId', value)}
-            content={institutionIds.map((id) => ({ id, text: id }))}
-            css={{ width: '100%' }}
-          />
-        </div>
-      )}
     </Card>
   );
 };

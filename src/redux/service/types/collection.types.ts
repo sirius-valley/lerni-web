@@ -2,7 +2,6 @@ export type CreateCollectionRequestDto = {
   title: string;
   programs: string[];
   students: Student[];
-  institutionId?: string;
 };
 
 export type StudentCollectionRequestDto = {

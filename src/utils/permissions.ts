@@ -1,63 +1,63 @@
 import { useLSelector } from '../redux/hooks';
+import { PermissionType, SpecificAction } from '../redux/service/types/auth.types';
 
 export enum EntityType {
   COLLECTION = 'collection',
   PROGRAM = 'program',
   PROFILE = 'profile',
-  PROFESSOR = 'professor',
-  STATS = 'stats',
 }
 
 export const usePermissions = () => {
   const permissions = useLSelector((state) => state.auth.permissions);
 
-  // Debug function to log current permissions
-  const debugPermissions = () => {
-    console.log('🔍 Current Permissions State:', {
-      collections: permissions.collections,
-      programs: permissions.programs,
-      profile: permissions.profile,
-      professors: permissions.professors,
-      stats: permissions.stats,
-    });
-  };
-
-  const hasPermission = (permission: string, entity: EntityType): boolean => {
+  const hasPermission = (permission: PermissionType, entity: EntityType): boolean => {
     switch (entity) {
       case EntityType.COLLECTION:
-        return permissions.collections?.includes(permission) ?? false;
+        return permissions.collections.general.includes(permission);
       case EntityType.PROGRAM:
-        return permissions.programs?.includes(permission) ?? false;
-      case EntityType.PROFILE:
-        return permissions.profile?.includes(permission) ?? false;
-      case EntityType.PROFESSOR:
-        return permissions.professors?.includes(permission) ?? false;
-      case EntityType.STATS:
-        return permissions.stats?.includes(permission) ?? false;
+        return permissions.programs.general.includes(permission);
       default:
         return false;
     }
   };
 
-  const canCreateCollection = () => hasPermission('create', EntityType.COLLECTION);
-  const canReadCollection = () => hasPermission('read', EntityType.COLLECTION);
-  const canUpdateCollection = () => hasPermission('update', EntityType.COLLECTION);
-  const canDeleteCollection = () => hasPermission('delete', EntityType.COLLECTION);
+  const hasSpecificPermission = (
+    specificPermission: SpecificAction,
+    entity: EntityType,
+  ): boolean => {
+    switch (entity) {
+      case EntityType.COLLECTION:
+        return permissions.collections.specific?.includes(specificPermission) ?? false;
+      case EntityType.PROGRAM:
+        return permissions.programs.specific?.includes(specificPermission) ?? false;
+      default:
+        return false;
+    }
+  };
 
-  const canAddStudentToCollection = () => hasPermission('add_student', EntityType.COLLECTION);
+  const canCreateCollection = () => hasPermission(PermissionType.CREATE, EntityType.COLLECTION);
+  const canReadCollection = () => hasPermission(PermissionType.READ, EntityType.COLLECTION);
+  const canUpdateCollection = () => hasPermission(PermissionType.UPDATE, EntityType.COLLECTION);
+  const canDeleteCollection = () => hasPermission(PermissionType.DELETE, EntityType.COLLECTION);
+
+  const canAddStudentToCollection = () =>
+    hasSpecificPermission(SpecificAction.ADD_STUDENT, EntityType.COLLECTION);
   const canEditStudentsListFromCollection = () =>
-    hasPermission('edit_students_list', EntityType.COLLECTION);
-  const canEditCollectionContent = () => hasPermission('edit_content', EntityType.COLLECTION);
+    hasSpecificPermission(SpecificAction.EDIT_STUDENTS_LIST, EntityType.COLLECTION);
+  const canEditCollectionContent = () =>
+    hasSpecificPermission(SpecificAction.EDIT_CONTENT, EntityType.COLLECTION);
 
-  const canCreateProgram = () => hasPermission('create', EntityType.PROGRAM);
-  const canReadProgram = () => hasPermission('read', EntityType.PROGRAM);
-  const canUpdateProgram = () => hasPermission('update', EntityType.PROGRAM);
-  const canDeleteProgram = () => hasPermission('delete', EntityType.PROGRAM);
+  const canCreateProgram = () => hasPermission(PermissionType.CREATE, EntityType.PROGRAM);
+  const canReadProgram = () => hasPermission(PermissionType.READ, EntityType.PROGRAM);
+  const canUpdateProgram = () => hasPermission(PermissionType.UPDATE, EntityType.PROGRAM);
+  const canDeleteProgram = () => hasPermission(PermissionType.DELETE, EntityType.PROGRAM);
 
-  const canAddStudentToProgram = () => hasPermission('add_student', EntityType.PROGRAM);
+  const canAddStudentToProgram = () =>
+    hasSpecificPermission(SpecificAction.ADD_STUDENT, EntityType.PROGRAM);
   const canEditStudentsListFromProgram = () =>
-    hasPermission('edit_students_list', EntityType.PROGRAM);
-  const canEditProgramContent = () => hasPermission('edit_content', EntityType.PROGRAM);
+    hasSpecificPermission(SpecificAction.EDIT_STUDENTS_LIST, EntityType.PROGRAM);
+  const canEditProgramContent = () =>
+    hasSpecificPermission(SpecificAction.EDIT_CONTENT, EntityType.PROGRAM);
 
   const canOnlyReadProgram = () => {
     return (
@@ -80,29 +80,8 @@ export const usePermissions = () => {
     );
   };
 
-  const canViewProfile = () => hasPermission('read', EntityType.PROFILE);
-  const canUpdateProfile = () => hasPermission('update', EntityType.PROFILE);
-
-  const hasFullAccess = () => {
-    const required = ['create', 'read', 'update', 'delete'];
-    const collections = permissions.collections || [];
-    const programs = permissions.programs || [];
-    return (
-      required.every((perm) => collections.includes(perm)) &&
-      required.every((perm) => programs.includes(perm))
-    );
-  };
-
-  const hasNoPermissions = () => {
-    const isEmpty = (arr: any[] | undefined) => !arr || arr.length === 0;
-    return (
-      isEmpty(permissions.collections) &&
-      isEmpty(permissions.programs) &&
-      isEmpty(permissions.profile) &&
-      isEmpty(permissions.professors) &&
-      isEmpty(permissions.stats)
-    );
-  };
+  const canViewProfile = () => hasPermission(PermissionType.READ, EntityType.PROFILE);
+  const canUpdateProfile = () => hasPermission(PermissionType.UPDATE, EntityType.PROFILE);
 
   return {
     canCreateCollection,
@@ -124,8 +103,5 @@ export const usePermissions = () => {
     canViewProfile,
     canUpdateProfile,
     hasPermission,
-    hasFullAccess,
-    hasNoPermissions,
-    debugPermissions, // Add debug function to return object
   };
 };

@@ -1,23 +1,27 @@
 export type PermissionsResponseDTO = {
   permissions: Permissions;
-  institutionIds: string[];
 };
 
-/**
- * Permissions interface - each property contains an array of permission strings
- * Example:
- * {
- *   collections: ["read", "add_student", "edit_students_list", "edit_content"],
- *   programs: ["read", "add_student", "edit_students_list", "edit_content"],
- *   profile: ["read"],
- *   professors: [],
- *   stats: []
- * }
- */
+export enum PermissionType {
+  CREATE = 'create',
+  READ = 'read',
+  UPDATE = 'update',
+  DELETE = 'delete',
+}
+
+export enum SpecificAction {
+  ADD_STUDENT = 'add_student',
+  EDIT_STUDENTS_LIST = 'edit_students_list',
+  EDIT_CONTENT = 'edit_content',
+}
+
+interface EntityPermissions {
+  general: PermissionType[];
+  specific?: SpecificAction[];
+}
+
 export interface Permissions {
-  collections: string[];
-  programs: string[];
-  profile: string[];
-  professors: string[];
-  stats: string[];
+  collections: EntityPermissions;
+  programs: EntityPermissions;
+  profile: EntityPermissions;
 }

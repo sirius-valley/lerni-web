@@ -16,10 +16,7 @@ export const transformedValues = (values: CreateProgramState) => {
     values.pills.reduce((acc, pill) => acc + pill.completionTimeMinutes, 0) +
     (Number(values?.questionnaire?.completionTimeMinutes) ?? 0);
   return {
-    title: values.title,
-    image: values.image,
-    description: values.description,
-    professor: values.professor,
+    ...values,
     pill: values.pills.map((pill) => ({
       /*
          "name": "string",
@@ -61,17 +58,14 @@ export const transformedValues = (values: CreateProgramState) => {
       completionTimeMinutes: Number(values.questionnaire?.completionTimeMinutes),
       order: 0,
     },
-    trivia: values.trivia
-      ? {
-          block: JSON.stringify(values.trivia),
-          questionsCount: 12,
-          order: 0,
-        }
-      : undefined,
+    trivia: {
+      block: JSON.stringify(values.trivia),
+      questionsCount: 12,
+      order: 0,
+    },
+    students: values.studentsState.current.map((student) => student.email),
     hoursToComplete: minutosTotales,
     pointsReward: amountOfQuestions * 5,
-    startDate: values.startDate,
-    endDate: values.endDate,
   };
 };
 
@@ -85,7 +79,6 @@ export const transformCreateCollectionRequest = (
       email: student.email,
       group: student.group.map((group) => group.name),
     })),
-    institutionId: values.institutionId || undefined,
   };
 };
 
