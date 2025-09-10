@@ -8,6 +8,16 @@ export enum EntityType {
   STATS = 'stats',
 }
 
+export enum PermissionType {
+  CREATE = 'create',
+  READ = 'read',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  ADD_STUDENT = 'add_student',
+  EDIT_STUDENTS_LIST = 'edit_students_list',
+  EDIT_CONTENT = 'edit_content',
+}
+
 export const usePermissions = () => {
   const permissions = useLSelector((state) => state.auth.permissions);
 
@@ -39,25 +49,29 @@ export const usePermissions = () => {
     }
   };
 
-  const canCreateCollection = () => hasPermission('create', EntityType.COLLECTION);
-  const canReadCollection = () => hasPermission('read', EntityType.COLLECTION);
-  const canUpdateCollection = () => hasPermission('update', EntityType.COLLECTION);
-  const canDeleteCollection = () => hasPermission('delete', EntityType.COLLECTION);
+  const canCreateCollection = () => hasPermission(PermissionType.CREATE, EntityType.COLLECTION);
+  const canReadCollection = () => hasPermission(PermissionType.READ, EntityType.COLLECTION);
+  const canUpdateCollection = () => hasPermission(PermissionType.UPDATE, EntityType.COLLECTION);
+  const canDeleteCollection = () => hasPermission(PermissionType.DELETE, EntityType.COLLECTION);
 
-  const canAddStudentToCollection = () => hasPermission('add_student', EntityType.COLLECTION);
+  const canAddStudentToCollection = () =>
+    hasPermission(PermissionType.ADD_STUDENT, EntityType.COLLECTION);
   const canEditStudentsListFromCollection = () =>
-    hasPermission('edit_students_list', EntityType.COLLECTION);
-  const canEditCollectionContent = () => hasPermission('edit_content', EntityType.COLLECTION);
+    hasPermission(PermissionType.EDIT_STUDENTS_LIST, EntityType.COLLECTION);
+  const canEditCollectionContent = () =>
+    hasPermission(PermissionType.EDIT_CONTENT, EntityType.COLLECTION);
 
-  const canCreateProgram = () => hasPermission('create', EntityType.PROGRAM);
-  const canReadProgram = () => hasPermission('read', EntityType.PROGRAM);
-  const canUpdateProgram = () => hasPermission('update', EntityType.PROGRAM);
-  const canDeleteProgram = () => hasPermission('delete', EntityType.PROGRAM);
+  const canCreateProgram = () => hasPermission(PermissionType.CREATE, EntityType.PROGRAM);
+  const canReadProgram = () => hasPermission(PermissionType.READ, EntityType.PROGRAM);
+  const canUpdateProgram = () => hasPermission(PermissionType.UPDATE, EntityType.PROGRAM);
+  const canDeleteProgram = () => hasPermission(PermissionType.DELETE, EntityType.PROGRAM);
 
-  const canAddStudentToProgram = () => hasPermission('add_student', EntityType.PROGRAM);
+  const canAddStudentToProgram = () =>
+    hasPermission(PermissionType.ADD_STUDENT, EntityType.PROGRAM);
   const canEditStudentsListFromProgram = () =>
-    hasPermission('edit_students_list', EntityType.PROGRAM);
-  const canEditProgramContent = () => hasPermission('edit_content', EntityType.PROGRAM);
+    hasPermission(PermissionType.EDIT_STUDENTS_LIST, EntityType.PROGRAM);
+  const canEditProgramContent = () =>
+    hasPermission(PermissionType.EDIT_CONTENT, EntityType.PROGRAM);
 
   const canOnlyReadProgram = () => {
     return (
@@ -80,11 +94,16 @@ export const usePermissions = () => {
     );
   };
 
-  const canViewProfile = () => hasPermission('read', EntityType.PROFILE);
-  const canUpdateProfile = () => hasPermission('update', EntityType.PROFILE);
+  const canViewProfile = () => hasPermission(PermissionType.READ, EntityType.PROFILE);
+  const canUpdateProfile = () => hasPermission(PermissionType.UPDATE, EntityType.PROFILE);
 
   const hasFullAccess = () => {
-    const required = ['create', 'read', 'update', 'delete'];
+    const required = [
+      PermissionType.CREATE,
+      PermissionType.READ,
+      PermissionType.UPDATE,
+      PermissionType.DELETE,
+    ];
     const collections = permissions.collections || [];
     const programs = permissions.programs || [];
     return (
