@@ -8,9 +8,13 @@ import { setModalOpen } from '../../../redux/slices/utils.slice';
 import { useGetGroupsQuery } from '../../../redux/service/groups.service';
 import { StudentDTO } from '../../../redux/service/types/students.response';
 import { removeStudent, setStudents } from '../../../redux/slices/program.slice';
-import { useStudentsListQuery } from '../../../redux/service/program.service';
+import {
+  useStudentsListQuery,
+  useResetProgressMutation,
+} from '../../../redux/service/program.service';
 import { EntityType } from '../../../utils/permissions';
 import ProgramStudentsSkeleton from './Skeleton';
+import { successToast, errorToast } from '../../Toasts';
 
 interface ProgramStudents {
   programVersionId?: string;
@@ -21,6 +25,7 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
   const dispatch = useLDispatch();
 
   const groups = useGetGroupsQuery();
+  const [resetProgress] = useResetProgressMutation();
 
   const { data: fetchedStudents, isLoading } = programVersionId
     ? useStudentsListQuery(programVersionId)
@@ -34,7 +39,7 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
     }
   }, [fetchedStudents, dispatch]);
 
-  const handleMenuClick = (action: 'view' | 'delete' | 'edit', student: StudentDTO) => {
+  const handleMenuClick = (action: 'view' | 'delete' | 'edit' | 'reset', student: StudentDTO) => {
     switch (action) {
       case 'view':
         dispatch(
@@ -57,6 +62,20 @@ export const ProgramStudents = ({ programVersionId }: ProgramStudents) => {
             metadata: { studentEmail: student.email, entityType: EntityType.PROGRAM },
           }),
         );
+        break;
+
+      case 'reset':
+        if (programVersionId) {
+          resetProgress({ programVersionId, studentId: student.id })
+            .unwrap()
+            .then(() => {
+              successToast('Progreso del estudiante reseteado exitosamente');
+            })
+            .catch((error) => {
+              console.error('Failed to reset student progress:', error);
+              errorToast('Error al resetear el progreso del estudiante');
+            });
+        }
         break;
 
       default:
