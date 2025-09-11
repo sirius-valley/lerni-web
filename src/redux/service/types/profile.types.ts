@@ -6,6 +6,9 @@ export type ProgramCardItem = {
   teacher: Teacher;
   points: number;
   maxPoints: number;
+  collectionName?: string;
+  collection?: string;
+  collectionId?: string;
 };
 
 export type Teacher = {
