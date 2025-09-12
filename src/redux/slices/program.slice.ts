@@ -135,6 +135,7 @@ export const programSlice = createSlice({
       state.title = action.payload.programName;
       state.image = action.payload.icon;
       state.professor = action.payload.teacher.id;
+      state.institution = action.payload.institutionId || '';
       state.description = action.payload.programDescription;
       state.startDate = action.payload.startDate;
       state.endDate = action.payload.endDate;

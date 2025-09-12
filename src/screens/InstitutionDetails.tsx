@@ -41,7 +41,6 @@ const InstitutionDetailsScreen = () => {
           css={{
             width: '100%',
             height: '66px',
-            background: theme.white,
             justifyContent: 'center',
             alignItems: 'center',
           }}
