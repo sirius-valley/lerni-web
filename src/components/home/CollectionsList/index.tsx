@@ -8,6 +8,8 @@ import { useCollectionListQuery } from '../../../redux/service/collection.servic
 import { CollectionItem } from '../../collection/CollectionItem';
 import { usePermissions } from '../../../utils/permissions';
 import CollectionsListSkeleton from './Skeleton';
+import EmptyState from '../../EmptyState';
+import { CollectionIcon } from '../../../assets/icons/CollectionIcon';
 
 const CollectionsList = () => {
   const navigation = useNavigate();
@@ -48,14 +50,18 @@ const CollectionsList = () => {
         )}
       </StyledRow>
       <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
-        {data?.map((item, key) => <CollectionItem key={key} {...item} />)}
-        {data?.length === 0 && (
-          <StyledText
-            variant="body2"
-            css={{ textAlign: 'center', marginTop: '24px', color: theme.gray500 }}
-          >
-            No hay colecciones disponibles por el momento.
-          </StyledText>
+        {data && data.length > 0 ? (
+          data.map((item, key) => <CollectionItem key={key} {...item} />)
+        ) : (
+          <EmptyState
+            title="No hay colecciones"
+            description={
+              canCreateCollection()
+                ? 'Crea tu primera colección para comenzar'
+                : 'No tienes ninguna colección asignada'
+            }
+            icon={<CollectionIcon />}
+          />
         )}
       </StyledColumn>
     </StyledColumn>

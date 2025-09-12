@@ -1,26 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { authApi, AuthType } from '../service/auth.service';
 import { Permissions } from '../service/types/auth.types';
+import { AdminRole } from '../../utils/permissions';
 
 interface InitialStateAuthType {
   token: string;
   permissions: Permissions;
-  institutionIds: string[];
+  role: string;
 }
 
 const permissionsInitialState: Permissions = {
   collections: [],
   programs: [],
   profile: [],
-  professors: [],
-  stats: [],
   institutions: [],
+  role: '',
 };
 
 const initialState: InitialStateAuthType = {
   token: '',
   permissions: permissionsInitialState,
-  institutionIds: [],
+  role: '',
 };
 
 const isPermissions = (permissions: any): permissions is Permissions => {
@@ -38,8 +38,9 @@ const isPermissions = (permissions: any): permissions is Permissions => {
     }
   }
 
-  // Check if all properties are arrays
-  for (const prop of requiredProperties) {
+  // Check if all other properties are arrays
+  const arrayProperties = ['collections', 'programs', 'profile', 'institutions'];
+  for (const prop of arrayProperties) {
     if (!Array.isArray(permissions[prop])) {
       console.warn(`Permission property ${prop} is not an array:`, permissions[prop]);
       return false;
@@ -47,7 +48,7 @@ const isPermissions = (permissions: any): permissions is Permissions => {
   }
 
   // Check if all array elements are strings
-  for (const prop of requiredProperties) {
+  for (const prop of arrayProperties) {
     const permissionArray = permissions[prop];
     for (let i = 0; i < permissionArray.length; i++) {
       if (typeof permissionArray[i] !== 'string') {
@@ -96,21 +97,25 @@ export const authSlice = createSlice({
     });
     builder.addMatcher(authApi.endpoints.me.matchFulfilled, (state, action) => {
       const permissions = action.payload.permissions;
+      const role = action.payload.role;
       //const permissions = mockedPermissions('fullAccess');
-      const institutionIds = action.payload.institutionIds || [];
       if (isPermissions(permissions)) {
         console.log('✅ Permissions validated successfully:', {
-          collections: permissions.collections?.length || 0,
-          programs: permissions.programs?.length || 0,
-          profile: permissions.profile?.length || 0,
-          institutions: permissions.institutions?.length || 0,
+          permissions: {
+            collections: permissions.collections?.length || 0,
+            programs: permissions.programs?.length || 0,
+            profile: permissions.profile?.length || 0,
+            institutions: permissions.institutions?.length || 0,
+          },
+          role: role,
         });
         state.permissions = permissions;
+        state.role = role as AdminRole;
       } else {
         console.warn('❌ Invalid permissions format received:', permissions);
         state.permissions = permissionsInitialState;
+        state.role = AdminRole.UNKNOWN_ROLE;
       }
-      state.institutionIds = institutionIds;
     });
   },
 });

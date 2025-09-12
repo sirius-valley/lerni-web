@@ -19,7 +19,6 @@ export const Card = ({ header, children }: CardProps) => {
         height: '274px',
         borderRadius: '19px',
         elevation: 5,
-        boxShadow: '0px 1.19px 10px rgba(0, 0, 0, 0.1)',
         backgroundColor: theme.white,
       }}
     >

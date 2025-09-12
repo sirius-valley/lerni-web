@@ -15,10 +15,24 @@ import { resetCollectionSlice } from '../redux/slices/collection.slice';
 const Home = () => {
   const { data, isError } = useMeQuery();
 
-  const { canReadCollection, canReadProgram, hasFullAccess, hasNoPermissions } = usePermissions();
+  const {
+    canReadCollection,
+    canReadProgram,
+    hasFullAccess,
+    hasNoPermissions,
+    canViewInstitutions,
+    canCreateInstitution,
+  } = usePermissions();
   const viewPrograms = canReadProgram();
   const viewCollections = canReadCollection();
+  const viewInstitutions = canViewInstitutions();
+  const viewProfessors = hasFullAccess();
+  const viewCharts = hasFullAccess();
   const dispatch = useLDispatch();
+
+  // Calcular si cada columna tiene contenido
+  const firstColumnHasContent = viewPrograms || viewCollections;
+  const secondColumnHasContent = viewCharts || viewProfessors || viewInstitutions;
 
   useEffect(() => {
     dispatch(api.util.invalidateTags(['CollectionDetails', 'CollectionStudentsList']));
@@ -33,6 +47,7 @@ const Home = () => {
         alignItems: 'center',
         minHeight: '100vh',
         paddingLeft: '72px',
+        overflow: 'hidden',
       }}
     >
       {hasNoPermissions() ? (
@@ -50,59 +65,64 @@ const Home = () => {
       ) : (
         <StyledRow
           css={{
+            overflow: 'auto',
             width: '100%',
             height: '100vh',
-            gap: '40px',
+            gap: '20px',
             padding: '30px 65px',
             flexWrap: 'wrap',
-            alignItems: hasFullAccess() ? 'center' : 'center',
-            justifyContent: hasFullAccess() ? 'center' : 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          <StyledColumn
-            css={{
-              overflow: 'hidden',
-              height: hasFullAccess() ? '100%' : 'auto',
-              flex: '1 1 400px',
-              justifyContent: 'space-between',
-              gap: '12px',
-              minWidth: '400px',
-              maxWidth: '560px',
-              ...(hasFullAccess() ? {} : { alignSelf: 'center' }),
-            }}
-          >
-            {viewPrograms && <ProgramsList />}
-            {viewCollections && <CollectionsList />}
-          </StyledColumn>
-          {hasFullAccess() && (
+          {firstColumnHasContent && (
             <StyledColumn
               css={{
                 overflow: 'hidden',
                 height: '100%',
                 flex: '1 1 400px',
                 justifyContent: 'space-between',
-                gap: '12px',
-                minWidth: '400px',
+                gap: '20px',
+                minWidth: '560px',
+                maxWidth: '560px',
+                alignSelf: 'start',
+              }}
+            >
+              {viewPrograms && <ProgramsList />}
+              {viewCollections && <CollectionsList />}
+            </StyledColumn>
+          )}
+          {secondColumnHasContent && (
+            <StyledColumn
+              css={{
+                overflow: 'hidden',
+                height: '100%',
+                flex: '1 1 400px',
+                justifyContent: 'space-between',
+                gap: '20px',
+                minWidth: '560px',
                 display: 'flex',
                 flexDirection: 'column',
                 maxWidth: '560px',
               }}
             >
-              <StyledRow
-                css={{
-                  gap: '30px',
-                  width: 'fit-content',
-                  maxWidth: '100%',
-                  alignItems: 'flex-start',
-                  overflowX: 'scroll',
-                  overflowY: 'hidden',
-                }}
-              >
-                <AllProgramsChart />
-                <StudentsRegisteredChart />
-              </StyledRow>
-              <InstitutionsList />
-              <ProfessorList />
+              {viewCharts && (
+                <StyledRow
+                  css={{
+                    gap: '20px',
+                    width: 'fit-content',
+                    maxWidth: '100%',
+                    alignItems: 'flex-start',
+                    overflowX: 'scroll',
+                    overflowY: 'hidden',
+                  }}
+                >
+                  <AllProgramsChart />
+                  <StudentsRegisteredChart />
+                </StyledRow>
+              )}
+              {viewInstitutions && <InstitutionsList />}
+              {viewProfessors && <ProfessorList />}
             </StyledColumn>
           )}
         </StyledRow>

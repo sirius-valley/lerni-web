@@ -67,7 +67,7 @@ export const InstitutionItem = ({ id, name, studentLimit, image }: InstitutionIt
             {name}
           </StyledText>
           <StyledText variant="body3" style={{ color: theme.gray400 }}>
-            Límite: {studentLimit.toLocaleString()}
+            {id}
           </StyledText>
         </StyledColumn>
       </StyledRow>

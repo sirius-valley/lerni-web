@@ -1,6 +1,6 @@
 export type PermissionsResponseDTO = {
   permissions: Permissions;
-  institutionIds: string[];
+  role: string;
 };
 
 /**
@@ -12,14 +12,14 @@ export type PermissionsResponseDTO = {
  *   profile: ["read"],
  *   professors: [],
  *   stats: [],
- *   institutions: ["read", "create", "update", "delete"]
+ *   institutions: ["read", "create", "update", "delete"],
+ *   role: "FULL_ACCESS"
  * }
  */
 export interface Permissions {
   collections: string[];
   programs: string[];
   profile: string[];
-  professors: string[];
-  stats: string[];
   institutions: string[];
+  role: string;
 }

@@ -8,6 +8,8 @@ import { useProgramListQuery } from '../../../redux/service/program.service';
 import { useTheme } from 'styled-components';
 import { usePermissions } from '../../../utils/permissions';
 import ProgramsListSkeleton from './Skeleton';
+import EmptyState from '../../EmptyState';
+import { CollectionIcon } from '../../../assets/icons/CollectionIcon';
 
 const ProgramsList = () => {
   const navigation = useNavigate();
@@ -48,7 +50,19 @@ const ProgramsList = () => {
         )}
       </StyledRow>
       <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
-        {data?.results.map((item, key) => <ProgramItem key={key} {...item} />)}
+        {data?.results && data.results.length > 0 ? (
+          data.results.map((item, key) => <ProgramItem key={key} {...item} />)
+        ) : (
+          <EmptyState
+            title="No hay programas"
+            description={
+              canCreateProgram()
+                ? 'Crea tu primer programa para comenzar'
+                : 'No tienes ningún programa asignado'
+            }
+            icon={<CollectionIcon />}
+          />
+        )}
       </StyledColumn>
     </StyledColumn>
   );

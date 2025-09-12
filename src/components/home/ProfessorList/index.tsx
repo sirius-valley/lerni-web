@@ -12,6 +12,8 @@ import { useLDispatch } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
 import { useTheme } from 'styled-components';
 import ProfessorListSkeleton from './Skeleton';
+import EmptyState from '../../EmptyState';
+import { PeopleIcon } from '../../../assets/icons/PeopleIcon';
 
 interface Professor {
   name: string;
@@ -76,13 +78,13 @@ const ProfessorList = () => {
         </Button>
       </StyledRow>
       {isLoading ? (
-        <StyledRow css={{ height: '242px', justifyContent: 'center', alignItems: 'center' }}>
-          <Spinner />
-        </StyledRow>
+        <EmptyState title="Cargando profesores..." icon={<PeopleIcon />} />
       ) : noProfessors ? (
-        <StyledRow css={{ height: '242px', justifyContent: 'center', alignItems: 'center' }}>
-          <StyledText>No hay profesores</StyledText>
-        </StyledRow>
+        <EmptyState
+          title="No hay profesores"
+          description="Agrega tu primer profesor para comenzar"
+          icon={<PeopleIcon />}
+        />
       ) : (
         <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
           {professorsList?.map(({ name, lastname, image }: Professor, index: number) => (
