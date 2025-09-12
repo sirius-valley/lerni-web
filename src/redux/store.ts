@@ -8,6 +8,7 @@ import authSlice from './slices/auth.slice';
 import utilsSlice from './slices/utils.slice';
 import programSlice from './slices/program.slice';
 import collectionSlice from './slices/collection.slice';
+import institutionSlice from './slices/institution.slice';
 import groupsSlice from './slices/groups.slice';
 import profileSlice from './slices/profile.slice';
 
@@ -19,6 +20,7 @@ const reducers = combineReducers({
   counter: counterSlice,
   program: programSlice,
   collection: collectionSlice,
+  institution: institutionSlice,
   groups: groupsSlice,
   profile: profileSlice,
   pokemon: pokemonSlice,

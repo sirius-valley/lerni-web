@@ -30,6 +30,7 @@ export interface CreateProgramState {
   image: string;
   description: string;
   professor: string;
+  institution: string;
   pills: Pill[];
   questionnaire?: {
     passsingScore: string;
@@ -55,6 +56,7 @@ const initialState: CreateProgramState = {
   image: '',
   description: '',
   professor: '',
+  institution: '',
   pills: [],
   questionnaire: undefined,
   trivia: undefined,
@@ -133,6 +135,7 @@ export const programSlice = createSlice({
       state.title = action.payload.programName;
       state.image = action.payload.icon;
       state.professor = action.payload.teacher.id;
+      state.institution = action.payload.institutionId || '';
       state.description = action.payload.programDescription;
       state.startDate = action.payload.startDate;
       state.endDate = action.payload.endDate;

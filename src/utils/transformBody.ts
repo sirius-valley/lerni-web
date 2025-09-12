@@ -20,6 +20,7 @@ export const transformedValues = (values: CreateProgramState) => {
     image: values.image,
     description: values.description,
     professor: values.professor,
+    institutionId: values.institution || undefined,
     pill: values.pills.map((pill) => ({
       /*
          "name": "string",

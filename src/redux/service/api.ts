@@ -51,6 +51,8 @@ export const api = createApi({
     'CollectionList',
     'Groups',
     'ProfileDetails',
+    'InstitutionDetails',
+    'InstitutionList',
   ],
   endpoints: () => ({}),
 });

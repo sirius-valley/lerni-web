@@ -14,6 +14,7 @@ const permissionsInitialState: Permissions = {
   profile: [],
   professors: [],
   stats: [],
+  institutions: [],
 };
 
 const initialState: InitialStateAuthType = {
@@ -29,7 +30,7 @@ const isPermissions = (permissions: any): permissions is Permissions => {
   }
 
   // Check if all required properties exist (only the ones backend actually sends)
-  const requiredProperties = ['collections', 'programs', 'profile'];
+  const requiredProperties = ['collections', 'programs', 'profile', 'institutions'];
   for (const prop of requiredProperties) {
     if (!(prop in permissions)) {
       console.warn(`Missing required permission property: ${prop}`);
@@ -102,6 +103,7 @@ export const authSlice = createSlice({
           collections: permissions.collections?.length || 0,
           programs: permissions.programs?.length || 0,
           profile: permissions.profile?.length || 0,
+          institutions: permissions.institutions?.length || 0,
         });
         state.permissions = permissions;
       } else {
