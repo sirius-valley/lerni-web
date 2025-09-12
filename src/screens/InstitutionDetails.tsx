@@ -4,16 +4,24 @@ import { useTheme } from 'styled-components';
 import { useParams } from 'react-router-dom';
 import InstitutionDetails from '../components/institution/InstitutionDetails';
 import InstitutionCollections from '../components/institution/InstitutionCollections';
-import { useGetInstitutionDetailsQuery } from '../redux/service/institution.service';
-import { useLDispatch } from '../redux/hooks';
+import {
+  useGetInstitutionDetailsQuery,
+  useUpdateInstitutionMutation,
+} from '../redux/service/institution.service';
+import { useLDispatch, useLSelector } from '../redux/hooks';
 import { isLoading } from '../redux/slices/institution.slice';
 import { usePermissions } from '../utils/permissions';
+import Button from '../components/styled/Button';
+import { ComponentVariantType } from '../utils/constants';
+import { successToast, errorToast } from '../components/Toasts';
 
 const InstitutionDetailsScreen = () => {
   const theme = useTheme();
   const { id } = useParams();
   const dispatch = useLDispatch();
-  const { canReadInstitution } = usePermissions();
+  const { canReadInstitution, canUpdateInstitution } = usePermissions();
+  const institution = useLSelector((state) => state.institution);
+  const [updateInstitution, { isLoading: isSaving }] = useUpdateInstitutionMutation();
 
   const {
     data,
@@ -76,6 +84,36 @@ const InstitutionDetailsScreen = () => {
         >
           <InstitutionDetails />
           <InstitutionCollections />
+          {canUpdateInstitution() && (
+            <Button
+              variant={ComponentVariantType.PRIMARY}
+              onClick={async () => {
+                try {
+                  await updateInstitution({
+                    id: institution.id,
+                    name: institution.name,
+                    studentLimit: Number(institution.studentLimit) || 0,
+                    picture: institution.picture,
+                  }).unwrap();
+                  successToast('La institución se ha actualizado con éxito!');
+                } catch (e) {
+                  errorToast('Algo salió mal, revisa los campos nuevamente');
+                }
+              }}
+              disabled={isSaving}
+              labelSize={'body3'}
+              css={{
+                marginTop: '8px',
+                width: 'auto',
+                height: '30px',
+                padding: '8px 16px 8px 16px',
+                fontFamily: 'Roboto-Bold',
+                cursor: 'pointer',
+              }}
+            >
+              {isSaving ? 'Guardando...' : 'Guardar'}
+            </Button>
+          )}
         </StyledColumn>
       </StyledColumn>
     </StyledBox>
