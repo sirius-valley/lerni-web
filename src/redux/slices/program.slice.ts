@@ -30,6 +30,7 @@ export interface CreateProgramState {
   image: string;
   description: string;
   professor: string;
+  institution: string;
   pills: Pill[];
   questionnaire?: {
     passsingScore: string;
@@ -55,6 +56,7 @@ const initialState: CreateProgramState = {
   image: '',
   description: '',
   professor: '',
+  institution: '',
   pills: [],
   questionnaire: undefined,
   trivia: undefined,

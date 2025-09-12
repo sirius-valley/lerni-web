@@ -14,6 +14,7 @@ import StudentsGroupsModal from './modals/StudentsGroupsModal';
 import { EntityType } from '../utils/permissions';
 import LoaderModal from './modals/LoaderModal';
 import ConfirmStudentsChangesModal from './modals/ConfirmStudentsChangesModal';
+import CreateInstitutionModal from './modals/CreateInstitutionModal';
 
 export const withModal = (Component: FunctionComponent) => (props: any) => {
   const type = useLSelector((state) => state.utils.modalType);
@@ -46,6 +47,8 @@ export const withModal = (Component: FunctionComponent) => (props: any) => {
         );
       case 'PROFESSOR_CREATE':
         return <CreateProfessorModal handleOnClose={handleOnClose} />;
+      case 'INSTITUTION_CREATE':
+        return <CreateInstitutionModal handleOnClose={handleOnClose} />;
       case 'ADD_STUDENT':
         return <AddStudentModal handleOnClose={handleOnClose} />;
       case 'STUDENTS_STATUS':

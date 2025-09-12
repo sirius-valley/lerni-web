@@ -11,7 +11,8 @@ export type PermissionsResponseDTO = {
  *   programs: ["read", "add_student", "edit_students_list", "edit_content"],
  *   profile: ["read"],
  *   professors: [],
- *   stats: []
+ *   stats: [],
+ *   institutions: ["read", "create", "update", "delete"]
  * }
  */
 export interface Permissions {
@@ -20,4 +21,5 @@ export interface Permissions {
   profile: string[];
   professors: string[];
   stats: string[];
+  institutions: string[];
 }

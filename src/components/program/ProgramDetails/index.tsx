@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Card from '../../Card';
 import { StyledColumn, StyledRow } from '../../styled/styles';
 import { TextInput } from '../../styled/TextInput';
@@ -14,6 +14,8 @@ import dayjs from 'dayjs';
 import { AutocompleteComponent } from '../../Autocomplete';
 import { usePermissions } from '../../../utils/permissions';
 import ProgramDetailsSkeleton from './Skeleton';
+import { DEFAULT_IMAGE_URL } from '../../../utils/constants';
+import { useGetInstitutionsListQuery } from '../../../redux/service/institution.service';
 
 const ProgramDetails = () => {
   const program = useLSelector((state) => state.program);
@@ -25,6 +27,16 @@ const ProgramDetails = () => {
 
   const [refetch, { data: profData, isLoading: isLoadingProf }] = useLazyGetProfessorsQuery();
   const [professors, setProfessorsList] = useState<{ id: string; text: string }[]>([]);
+  const { data: institutionsListResponse } = useGetInstitutionsListQuery();
+
+  const institutionOptions = useMemo(
+    () =>
+      (institutionsListResponse?.institutions || []).map((inst) => ({
+        id: inst.id,
+        text: inst.name,
+      })),
+    [institutionsListResponse?.institutions],
+  );
 
   useEffect(() => {
     refetch({ page: 1 });
@@ -51,6 +63,10 @@ const ProgramDetails = () => {
   const handleChange = (name: string, value: string) => {
     dispatch(updatePillInfo({ ...program, [name]: value }));
   };
+  const handleChangeMultiple = (name: string, values: { id: string; text: string }[]) => {
+    const ids = values.map((v) => v.id);
+    dispatch(updatePillInfo({ ...program, [name]: ids }));
+  };
 
   useEffect(() => {
     if (program.endDate < program.startDate) {
@@ -58,7 +74,7 @@ const ProgramDetails = () => {
     }
   }, [program.startDate, program.endDate]);
 
-  const imageUrl = 'https://lerni-images-2024.s3.amazonaws.com/default_image_program.jpg';
+  const imageUrl = DEFAULT_IMAGE_URL;
 
   if (isLoading) return <ProgramDetailsSkeleton />;
 
@@ -102,6 +118,18 @@ const ProgramDetails = () => {
             multiple={false}
             onChange={(val) => {
               handleChange('professor', val);
+            }}
+            css={{ fontSize: 14 }}
+            disabled={!canUpdate}
+          />
+          <AutocompleteComponent
+            label={'Institución'}
+            value={institutionOptions.find((opt) => opt.id === program.institution) ?? null}
+            placeholder={'Seleccionar institución'}
+            content={institutionOptions}
+            multiple={false}
+            onChange={(val) => {
+              handleChange('institution', val);
             }}
             css={{ fontSize: 14 }}
             disabled={!canUpdate}

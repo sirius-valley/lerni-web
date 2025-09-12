@@ -6,6 +6,7 @@ export enum EntityType {
   PROFILE = 'profile',
   PROFESSOR = 'professor',
   STATS = 'stats',
+  INSTITUTION = 'institution',
 }
 
 export const usePermissions = () => {
@@ -19,6 +20,7 @@ export const usePermissions = () => {
       profile: permissions.profile,
       professors: permissions.professors,
       stats: permissions.stats,
+      institutions: permissions.institutions,
     });
   };
 
@@ -34,6 +36,8 @@ export const usePermissions = () => {
         return permissions.professors?.includes(permission) ?? false;
       case EntityType.STATS:
         return permissions.stats?.includes(permission) ?? false;
+      case EntityType.INSTITUTION:
+        return permissions.institutions?.includes(permission) ?? false;
       default:
         return false;
     }
@@ -83,13 +87,26 @@ export const usePermissions = () => {
   const canViewProfile = () => hasPermission('read', EntityType.PROFILE);
   const canUpdateProfile = () => hasPermission('update', EntityType.PROFILE);
 
+  // Institution permissions
+  const canCreateInstitution = () => hasPermission('create', EntityType.INSTITUTION);
+  const canReadInstitution = () => hasPermission('read', EntityType.INSTITUTION);
+  const canUpdateInstitution = () => hasPermission('update', EntityType.INSTITUTION);
+  const canDeleteInstitution = () => hasPermission('delete', EntityType.INSTITUTION);
+  const canViewInstitutions = () => hasPermission('read', EntityType.INSTITUTION);
+
+  const canOnlyReadInstitution = () => {
+    return canReadInstitution() && !canUpdateInstitution() && !canDeleteInstitution();
+  };
+
   const hasFullAccess = () => {
     const required = ['create', 'read', 'update', 'delete'];
     const collections = permissions.collections || [];
     const programs = permissions.programs || [];
+    const institutions = permissions.institutions || [];
     return (
       required.every((perm) => collections.includes(perm)) &&
-      required.every((perm) => programs.includes(perm))
+      required.every((perm) => programs.includes(perm)) &&
+      required.every((perm) => institutions.includes(perm))
     );
   };
 
@@ -100,7 +117,8 @@ export const usePermissions = () => {
       isEmpty(permissions.programs) &&
       isEmpty(permissions.profile) &&
       isEmpty(permissions.professors) &&
-      isEmpty(permissions.stats)
+      isEmpty(permissions.stats) &&
+      isEmpty(permissions.institutions)
     );
   };
 
@@ -123,6 +141,13 @@ export const usePermissions = () => {
     canOnlyReadCollection,
     canViewProfile,
     canUpdateProfile,
+    // Institution permissions
+    canCreateInstitution,
+    canReadInstitution,
+    canUpdateInstitution,
+    canDeleteInstitution,
+    canViewInstitutions,
+    canOnlyReadInstitution,
     hasPermission,
     hasFullAccess,
     hasNoPermissions,

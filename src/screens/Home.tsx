@@ -3,6 +3,7 @@ import ProfessorList from '../components/home/ProfessorList';
 import ProgramsList from '../components/home/ProgramsList';
 import { RootContainer, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
 import AllProgramsChart from '../components/charts/AllProgramsChart';
+import { InstitutionsList } from '../components/charts/InstitutionsList';
 import { StudentsRegisteredChart } from '../components/charts/StudentsRegisteredChart';
 import CollectionsList from '../components/home/CollectionsList';
 import { useMeQuery } from '../redux/service/auth.service';
@@ -100,6 +101,7 @@ const Home = () => {
                 <AllProgramsChart />
                 <StudentsRegisteredChart />
               </StyledRow>
+              <InstitutionsList />
               <ProfessorList />
             </StyledColumn>
           )}

@@ -15,6 +15,7 @@ import { getTokenFromLocalStorage } from '../utils/utils';
 import ProgramDetails from '../screens/ProgramDetails';
 import CreateCollection from '../screens/CreateCollection';
 import CollectionDetails from '../screens/CollectionDetails';
+import InstitutionDetails from '../screens/InstitutionDetails';
 import ProfileDetails from '../screens/ProfileDetails';
 import LimitedView from '../screens/LimitedView';
 import StudentProgress from '../screens/StudentProgress';
@@ -55,6 +56,7 @@ const Router = () => {
             {viewCollections && (
               <Route path="/details/collection/:id" element={<CollectionDetails />} />
             )}
+            <Route path="/details/institution/:id" element={<InstitutionDetails />} />
             <Route path="/profile/:id" element={<ProfileDetails />} />
           </Route>
         </Route>
