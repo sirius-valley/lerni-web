@@ -4,22 +4,27 @@ export enum EntityType {
   COLLECTION = 'collection',
   PROGRAM = 'program',
   PROFILE = 'profile',
-  PROFESSOR = 'professor',
-  STATS = 'stats',
   INSTITUTION = 'institution',
+}
+
+export enum AdminRole {
+  FULL_ACCESS = 'FULL_ACCESS',
+  READ_ONLY = 'READ_ONLY',
+  READ_ONLY_COLLECTION = 'READ_ONLY_COLLECTION',
+  ADMIN = 'ADMIN',
+  INSTITUTION_ADMIN = 'INSTITUTION_ADMIN',
+  UNKNOWN_ROLE = 'UNKNOWN_ROLE',
 }
 
 export const usePermissions = () => {
   const permissions = useLSelector((state) => state.auth.permissions);
-
+  const role = useLSelector((state) => state.auth.role);
   // Debug function to log current permissions
   const debugPermissions = () => {
     console.log('🔍 Current Permissions State:', {
       collections: permissions.collections,
       programs: permissions.programs,
       profile: permissions.profile,
-      professors: permissions.professors,
-      stats: permissions.stats,
       institutions: permissions.institutions,
     });
   };
@@ -32,10 +37,6 @@ export const usePermissions = () => {
         return permissions.programs?.includes(permission) ?? false;
       case EntityType.PROFILE:
         return permissions.profile?.includes(permission) ?? false;
-      case EntityType.PROFESSOR:
-        return permissions.professors?.includes(permission) ?? false;
-      case EntityType.STATS:
-        return permissions.stats?.includes(permission) ?? false;
       case EntityType.INSTITUTION:
         return permissions.institutions?.includes(permission) ?? false;
       default:
@@ -99,15 +100,7 @@ export const usePermissions = () => {
   };
 
   const hasFullAccess = () => {
-    const required = ['create', 'read', 'update', 'delete'];
-    const collections = permissions.collections || [];
-    const programs = permissions.programs || [];
-    const institutions = permissions.institutions || [];
-    return (
-      required.every((perm) => collections.includes(perm)) &&
-      required.every((perm) => programs.includes(perm)) &&
-      required.every((perm) => institutions.includes(perm))
-    );
+    return role === AdminRole.FULL_ACCESS;
   };
 
   const hasNoPermissions = () => {
@@ -116,8 +109,6 @@ export const usePermissions = () => {
       isEmpty(permissions.collections) &&
       isEmpty(permissions.programs) &&
       isEmpty(permissions.profile) &&
-      isEmpty(permissions.professors) &&
-      isEmpty(permissions.stats) &&
       isEmpty(permissions.institutions)
     );
   };

@@ -12,6 +12,7 @@ import { useLDispatch } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
 import { useTheme } from 'styled-components';
 import ProfessorListSkeleton from './Skeleton';
+import { usePermissions } from '../../../utils/permissions';
 
 interface Professor {
   name: string;
@@ -26,6 +27,11 @@ const ProfessorList = () => {
   const dispatch = useLDispatch();
   const theme = useTheme();
   const [professorsList, setProfessorsList] = useState<Professor[]>([]);
+  const { hasFullAccess } = usePermissions();
+
+  if (!hasFullAccess()) {
+    return null;
+  }
 
   const handleAddNewProfessor = () => {
     dispatch(setModalOpen({ modalType: 'PROFESSOR_CREATE' }));

@@ -33,6 +33,7 @@ const Home = () => {
         alignItems: 'center',
         minHeight: '100vh',
         paddingLeft: '72px',
+        overflow: 'hidden',
       }}
     >
       {hasNoPermissions() ? (
@@ -50,9 +51,10 @@ const Home = () => {
       ) : (
         <StyledRow
           css={{
+            overflow: 'auto',
             width: '100%',
             height: '100vh',
-            gap: '40px',
+            gap: '20px',
             padding: '30px 65px',
             flexWrap: 'wrap',
             alignItems: hasFullAccess() ? 'center' : 'center',
@@ -65,8 +67,8 @@ const Home = () => {
               height: hasFullAccess() ? '100%' : 'auto',
               flex: '1 1 400px',
               justifyContent: 'space-between',
-              gap: '12px',
-              minWidth: '400px',
+              gap: '20px',
+              minWidth: '560px',
               maxWidth: '560px',
               ...(hasFullAccess() ? {} : { alignSelf: 'center' }),
             }}
@@ -74,37 +76,35 @@ const Home = () => {
             {viewPrograms && <ProgramsList />}
             {viewCollections && <CollectionsList />}
           </StyledColumn>
-          {hasFullAccess() && (
-            <StyledColumn
+          <StyledColumn
+            css={{
+              overflow: 'hidden',
+              height: '100%',
+              flex: '1 1 400px',
+              justifyContent: 'space-between',
+              gap: '20px',
+              minWidth: '560px',
+              display: 'flex',
+              flexDirection: 'column',
+              maxWidth: '560px',
+            }}
+          >
+            <StyledRow
               css={{
-                overflow: 'hidden',
-                height: '100%',
-                flex: '1 1 400px',
-                justifyContent: 'space-between',
-                gap: '12px',
-                minWidth: '400px',
-                display: 'flex',
-                flexDirection: 'column',
-                maxWidth: '560px',
+                gap: '20px',
+                width: 'fit-content',
+                maxWidth: '100%',
+                alignItems: 'flex-start',
+                overflowX: 'scroll',
+                overflowY: 'hidden',
               }}
             >
-              <StyledRow
-                css={{
-                  gap: '30px',
-                  width: 'fit-content',
-                  maxWidth: '100%',
-                  alignItems: 'flex-start',
-                  overflowX: 'scroll',
-                  overflowY: 'hidden',
-                }}
-              >
-                <AllProgramsChart />
-                <StudentsRegisteredChart />
-              </StyledRow>
-              <InstitutionsList />
-              <ProfessorList />
-            </StyledColumn>
-          )}
+              <AllProgramsChart />
+              <StudentsRegisteredChart />
+            </StyledRow>
+            <InstitutionsList />
+            <ProfessorList />
+          </StyledColumn>
         </StyledRow>
       )}
     </RootContainer>

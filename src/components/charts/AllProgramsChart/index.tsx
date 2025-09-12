@@ -6,10 +6,16 @@ import Chart from 'react-apexcharts';
 import { useAllProgramsChartQuery } from '../../../redux/service/program.service';
 import Spinner from '../../Spinner/Spinner';
 import MetricChartSkeleton from '../MetricChart/Skeleton';
+import { usePermissions } from '../../../utils/permissions';
 
 const AllProgramsChart = () => {
   const { data, isLoading } = useAllProgramsChartQuery();
   const theme = useTheme();
+  const { hasFullAccess } = usePermissions();
+
+  if (!hasFullAccess()) {
+    return null;
+  }
 
   if (isLoading) return <MetricChartSkeleton height={'274px'} />;
   if (!data) return <></>;
