@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyledBox, StyledColumn, StyledRow, StyledText } from '../../styled/styles';
+import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import Button from '../../styled/Button';
 import { ComponentVariantType } from '../../../utils/constants';
 import { useTheme } from 'styled-components';
@@ -7,29 +7,19 @@ import { CollectionIcon } from '../../../assets/icons/CollectionIcon';
 
 import { useLDispatch } from '../../../redux/hooks';
 import { setModalOpen } from '../../../redux/slices/utils.slice';
-import { useNavigate } from 'react-router-dom';
-import { ButtonLabelSize } from '../../styled/Button/styles';
 import { useGetInstitutionsListQuery } from '../../../redux/service/institution.service';
 import { InstitutionListItem } from '../../../redux/service/types/institution.types';
 import { usePermissions } from '../../../utils/permissions';
+import EmptyState from '../../EmptyState';
+import { InstitutionItem } from '../../institution/InstitutionItem';
 
 export const InstitutionsList = () => {
   const theme = useTheme();
   const dispatch = useLDispatch();
-  const navigate = useNavigate();
-  const { canViewInstitutions, canCreateInstitution } = usePermissions();
+  const { canCreateInstitution } = usePermissions();
   const { data: institutionsResponse, isLoading, error } = useGetInstitutionsListQuery();
 
   const institutionsList: InstitutionListItem[] = institutionsResponse?.institutions || [];
-
-  const handleInstitutionClick = (institutionId: string) => {
-    navigate(`/details/institution/${institutionId}`);
-  };
-
-  // Don't render if user doesn't have permission to view institutions
-  if (!canViewInstitutions()) {
-    return null;
-  }
 
   return (
     <StyledColumn
@@ -58,68 +48,33 @@ export const InstitutionsList = () => {
         )}
       </StyledRow>
       {isLoading ? (
-        <StyledRow css={{ height: '242px', justifyContent: 'center', alignItems: 'center' }}>
-          <StyledText>Cargando instituciones...</StyledText>
-        </StyledRow>
+        <EmptyState title="Cargando instituciones..." icon={<CollectionIcon />} />
       ) : error ? (
-        <StyledRow css={{ height: '242px', justifyContent: 'center', alignItems: 'center' }}>
-          <StyledText>Error al cargar las instituciones</StyledText>
-        </StyledRow>
+        <EmptyState
+          title="Error al cargar las instituciones"
+          description="Intenta recargar la página"
+          icon={<CollectionIcon />}
+        />
       ) : institutionsList.length === 0 ? (
-        <StyledRow css={{ height: '242px', justifyContent: 'center', alignItems: 'center' }}>
-          <StyledText>No hay instituciones</StyledText>
-        </StyledRow>
+        <EmptyState
+          title="No hay instituciones"
+          description={
+            canCreateInstitution()
+              ? 'Crea tu primera institución para comenzar'
+              : 'No perteneces a ninguna institución'
+          }
+          icon={<CollectionIcon />}
+        />
       ) : (
         <StyledColumn css={{ gap: '0px', height: '100%', overflowY: 'scroll' }}>
           {institutionsList.map((inst) => (
-            <StyledRow
+            <InstitutionItem
               key={inst.id}
-              style={{
-                padding: '10px 8px',
-                borderBottom: '1px solid',
-                borderBottomColor: theme.gray200,
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%',
-                cursor: 'pointer',
-              }}
-              onClick={() => handleInstitutionClick(inst.id)}
-            >
-              <StyledRow style={{ gap: 8, alignItems: 'center', justifyContent: 'center' }}>
-                <StyledBox
-                  style={{
-                    display: 'flex',
-                    borderRadius: 4,
-                    width: 40,
-                    height: 40,
-                    background: theme.gray200,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <CollectionIcon />
-                </StyledBox>
-                <StyledColumn style={{ gap: 2 }}>
-                  <StyledText variant="body1" style={{ color: theme.primary950 }}>
-                    {inst.name}
-                  </StyledText>
-                  <StyledText variant="body3" style={{ color: theme.gray400 }}>
-                    {inst.id}
-                  </StyledText>
-                </StyledColumn>
-              </StyledRow>
-              <StyledBox style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                  onClick={() => handleInstitutionClick(inst.id)}
-                  disabled={false}
-                  labelSize={ButtonLabelSize.BODY3}
-                  variant={ComponentVariantType.GHOST}
-                  css={{ color: theme.primary400 }}
-                >
-                  Ver detalles
-                </Button>
-              </StyledBox>
-            </StyledRow>
+              id={inst.id}
+              name={inst.name}
+              studentLimit={inst.studentLimit || 0}
+              image={inst.picture}
+            />
           ))}
         </StyledColumn>
       )}

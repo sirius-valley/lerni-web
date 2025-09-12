@@ -3,16 +3,10 @@ import { useStudentsRegisteredQuery } from '../../../redux/service/students.serv
 import { StyledBox, StyledColumn, StyledText } from '../../styled/styles';
 import { Card } from '../Card';
 import MetricChartSkeleton from '../MetricChart/Skeleton';
-import { usePermissions } from '../../../utils/permissions';
 
 export const StudentsRegisteredChart = () => {
   const { data, isLoading } = useStudentsRegisteredQuery();
   const students = data?.registeredStudents;
-  const { hasFullAccess } = usePermissions();
-
-  if (!hasFullAccess()) {
-    return null;
-  }
   const cardHeader = (
     <StyledColumn css={{ padding: '0px 14px 7px', gap: '4px' }}>
       <StyledText variant="h2" color="gray900" css={{ fontFamily: 'Roboto' }}>
