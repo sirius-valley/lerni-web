@@ -91,10 +91,10 @@ export const CollectionStudents = ({ collectionId }: CollectionStudents) => {
   const collection = useLSelector((state) => state.collection);
   const { edit } = collection;
 
-  const { isAdmin } = useIsAdmin();
+  // const { isAdmin } = useIsAdmin();
 
   const { canAddStudentToCollection } = usePermissions();
-  const canAdd = canAddStudentToCollection() && isAdmin;
+  const canAdd = canAddStudentToCollection();
 
   const groups = useGetGroupsQuery();
 

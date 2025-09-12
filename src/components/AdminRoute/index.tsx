@@ -26,13 +26,13 @@ const AdminRoute = () => {
     }
   }, [location, setAdminStatus]);
 
-  useEffect(() => {
-    // Verificar si el usuario es admin y redirigir si no lo es
-    if (!isAdmin && isAdmin !== undefined) {
-      console.log('isAdmin', isAdmin);
-      navigate('/limited-view');
-    }
-  }, [isAdmin, navigate]);
+  // useEffect(() => {
+  //   // Verificar si el usuario es admin y redirigir si no lo es
+  //   if (!isAdmin && isAdmin !== undefined) {
+  //     console.log('isAdmin', isAdmin);
+  //     navigate('/limited-view');
+  //   }
+  // }, [isAdmin, navigate]);
 
   return <Outlet />;
 };
