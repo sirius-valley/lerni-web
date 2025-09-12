@@ -7,24 +7,24 @@ const AdminRoute = () => {
   const location = useLocation();
   const { isAdmin, setAdminStatus } = useIsAdmin();
 
-  useEffect(() => {
-    // Verificar si hay parámetro isAdmin en la URL
-    const urlParams = new URLSearchParams(location.search);
-    const isAdminParam = urlParams.get('isAdmin');
+  // useEffect(() => {
+  //   // Verificar si hay parámetro isAdmin en la URL
+  //   const urlParams = new URLSearchParams(location.search);
+  //   const isAdminParam = urlParams.get('isAdmin');
 
-    if (isAdminParam === 'true') {
-      // Setear usando el hook
-      setAdminStatus(true);
+  //   if (isAdminParam === 'true') {
+  //     // Setear usando el hook
+  //     setAdminStatus(true);
 
-      // Remover el parámetro de la URL
-      urlParams.delete('isAdmin');
-      const newSearch = urlParams.toString();
-      const newUrl = location.pathname + (newSearch ? '?' + newSearch : '');
+  //     // Remover el parámetro de la URL
+  //     urlParams.delete('isAdmin');
+  //     const newSearch = urlParams.toString();
+  //     const newUrl = location.pathname + (newSearch ? '?' + newSearch : '');
 
-      // Reemplazar la URL sin el parámetro
-      window.history.replaceState({}, '', newUrl);
-    }
-  }, [location, setAdminStatus]);
+  //     // Reemplazar la URL sin el parámetro
+  //     window.history.replaceState({}, '', newUrl);
+  //   }
+  // }, [location, setAdminStatus]);
 
   // useEffect(() => {
   //   // Verificar si el usuario es admin y redirigir si no lo es
