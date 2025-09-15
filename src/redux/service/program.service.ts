@@ -74,6 +74,7 @@ export const programApi = api.injectEndpoints({
         method: 'GET',
         params: { limit: 500 },
       }),
+      providesTags: ['ProgramList'],
     }),
     programDetails: builder.query<any, string>({
       providesTags: ['ProgramDetails'],
@@ -88,6 +89,7 @@ export const programApi = api.injectEndpoints({
         method: 'POST',
         body: body,
       }),
+      invalidatesTags: ['ProgramList'],
     }),
     getProgramLikes: builder.query<LikesResponse, string>({
       query: (id: string) => ({

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
 import { useTheme } from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import InstitutionDetails from '../components/institution/InstitutionDetails';
 import InstitutionCollections from '../components/institution/InstitutionCollections';
 import {
@@ -18,6 +18,7 @@ import { successToast, errorToast } from '../components/Toasts';
 const InstitutionDetailsScreen = () => {
   const theme = useTheme();
   const { id } = useParams();
+  const navigate = useNavigate();
   const dispatch = useLDispatch();
   const { canReadInstitution, canUpdateInstitution } = usePermissions();
   const institution = useLSelector((state) => state.institution);
@@ -95,6 +96,7 @@ const InstitutionDetailsScreen = () => {
                     picture: institution.picture,
                   }).unwrap();
                   successToast('La institución se ha actualizado con éxito!');
+                  navigate('/');
                 } catch (e) {
                   errorToast('Algo salió mal, revisa los campos nuevamente');
                 }

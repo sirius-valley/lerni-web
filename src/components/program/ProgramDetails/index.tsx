@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Card from '../../Card';
-import { StyledColumn, StyledRow } from '../../styled/styles';
+import { StyledColumn, StyledRow, StyledText } from '../../styled/styles';
 import { TextInput } from '../../styled/TextInput';
 import { useLDispatch, useLSelector } from '../../../redux/hooks';
 import { updatePillInfo } from '../../../redux/slices/program.slice';
@@ -16,6 +16,7 @@ import { usePermissions } from '../../../utils/permissions';
 import ProgramDetailsSkeleton from './Skeleton';
 import { DEFAULT_IMAGE_URL } from '../../../utils/constants';
 import { useGetInstitutionsListQuery } from '../../../redux/service/institution.service';
+import { isValidUrl } from '../../../utils/utils';
 
 const ProgramDetails = () => {
   const program = useLSelector((state) => state.program);
@@ -27,6 +28,7 @@ const ProgramDetails = () => {
 
   const [refetch, { data: profData, isLoading: isLoadingProf }] = useLazyGetProfessorsQuery();
   const [professors, setProfessorsList] = useState<{ id: string; text: string }[]>([]);
+  const [imageUrlError, setImageUrlError] = useState<string>('');
   const { data: institutionsListResponse } = useGetInstitutionsListQuery();
 
   const institutionOptions = useMemo(
@@ -62,10 +64,15 @@ const ProgramDetails = () => {
 
   const handleChange = (name: string, value: string) => {
     dispatch(updatePillInfo({ ...program, [name]: value }));
-  };
-  const handleChangeMultiple = (name: string, values: { id: string; text: string }[]) => {
-    const ids = values.map((v) => v.id);
-    dispatch(updatePillInfo({ ...program, [name]: ids }));
+
+    // Validar URL de imagen en tiempo real
+    if (name === 'image') {
+      if (value && !isValidUrl(value)) {
+        setImageUrlError('Por favor ingresa una URL válida (debe comenzar con http:// o https://)');
+      } else {
+        setImageUrlError('');
+      }
+    }
   };
 
   useEffect(() => {
@@ -101,7 +108,7 @@ const ProgramDetails = () => {
             value={program.title}
             onChange={(value) => handleChange('title', value)}
             disabled={!canUpdate}
-          ></TextInput>
+          />
           <TextInput
             placeholder="https://www.pixels.com/321423534ng43g432g4f443f4545"
             title="URL de la imagen"
@@ -109,7 +116,9 @@ const ProgramDetails = () => {
             value={program.image}
             onChange={(value) => handleChange('image', value)}
             disabled={!canUpdate}
-          ></TextInput>
+            error={!!imageUrlError}
+            subtitle={imageUrlError}
+          />
           <AutocompleteComponent
             label={'Profesor'}
             value={professors.find((prof) => prof.id === program.professor) ?? null}
@@ -144,7 +153,7 @@ const ProgramDetails = () => {
             multiline
             maxLength={2000}
             disabled={!canUpdate}
-          ></TextInput>
+          />
           <StyledRow css={{ gap: '16px' }}>
             <DateTimePicker
               label="Comienzo"

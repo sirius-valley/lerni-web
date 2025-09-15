@@ -51,8 +51,8 @@ const InstitutionDetails = () => {
             disabled={!canUpdateInstitution()}
           />
           <TextInput
-            placeholder="URL de la imagen (opcional)"
-            title="Imagen"
+            placeholder="https://www.pixels.com/321423534ng43g432g4f443f4545"
+            title="URL de la imagen"
             value={institution.picture}
             onChange={(value) => handleChange('picture', value)}
             disabled={!canUpdateInstitution()}

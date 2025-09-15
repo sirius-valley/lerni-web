@@ -45,6 +45,7 @@ export const api = createApi({
   tagTypes: [
     'Pokemon',
     'ProgramDetails',
+    'ProgramList',
     'CollectionDetails',
     'StudentsProgress',
     'CollectionStudentsList',

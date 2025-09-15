@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyledBox, StyledColumn, StyledRow, StyledText } from '../components/styled/styles';
 import { useTheme } from 'styled-components';
 import ProgramContent from '../components/program/ProgramContent';
@@ -16,6 +16,7 @@ import { resetProgramSlice } from '../redux/slices/program.slice';
 import { api } from '../redux/service/api';
 import { useMeQuery } from '../redux/service/auth.service';
 import { closeModal, setModalOpen } from '../redux/slices/utils.slice';
+import { validateProgram } from '../utils/program';
 
 const CreateProgram = () => {
   const theme = useTheme();
@@ -25,25 +26,44 @@ const CreateProgram = () => {
   const { data: meData, isError: meError } = useMeQuery();
 
   const [createProgram, { isError, error, data, isSuccess }] = useCreateProgramMutation();
+  const [isValidating, setIsValidating] = useState(false);
 
   const handleSave = () => {
-    const allFieldsFilled = Object.values(program).every((value) => value !== '');
-    if (allFieldsFilled) {
-      dispatch(setModalOpen({ modalType: 'LOADER', closable: false }));
-      createProgram(transformedValues(program)).then((res: any) => {
+    // Prevenir múltiples clics
+    if (isValidating) {
+      return;
+    }
+
+    setIsValidating(true);
+
+    const validationError = validateProgram(program);
+
+    if (validationError) {
+      errorToast(validationError);
+      setIsValidating(false);
+      return;
+    }
+
+    dispatch(setModalOpen({ modalType: 'LOADER', closable: false }));
+    createProgram(transformedValues(program))
+      .then((res: any) => {
         dispatch(closeModal());
         navigate('/');
         dispatch(resetProgramSlice());
-        dispatch(api.util.invalidateTags(['Groups']));
+        dispatch(api.util.invalidateTags(['Groups', 'ProgramList']));
         successToast('Programa creado exitosamente!');
+        setIsValidating(false);
+      })
+      .catch(() => {
+        setIsValidating(false);
       });
-    }
   };
 
   useEffect(() => {
     if (isError) {
       dispatch(closeModal());
       errorToast('Algo ha salido mal! ');
+      setIsValidating(false);
     }
   }, [isError]);
 
@@ -92,16 +112,18 @@ const CreateProgram = () => {
             variant={ComponentVariantType.PRIMARY}
             onClick={handleSave}
             labelSize={'body3'}
+            disabled={isValidating}
             css={{
               marginTop: '8px',
               width: 'auto',
               height: '30px',
               padding: '8px 16px 8px 16px',
               fontFamily: 'Roboto-Bold',
-              cursor: 'pointer',
+              cursor: isValidating ? 'not-allowed' : 'pointer',
+              opacity: isValidating ? 0.6 : 1,
             }}
           >
-            Guardar
+            {isValidating ? 'Validando...' : 'Guardar'}
           </Button>
         </StyledColumn>
       </StyledColumn>
