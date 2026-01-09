@@ -342,26 +342,26 @@ export const exportGradesToCsv = async (
                 let formattedGrade = '';
                 if (columnTitle === 'Ciberseguridad') {
                   // Para ciberseguridad: (NOTA*2)/20
-                  const multipliedGrade = programProgress.grade * 2;
-                  formattedGrade = `"${multipliedGrade}/20"`;
+                  // const multipliedGrade = programProgress.grade * 2;
+                  formattedGrade = `"${programProgress.grade}"`;
                 } else if (columnTitle === 'RCP') {
                   // Para RCP: convertir de escala 1-10 a escala 1-9
-                  const rcpGrade = Math.round((programProgress.grade * 9) / 10);
-                  formattedGrade = `"${rcpGrade}/9"`;
+                  // const rcpGrade = Math.round((programProgress.grade * 9) / 10);
+                  formattedGrade = `"${programProgress.grade}"`;
                 } else {
                   // Para otros programas: [NOTA]/10
-                  formattedGrade = `"${programProgress.grade}/10"`;
+                  formattedGrade = `"${programProgress.grade}"`;
                 }
 
                 row[columnTitle] = formattedGrade;
               } else {
                 // Formatear el 0 según el programa
                 if (columnTitle === 'Ciberseguridad') {
-                  row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '"0/20"';
+                  row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '"0"';
                 } else if (columnTitle === 'RCP') {
-                  row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '"0/9"';
+                  row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '"0"';
                 } else {
-                  row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '"0/10"';
+                  row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '"0"';
                 }
               }
             } else {
