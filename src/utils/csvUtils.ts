@@ -339,7 +339,7 @@ export const exportGradesToCsv = async (
             if (programProgress) {
               // Solo columna de nota
               if (programProgress.status === 'completed' && programProgress.grade !== undefined) {
-                row[columnTitle] = `"${programProgress.grade}"`;
+                row[columnTitle] = `${programProgress.grade}`;
               } else {
                 row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '"0"';
               }
