@@ -293,10 +293,10 @@ export const exportGradesToCsv = async (
     const programColumnTitles = [
       'Atención centrada en la persona',
       'Evacuación e incendio',
-      'Higiene de manos',
+      // 'Higiene de manos',
       'Ciberseguridad',
       'Calidad y seguridad del paciente',
-      'RCP',
+      // 'RCP',
       'Seguridad e higiene',
       'Reporte de accidentes e incidentes',
       'Cuidado del Medio Ambiente',
