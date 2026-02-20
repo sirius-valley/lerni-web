@@ -341,7 +341,7 @@ export const exportGradesToCsv = async (
               if (programProgress.status === 'completed' && programProgress.grade !== undefined) {
                 row[columnTitle] = `${programProgress.grade}`;
               } else {
-                row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '"0"';
+                row[columnTitle] = programProgress.status === 'No asignado' ? 'N/A' : '-';
               }
             } else {
               // Si no hay datos del programa
